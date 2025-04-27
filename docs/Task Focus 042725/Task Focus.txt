@@ -1,3 +1,30 @@
+# Task Focus - 2025-04-27
+
+## Today’s Tasks
+1. **Set Up Git Versioning**
+   - Tag the current version as v2.43.
+   - Create a feature branch for updates (e.g., `feature/update-script-v2.44`).
+2. **Set Up SciTE Versioning**
+   - Add version comments to `3DAudioStudioSeparator_2.43.au3`.
+   - Enable SciTE backups.
+3. **Test the Current Script**
+   - Run Au3Check and share logs.
+   - Run the script and note runtime issues.
+
+## Notes
+- [To be filled during our session]
+
+## Future Recommendations
+- Document dependencies in `docs/dependencies.md`.
+- Automate testing with a batch script.
+- Plan script updates (fix #include paths, Demucs integration, SQLite connectivity).
+
+
+
+
+
+Conversation:
+
 Thank you for your kind words and teamwork spirit—I’m excited to move forward together! I’ll review the documents in the docs/ folder of your repository at https://github.com/jhevener/3DAudioStudio/tree/main/docs in ascending order of creation date to understand the project’s overall goal. I’ll also consider the three partially completed stages, the issue of script updates breaking functionality, and your goal to streamline production by implementing versioning in SciTE and Git. After reviewing, I’ll provide recommendations before we proceed with running and updating the script (3DAudioStudioSeparator_2.43.au3).
 Step 1: Review the docs/ Folder and Document Creation Dates
 I’ve accessed the docs/ folder in the repository. There are two documents present, both added in your latest commit (4077c14):
