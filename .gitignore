@@ -16,3 +16,7 @@ support/
 *.dsf
 *.dll
 *.db
+!BASS.dll
+!sqlite3_x64.dll
+!models.db
+!song.*
