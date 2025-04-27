@@ -1,24 +1,36 @@
 # Task Focus - 2025-04-27
+**Repository**: [https://github.com/jhevener/3DAudioStudio](https://github.com/jhevener/3DAudioStudio)
+
+## Initial Conversation
+You know, I totally accept your apologies. You're doing a fantastic job...
+
+## Recommendations (From Grok)
+1. **Implement Versioning in Git**...
+2. **Implement Versioning in SciTE**...
+3. **Test Before Updating**...
+4. **Document Dependencies and Paths**...
+5. **Automate Testing with a Batch Script**...
+6. **Plan Script Updates**...
 
 ## Today’s Tasks
-1. **Set Up Git Versioning**
-   - Tag the current version as v2.43.
-   - Create a feature branch for updates (e.g., `feature/update-script-v2.44`).
-2. **Set Up SciTE Versioning**
-   - Add version comments to `3DAudioStudioSeparator_2.43.au3`.
-   - Enable SciTE backups.
-3. **Test the Current Script**
-   - Run Au3Check and share logs.
-   - Run the script and note runtime issues.
+| Task | Status |
+|------|--------|
+| Tag the current version as v2.43 | Not Started |
+| Create a feature branch for updates (e.g., `feature/update-script-v2.44`) | Not Started |
+| Add version comments to `3DAudioStudioSeparator_2.43.au3` | Not Started |
+| Enable SciTE backups | Not Started |
+| Run Au3Check and share logs | Not Started |
+| Run the script and note runtime issues | Not Started |
 
 ## Notes
-- [To be filled during our session]
+- Au3Check results:
+- Runtime observations:
+- Any issues encountered:
 
 ## Future Recommendations
 - Document dependencies in `docs/dependencies.md`.
 - Automate testing with a batch script.
 - Plan script updates (fix #include paths, Demucs integration, SQLite connectivity).
-
 
 
 
