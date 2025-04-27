@@ -1,0 +1,175 @@
+Func _ProcessUVR5($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessUVR5: File=" & $sSong & ", Model=" & $sModel)
+    Local $sUVRDir = @ScriptDir & "\installs\UVR\uvr_env"
+    Local $sPythonPath = $sUVRDir & "\Scripts\python.exe"
+    Local $sActivate = $sUVRDir & "\Scripts\activate.bat"
+    If Not FileExists($sActivate) Then
+        _Log("UVR virtual environment not found: " & $sActivate, True)
+        MsgBox($MB_ICONERROR, "Error", "UVR virtual environment not found at " & $sActivate)
+        Return SetError(1, 0, False)
+    EndIf
+    If Not FileExists($sPythonPath) Then
+        _Log("Python executable not found: " & $sPythonPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Python executable not found at " & $sPythonPath)
+        Return SetError(2, 0, False)
+    EndIf
+    _Log("Virtual environment found: " & $sActivate)
+
+    ; Retrieve the model details to get the Path
+    Local $aDetails = _GetModelDetails($sModel)
+    If @error Then
+        _Log("Failed to retrieve model details for " & $sModel, True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to retrieve model details for " & $sModel)
+        Return SetError(3, 0, False)
+    EndIf
+    Local $sModelPath = $aDetails[3] ; Path field (index 3 from _GetModelDetails)
+    If $sModelPath = "N/A" Or Not FileExists($sModelPath) Then
+        _Log("Model file not found for " & $sModel & " at " & $sModelPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Model file not found for " & $sModel & " at " & $sModelPath)
+        Return SetError(4, 0, False)
+    EndIf
+
+    ; Ensure output directory exists
+    If Not FileExists($sOutputDir) Then
+        DirCreate($sOutputDir)
+        If Not FileExists($sOutputDir) Then
+            _Log("Failed to create output directory: " & $sOutputDir, True)
+            MsgBox($MB_ICONERROR, "Error", "Failed to create output directory: " & $sOutputDir)
+            Return SetError(5, 0, False)
+        EndIf
+    EndIf
+
+    ; Create model-specific subdirectory
+    Local $sModelSubDir = $sOutputDir & "\" & $sModel
+    If Not FileExists($sModelSubDir) Then
+        DirCreate($sModelSubDir)
+        If Not FileExists($sModelSubDir) Then
+            _Log("Failed to create model subdirectory: " & $sModelSubDir, True)
+            MsgBox($MB_ICONERROR, "Error", "Failed to create model subdirectory: " & $sModelSubDir)
+            Return SetError(6, 0, False)
+        EndIf
+    EndIf
+
+    ; Retrieve the command line from the database
+    Local $sCmdTemplate = $aDetails[5] ; CommandLine field (index 5 from _GetModelDetails)
+    If $sCmdTemplate = "" Then
+        _Log("No command line defined in database for model " & $sModel, True)
+        MsgBox($MB_ICONERROR, "Error", "No command line defined in database for model " & $sModel)
+        Return SetError(7, 0, False)
+    EndIf
+
+    ; Replace placeholders in the command template
+    Local $sCmd = StringReplace($sCmdTemplate, "@ScriptDir@", @ScriptDir)
+    $sCmd = StringReplace($sCmd, "@OutputDir@", $sModelSubDir)
+    $sCmd = StringReplace($sCmd, "@SongPath@", $sSong)
+
+    Local $sLogFile = @ScriptDir & "\logs\uvr_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
+    If $hLogFile = -1 Then
+        _Log("Failed to open uvr_log.txt for writing", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to open uvr_log.txt for writing")
+        Return SetError(8, 0, False)
+    EndIf
+    _Log("Opened uvr_log.txt for writing")
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
+
+    Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $iPID = 0 Then
+        _Log("Failed to start UVR command", True)
+        FileWrite($hLogFile, "Error: " & $sCmd & " Failed to start UVR command" & @CRLF)
+        FileClose($hLogFile)
+        MsgBox($MB_ICONERROR, "Error", "Failed to start UVR command. Check log for details.")
+        Return SetError(9, 0, False)
+    EndIf
+    _Log("Started UVR process with PID: " & $iPID)
+
+    ; Create a Google Blue brush for the progress bar
+    Local $hBrushTeal = _GDIPlus_BrushCreateSolid($GOOGLE_BLUE)
+
+    Local $sOutput, $iProgress = 0
+    While ProcessExists($iPID)
+        $sOutput = StdoutRead($iPID)
+        If Not @error And $sOutput <> "" Then
+            _Log("[UVR STDOUT] " & $sOutput)
+            FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+            ; Parse for progress percentage (e.g., "45%")
+            Local $aMatch = StringRegExp($sOutput, "(\d+)%", 1)
+            If Not @error Then
+                $iProgress = Number($aMatch[0])
+                _Log("Progress updated to: " & $iProgress & "%")
+                GUICtrlSetData($hProgressLabel, "Task Progress: " & $iProgress & "%")
+                _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, ($iGuiWidth - 20) * $iProgress / 100, 20, $hBrushTeal)
+            EndIf
+        EndIf
+        $sOutput = StderrRead($iPID)
+        If Not @error And $sOutput <> "" Then
+            _Log("[UVR STDERR] " & $sOutput)
+            FileWrite($hLogFile, "[STDERR] " & $sOutput)
+        EndIf
+        Sleep(100)
+    WEnd
+
+    ; Capture any remaining output
+    $sOutput = StdoutRead($iPID)
+    If $sOutput <> "" Then
+        _Log("[UVR STDOUT] " & $sOutput)
+        FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+    EndIf
+    $sOutput = StderrRead($iPID)
+    If $sOutput <> "" Then
+        _Log("[UVR STDERR] " & $sOutput)
+        FileWrite($hLogFile, "[STDERR] " & $sOutput)
+    EndIf
+
+    Local $iExitCode = ProcessWaitClose($iPID)
+    _Log("UVR process exited with code: " & $iExitCode)
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    ; Clean up the brush
+    _GDIPlus_BrushDispose($hBrushTeal)
+
+    ; Check for expected output files
+    Local $sFileName = StringRegExpReplace($sSong, "^.*\\", "")
+    $sFileName = StringRegExpReplace($sFileName, "\.[^.]+$", "")
+    Local $sOutputPath = $sModelSubDir & "\" & $sFileName
+    Local $aExpectedFiles[2] = ["instrumental.wav", "vocals.wav"] ; Default for 2-stem models
+    If $aDetails[2] = 1 Then ; Stems field (index 2 from _GetModelDetails)
+        If StringInStr($sModel, "Vocals") Or StringInStr($sModel, "KARA") Then
+            Dim $aExpectedFiles[1] = ["vocals.wav"]
+        ElseIf StringInStr($sModel, "Inst") Then
+            Dim $aExpectedFiles[1] = ["instrumental.wav"]
+        ElseIf StringInStr($sModel, "bass") Then
+            Dim $aExpectedFiles[1] = ["bass.wav"]
+        ElseIf StringInStr($sModel, "drums") Then
+            Dim $aExpectedFiles[1] = ["drums.wav"]
+        ElseIf StringInStr($sModel, "other") Then
+            Dim $aExpectedFiles[1] = ["other.wav"]
+        ElseIf StringInStr($sModel, "Wind_Inst") Then
+            Dim $aExpectedFiles[1] = ["wind_instrument.wav"]
+        Else
+            Dim $aExpectedFiles[1] = ["processed.wav"] ; For de-reverb, de-noise, etc.
+        EndIf
+    EndIf
+
+    Local $iFound = 0
+    For $i = 0 To UBound($aExpectedFiles) - 1
+        If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
+    Next
+
+    If $iFound = UBound($aExpectedFiles) Then
+        _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
+        For $i = 0 To UBound($aExpectedFiles) - 1
+            _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
+        Next
+        Return True
+    Else
+        _Log("Failed to process " & $sSong & ": expected " & UBound($aExpectedFiles) & " output files, found " & $iFound, True)
+        Local $sLogContent = FileRead($sLogFile)
+        If StringLen($sLogContent) > 1000 Then
+            $sLogContent = StringLeft($sLogContent, 1000) & "... (see full log at " & $sLogFile & ")"
+        EndIf
+        MsgBox($MB_ICONERROR, "UVR Error", "Failed to process " & $sSong & ". Expected " & UBound($aExpectedFiles) & " output files, found " & $iFound & "." & @CRLF & @CRLF & "Log Details:" & @CRLF & $sLogContent)
+        Return SetError(10, 0, False)
+    EndIf
+EndFunc

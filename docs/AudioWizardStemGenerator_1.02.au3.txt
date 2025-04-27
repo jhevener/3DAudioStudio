@@ -1,0 +1,513 @@
+#include <GUIConstantsEx.au3>
+#include <ButtonConstants.au3>
+#include <ComboConstants.au3>
+#include <StaticConstants.au3>
+#include <WindowsConstants.au3>
+#include <Constants.au3>
+#include <File.au3>
+#include <GuiTab.au3>
+#include <ProgressConstants.au3>
+
+; Define Google colors and Teal Blue for progress bar
+Global Const $GOOGLE_GREEN = 0x34C759 ; Success
+Global Const $GOOGLE_YELLOW = 0xFBBC05 ; Working
+Global Const $TEAL_BLUE = 0x26A69A ; Progress bar color
+
+; UDF to run Demucs on a single file with progress monitoring
+Func _DemucsSeparateSingle($sSongPath, $sOutputDir, $sModel, $hProgressBar, $bUseGPU)
+    Local $sVenvPath = "C:\temp\s2S\installs\Demucs\demucs_env\Scripts"
+    Local $sPythonPath = $sVenvPath & "\python.exe"
+    Local $sActivateCmd = $sVenvPath & "\activate.bat"
+    Local $sDeactivateCmd = "deactivate"
+    Local $sRepoPath = @ScriptDir & "\installs\Demucs_Models\Demucs_Models"
+    Local $sDevice = $bUseGPU ? "cuda" : "cpu"
+    Local $sCmd, $iPID, $sStdout, $sStderr, $hLogFile
+
+    If Not FileExists($sActivateCmd) Then
+        MsgBox(16, "Error", "Demucs venv not found at " & $sVenvPath)
+        Return SetError(1, 0, 0)
+    EndIf
+
+    If Not FileExists($sOutputDir) Then DirCreate($sOutputDir)
+
+    ; Construct command: stock models (htdemucs, mdx_extra_q) use default location, others use --repo
+    If $sModel = "htdemucs_2s" Then
+        $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' -m demucs --two-stems vocals --device ' & $sDevice & ' -o "' & $sOutputDir & '" "' & $sSongPath & '" && ' & $sDeactivateCmd & '"'
+    ElseIf $sModel = "htdemucs" Then
+        $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' -m demucs --device ' & $sDevice & ' -o "' & $sOutputDir & '" "' & $sSongPath & '" && ' & $sDeactivateCmd & '"'
+    ElseIf $sModel = "htdemucs_6s" Then
+        $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' -m demucs -n htdemucs_6s --device ' & $sDevice & ' -o "' & $sOutputDir & '" "' & $sSongPath & '" && ' & $sDeactivateCmd & '"'
+    ElseIf $sModel = "mdx_extra_q" Then
+        $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' -m demucs -n mdx_extra_q --device ' & $sDevice & ' -o "' & $sOutputDir & '" "' & $sSongPath & '" && ' & $sDeactivateCmd & '"'
+    Else
+        $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' -m demucs --repo "' & $sRepoPath & '" -n ' & $sModel & ' --device ' & $sDevice & ' -o "' & $sOutputDir & '" "' & $sSongPath & '" && ' & $sDeactivateCmd & '"'
+    EndIf
+
+    $hLogFile = FileOpen(@ScriptDir & "\demucs_log.txt", 2)
+    If $hLogFile = -1 Then
+        MsgBox(16, "Error", "Failed to open log file")
+        Return SetError(2, 0, 0)
+    EndIf
+
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
+
+    $iPID = Run($sCmd, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD)
+    If $iPID = 0 Then
+        FileWrite($hLogFile, "Error: Failed to start Demucs command" & @CRLF)
+        FileClose($hLogFile)
+        Return SetError(3, 0, 0)
+    EndIf
+
+    While ProcessExists($iPID)
+        $sStdout = StdoutRead($iPID)
+        If Not @error And $sStdout <> "" Then FileWrite($hLogFile, "[STDOUT] " & $sStdout)
+
+        $sStderr = StderrRead($iPID)
+        If Not @error And $sStderr <> "" Then
+            FileWrite($hLogFile, "[STDERR] " & $sStderr)
+            Local $aMatch = StringRegExp($sStderr, "(\d+)%\|", 1)
+            If Not @error Then
+                GUICtrlSetData($hProgressBar, Number($aMatch[0]))
+            EndIf
+        EndIf
+        Sleep(100)
+    WEnd
+
+    $sStdout = StdoutRead($iPID)
+    If $sStdout <> "" Then FileWrite($hLogFile, "[STDOUT] " & $sStdout)
+
+    $sStderr = StderrRead($iPID)
+    If $sStderr <> "" Then FileWrite($hLogFile, "[STDERR] " & $sStderr)
+
+    Local $iExitCode = ProcessWaitClose($iPID)
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    Local $sDrive, $sDir, $sFileName, $sExtension
+    Local $aPath = _PathSplit($sSongPath, $sDrive, $sDir, $sFileName, $sExtension)
+    Local $sStemDir = $sOutputDir & "\" & ($sModel = "htdemucs_2s" ? "htdemucs" : $sModel) & "\" & $sFileName
+    If FileExists($sStemDir & "\vocals.wav") Then Return 1
+    Return SetError(4, $iExitCode, 0)
+EndFunc
+
+; UDF to run Spleeter on a single file with progress monitoring
+Func _SpleeterSeparateSingle($sSongPath, $sOutputDir, $sModel, $hProgressBar, $bUseGPU)
+    Local $sVenvPath = "C:\temp\s2S\installs\Spleeter\spleeter_env\Scripts"
+    Local $sPythonPath = $sVenvPath & "\python.exe"
+    Local $sActivateCmd = $sVenvPath & "\activate.bat"
+    Local $sDeactivateCmd = "deactivate"
+    Local $sDevice = $bUseGPU ? "cuda" : "cpu"
+    Local $sModelConfig = $sModel & "-" & $sDevice
+    Local $sCmd, $iPID, $sStdout, $sStderr, $hLogFile
+
+    If Not FileExists($sActivateCmd) Then
+        MsgBox(16, "Error", "Spleeter venv not found at " & $sVenvPath)
+        Return SetError(1, 0, 0)
+    EndIf
+
+    If Not FileExists($sOutputDir) Then DirCreate($sOutputDir)
+
+    ; Construct command for Spleeter
+    $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' -m spleeter separate -p spleeter:' & $sModelConfig & ' -o "' & $sOutputDir & '" "' & $sSongPath & '" && ' & $sDeactivateCmd & '"'
+
+    $hLogFile = FileOpen(@ScriptDir & "\spleeter_log.txt", 2)
+    If $hLogFile = -1 Then
+        MsgBox(16, "Error", "Failed to open log file")
+        Return SetError(2, 0, 0)
+    EndIf
+
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
+
+    $iPID = Run($sCmd, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD)
+    If $iPID = 0 Then
+        FileWrite($hLogFile, "Error: Failed to start Spleeter command" & @CRLF)
+        FileClose($hLogFile)
+        Return SetError(3, 0, 0)
+    EndIf
+
+    While ProcessExists($iPID)
+        $sStdout = StdoutRead($iPID)
+        If Not @error And $sStdout <> "" Then FileWrite($hLogFile, "[STDOUT] " & $sStdout)
+
+        $sStderr = StderrRead($iPID)
+        If Not @error And $sStderr <> "" Then
+            FileWrite($hLogFile, "[STDERR] " & $sStderr)
+            Local $aMatch = StringRegExp($sStderr, "(\d+)%", 1)
+            If Not @error Then
+                GUICtrlSetData($hProgressBar, Number($aMatch[0]))
+            EndIf
+        EndIf
+        Sleep(100)
+    WEnd
+
+    $sStdout = StdoutRead($iPID)
+    If $sStdout <> "" Then FileWrite($hLogFile, "[STDOUT] " & $sStdout)
+
+    $sStderr = StderrRead($iPID)
+    If $sStderr <> "" Then FileWrite($hLogFile, "[STDERR] " & $sStderr)
+
+    Local $iExitCode = ProcessWaitClose($iPID)
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    Local $sDrive, $sDir, $sFileName, $sExtension
+    Local $aPath = _PathSplit($sSongPath, $sDrive, $sDir, $sFileName, $sExtension)
+    Local $sStemDir = $sOutputDir & "\" & $sFileName
+    If FileExists($sStemDir & "\vocals.wav") Then Return 1
+    Return SetError(4, $iExitCode, 0)
+EndFunc
+
+; UDF to run UVR5 on a single file with progress simulation
+Func _UVR5SeparateSingle($sSongPath, $sOutputDir, $sModel, $hProgressBar, $bUseGPU)
+    Local $sVenvPath = "C:\temp\s2S\installs\uvr\uvr_env\Scripts"
+    Local $sPythonPath = $sVenvPath & "\python.exe"
+    Local $sActivateCmd = $sVenvPath & "\activate.bat"
+    Local $sDeactivateCmd = "deactivate"
+    Local $sScriptPath = "C:\temp\s2S\installs\uvr\uvr-main\separate.py"
+    Local $sDevice = $bUseGPU ? "cuda" : "cpu"
+    Local $sIsHalf = $bUseGPU ? "True" : "False"
+    Local $sCmd, $iPID, $sStdout, $sStderr, $hLogFile
+
+    If Not FileExists($sActivateCmd) Then
+        MsgBox(16, "Error", "UVR5 venv not found at " & $sVenvPath)
+        Return SetError(1, 0, 0)
+    EndIf
+
+    If Not FileExists($sOutputDir) Then DirCreate($sOutputDir)
+
+    ; Generate separate.py script
+    Local $sDrive, $sDir, $sFileName, $sExtension
+    Local $aPath = _PathSplit($sSongPath, $sDrive, $sDir, $sFileName, $sExtension)
+    Local $sScript = "import os,sys,torch,warnings,pdb" & @CRLF & _
+                     "warnings.filterwarnings('ignore')" & @CRLF & _
+                     "import librosa" & @CRLF & _
+                     "import importlib" & @CRLF & _
+                     "import numpy as np" & @CRLF & _
+                     "import hashlib, math" & @CRLF & _
+                     "from tqdm import tqdm" & @CRLF & _
+                     "from uvr5_pack.lib_v5 import spec_utils" & @CRLF & _
+                     "from uvr5_pack.utils import _get_name_params,inference" & @CRLF & _
+                     "from uvr5_pack.lib_v5.model_param_init import ModelParameters" & @CRLF & _
+                     "from scipy.io import wavfile" & @CRLF & _
+                     @CRLF & _
+                     "class _audio_pre_():" & @CRLF & _
+                     "    def __init__(self, model_path, device, is_half):" & @CRLF & _
+                     "        self.model_path = model_path" & @CRLF & _
+                     "        self.device = device" & @CRLF & _
+                     "        self.data = {" & @CRLF & _
+                     "            'postprocess': False," & @CRLF & _
+                     "            'tta': False," & @CRLF & _
+                     "            'window_size': 512," & @CRLF & _
+                     "            'agg': 10," & @CRLF & _
+                     "            'high_end_process': 'mirroring'," & @CRLF & _
+                     "        }" & @CRLF & _
+                     "        nn_arch_sizes = [31191, 33966, 61968, 123821, 123812, 537238]" & @CRLF & _
+                     "        self.nn_architecture = list('{}KB'.format(s) for s in nn_arch_sizes)" & @CRLF & _
+                     "        model_size = math.ceil(os.stat(model_path).st_size / 1024)" & @CRLF & _
+                     "        nn_architecture = '{}KB'.format(min(nn_arch_sizes, key=lambda x:abs(x-model_size)))" & @CRLF & _
+                     "        nets = importlib.import_module('uvr5_pack.lib_v5.nets' + f'_{nn_architecture}'.replace('_{}KB'.format(nn_arch_sizes[0]), ''), package=None)" & @CRLF & _
+                     "        model_hash = hashlib.md5(open(model_path,'rb').read()).hexdigest()" & @CRLF & _
+                     "        param_name, model_params_d = _get_name_params(model_path, model_hash)" & @CRLF & _
+                     "        mp = ModelParameters(model_params_d)" & @CRLF & _
+                     "        model = nets.CascadedASPPNet(mp.param['bins'] * 2)" & @CRLF & _
+                     "        cpk = torch.load(model_path, map_location='cpu')" & @CRLF & _
+                     "        model.load_state_dict(cpk)" & @CRLF & _
+                     "        model.eval()" & @CRLF & _
+                     "        if(is_half==True): model = model.half().to(device)" & @CRLF & _
+                     "        else: model = model.to(device)" & @CRLF & _
+                     "        self.mp = mp" & @CRLF & _
+                     "        self.model = model" & @CRLF & _
+                     @CRLF & _
+                     "    def _path_audio_(self, music_file, ins_root=None, vocal_root=None):" & @CRLF & _
+                     "        if(ins_root is None and vocal_root is None): return 'No save root.'" & @CRLF & _
+                     "        name = os.path.basename(music_file)" & @CRLF & _
+                     "        if(ins_root is not None): os.makedirs(ins_root, exist_ok=True)" & @CRLF & _
+                     "        if(vocal_root is not None): os.makedirs(vocal_root, exist_ok=True)" & @CRLF & _
+                     "        X_wave, y_wave, X_spec_s, y_spec_s = {}, {}, {}, {}" & @CRLF & _
+                     "        bands_n = len(self.mp.param['band'])" & @CRLF & _
+                     "        for d in range(bands_n, 0, -1):" & @CRLF & _
+                     "            bp = self.mp.param['band'][d]" & @CRLF & _
+                     "            if d == bands_n:" & @CRLF & _
+                     "                X_wave[d], _ = librosa.core.load(music_file, bp['sr'], False, dtype=np.float32, res_type=bp['res_type'])" & @CRLF & _
+                     "                if X_wave[d].ndim == 1:" & @CRLF & _
+                     "                    X_wave[d] = np.asfortranarray([X_wave[d], X_wave[d]])" & @CRLF & _
+                     "            else:" & @CRLF & _
+                     "                X_wave[d] = librosa.core.resample(X_wave[d+1], self.mp.param['band'][d+1]['sr'], bp['sr'], res_type=bp['res_type'])" & @CRLF & _
+                     "            X_spec_s[d] = spec_utils.wave_to_spectrogram_mt(X_wave[d], bp['hl'], bp['n_fft'], self.mp.param['mid_side'], self.mp.param['mid_side_b2'], self.mp.param['reverse'])" & @CRLF & _
+                     "            if d == bands_n and self.data['high_end_process'] != 'none':" & @CRLF & _
+                     "                input_high_end_h = (bp['n_fft']//2 - bp['crop_stop']) + (self.mp.param['pre_filter_stop'] - self.mp.param['pre_filter_start'])" & @CRLF & _
+                     "                input_high_end = X_spec_s[d][:, bp['n_fft']//2-input_high_end_h:bp['n_fft']//2, :]" & @CRLF & _
+                     @CRLF & _
+                     "        X_spec_m = spec_utils.combine_spectrograms(X_spec_s, self.mp)" & @CRLF & _
+                     "        aggresive_set = float(self.data['agg']/100)" & @CRLF & _
+                     "        aggressiveness = {'value': aggresive_set, 'split_bin': self.mp.param['band'][1]['crop_stop']}" & @CRLF & _
+                     "        with torch.no_grad():" & @CRLF & _
+                     "            pred, X_mag, X_phase = inference(X_spec_m, self.device, self.model, aggressiveness, self.data)" & @CRLF & _
+                     "        if self.data['postprocess']:" & @CRLF & _
+                     "            pred_inv = np.clip(X_mag - pred, 0, np.inf)" & @CRLF & _
+                     "            pred = spec_utils.mask_silence(pred, pred_inv)" & @CRLF & _
+                     "        y_spec_m = pred * X_phase" & @CRLF & _
+                     "        v_spec_m = X_spec_m - y_spec_m" & @CRLF & _
+                     @CRLF & _
+                     "        if (ins_root is not None):" & @CRLF & _
+                     "            if self.data['high_end_process'].startswith('mirroring'):" & @CRLF & _
+                     "                input_high_end_ = spec_utils.mirroring(self.data['high_end_process'], y_spec_m, input_high_end, self.mp)" & @CRLF & _
+                     "                wav_instrument = spec_utils.cmb_spectrogram_to_wave(y_spec_m, self.mp, input_high_end_h, input_high_end_)" & @CRLF & _
+                     "            else:" & @CRLF & _
+                     "                wav_instrument = spec_utils.cmb_spectrogram_to_wave(y_spec_m, self.mp)" & @CRLF & _
+                     "            print('%s instruments done' % name)" & @CRLF & _
+                     "            wavfile.write(os.path.join(ins_root, 'instrument_{}.wav'.format(name)), self.mp.param['sr'], (np.array(wav_instrument)*32768).astype('int16'))" & @CRLF & _
+                     "        if (vocal_root is not None):" & @CRLF & _
+                     "            if self.data['high_end_process'].startswith('mirroring'):" & @CRLF & _
+                     "                input_high_end_ = spec_utils.mirroring(self.data['high_end_process'], v_spec_m, input_high_end, self.mp)" & @CRLF & _
+                     "                wav_vocals = spec_utils.cmb_spectrogram_to_wave(v_spec_m, self.mp, input_high_end_h, input_high_end_)" & @CRLF & _
+                     "            else:" & @CRLF & _
+                     "                wav_vocals = spec_utils.cmb_spectrogram_to_wave(v_spec_m, self.mp)" & @CRLF & _
+                     "            print('%s vocals done' % name)" & @CRLF & _
+                     "            wavfile.write(os.path.join(vocal_root, 'vocal_{}.wav'.format(name)), self.mp.param['sr'], (np.array(wav_vocals)*32768).astype('int16'))" & @CRLF & _
+                     @CRLF & _
+                     "if __name__ == '__main__':" & @CRLF & _
+                     "    device = '" & $sDevice & "'" & @CRLF & _
+                     "    model_path = 'uvr5_weights/" & $sModel & "'" & @CRLF & _
+                     "    pre_fun = _audio_pre_(model_path=model_path, device=device, is_half=" & $sIsHalf & ")" & @CRLF & _
+                     "    audio_path = '" & $sSongPath & "'" & @CRLF & _
+                     "    save_path = '" & $sOutputDir & "\" & $sFileName & "'" & @CRLF & _
+                     "    pre_fun._path_audio_(audio_path, save_path, save_path)" & @CRLF
+
+    ; Write the script to file
+    FileWrite($sScriptPath, $sScript)
+
+    ; Construct command to run the script
+    $sCmd = 'cmd /c "' & $sActivateCmd & ' && set PATH=%PATH%;' & $sVenvPath & ' && ' & $sPythonPath & ' "' & $sScriptPath & '" && ' & $sDeactivateCmd & '"'
+
+    $hLogFile = FileOpen(@ScriptDir & "\uvr5_log.txt", 2)
+    If $hLogFile = -1 Then
+        MsgBox(16, "Error", "Failed to open log file")
+        Return SetError(2, 0, 0)
+    EndIf
+
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
+
+    $iPID = Run($sCmd, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD)
+    If $iPID = 0 Then
+        FileWrite($hLogFile, "Error: Failed to start UVR5 command" & @CRLF)
+        FileClose($hLogFile)
+        Return SetError(3, 0, 0)
+    EndIf
+
+    ; Simulate progress since UVR5 doesn't output percentage
+    Local $iProgress = 0
+    While ProcessExists($iPID)
+        $sStdout = StdoutRead($iPID)
+        If Not @error And $sStdout <> "" Then FileWrite($hLogFile, "[STDOUT] " & $sStdout)
+
+        $sStderr = StderrRead($iPID)
+        If Not @error And $sStderr <> "" Then FileWrite($hLogFile, "[STDERR] " & $sStderr)
+
+        ; Simulate progress (increment by 5% every 500ms)
+        $iProgress += 5
+        If $iProgress > 100 Then $iProgress = 100
+        GUICtrlSetData($hProgressBar, $iProgress)
+        Sleep(500)
+    WEnd
+
+    $sStdout = StdoutRead($iPID)
+    If $sStdout <> "" Then FileWrite($hLogFile, "[STDOUT] " & $sStdout)
+
+    $sStderr = StderrRead($iPID)
+    If $sStderr <> "" Then FileWrite($hLogFile, "[STDERR] " & $sStderr)
+
+    Local $iExitCode = ProcessWaitClose($iPID)
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    Local $sStemDir = $sOutputDir & "\" & $sFileName
+    If FileExists($sStemDir & "\vocal_" & $sFileName & ".wav") Then Return 1
+    Return SetError(4, $iExitCode, 0)
+EndFunc
+
+; GUI Setup
+Global $hGUI = GUICreate("Stem Separator", 300, 350, -1, -1, BitOR($WS_CAPTION, $WS_SYSMENU))
+GUISetBkColor(0xFFFFFF)
+
+; Create tab control
+Global $hTab = GUICtrlCreateTab(10, 10, 280, 330)
+
+; Demucs Tab
+GUICtrlCreateTabItem("Demucs")
+Global $hDemucsCombo = GUICtrlCreateCombo("", 50, 40, 200, 25, $CBS_DROPDOWNLIST)
+GUICtrlSetData($hDemucsCombo, "htdemucs_2s|htdemucs|htdemucs_6s|mdx_extra_q|demucs-e07c671f|demucs|demucs48_hq-28a1282c|demucs_extra-3646af93|demucs_extra|demucs_unittest-09ebc15f|light|light_extra|tasnet-beb46fac|tasnet|tasnet_extra-df3777b2|tasnet_extra", "htdemucs")
+
+Global $hDemucsGPUCheck = GUICtrlCreateCheckbox("Use GPU", 50, 70, 100, 20)
+GUICtrlSetState($hDemucsGPUCheck, $GUI_UNCHECKED)
+
+Global $hDemucsButton = GUICtrlCreateButton("Choose", 75, 100, 150, 50, $BS_FLAT)
+GUICtrlSetBkColor($hDemucsButton, $GOOGLE_GREEN)
+GUICtrlSetColor($hDemucsButton, 0xFFFFFF)
+GUICtrlSetFont($hDemucsButton, 12, 400, 0, "Arial")
+
+Global $hDemucsProgress = GUICtrlCreateProgress(37, 160, 225, 20, $PBS_SMOOTH)
+GUICtrlSetColor($hDemucsProgress, $TEAL_BLUE)
+GUICtrlSetBkColor($hDemucsProgress, 0xFFFFFF)
+
+Global $hDemucsInputLabel = GUICtrlCreateLabel("Input: ", 10, 190, 280, 40, $SS_CENTER)
+GUICtrlSetFont($hDemucsInputLabel, 9, 400, 0, "Arial")
+Global $hDemucsOutputLabel = GUICtrlCreateLabel("Output: ", 10, 230, 280, 40, $SS_CENTER)
+GUICtrlSetFont($hDemucsOutputLabel, 9, 400, 0, "Arial")
+
+; Spleeter Tab
+GUICtrlCreateTabItem("Spleeter")
+Global $hSpleeterCombo = GUICtrlCreateCombo("", 50, 40, 200, 25, $CBS_DROPDOWNLIST)
+GUICtrlSetData($hSpleeterCombo, "2stems|4stems|5stems", "2stems")
+
+Global $hSpleeterGPUCheck = GUICtrlCreateCheckbox("Use GPU", 50, 70, 100, 20)
+GUICtrlSetState($hSpleeterGPUCheck, $GUI_UNCHECKED)
+
+Global $hSpleeterButton = GUICtrlCreateButton("Choose", 75, 100, 150, 50, $BS_FLAT)
+GUICtrlSetBkColor($hSpleeterButton, $GOOGLE_GREEN)
+GUICtrlSetColor($hSpleeterButton, 0xFFFFFF)
+GUICtrlSetFont($hSpleeterButton, 12, 400, 0, "Arial")
+
+Global $hSpleeterProgress = GUICtrlCreateProgress(37, 160, 225, 20, $PBS_SMOOTH)
+GUICtrlSetColor($hSpleeterProgress, $TEAL_BLUE)
+GUICtrlSetBkColor($hSpleeterProgress, 0xFFFFFF)
+
+Global $hSpleeterInputLabel = GUICtrlCreateLabel("Input: ", 10, 190, 280, 40, $SS_CENTER)
+GUICtrlSetFont($hSpleeterInputLabel, 9, 400, 0, "Arial")
+Global $hSpleeterOutputLabel = GUICtrlCreateLabel("Output: ", 10, 230, 280, 40, $SS_CENTER)
+GUICtrlSetFont($hSpleeterOutputLabel, 9, 400, 0, "Arial")
+
+; UVR5 Tab
+GUICtrlCreateTabItem("UVR5")
+Global $hUVR5Combo = GUICtrlCreateCombo("", 50, 40, 200, 25, $CBS_DROPDOWNLIST)
+GUICtrlSetData($hUVR5Combo, "5_HP-Karaoke-UVR.pth", "5_HP-Karaoke-UVR.pth")
+
+Global $hUVR5GPUCheck = GUICtrlCreateCheckbox("Use GPU", 50, 70, 100, 20)
+GUICtrlSetState($hUVR5GPUCheck, $GUI_UNCHECKED)
+
+Global $hUVR5Button = GUICtrlCreateButton("Choose", 75, 100, 150, 50, $BS_FLAT)
+GUICtrlSetBkColor($hUVR5Button, $GOOGLE_GREEN)
+GUICtrlSetColor($hUVR5Button, 0xFFFFFF)
+GUICtrlSetFont($hUVR5Button, 12, 400, 0, "Arial")
+
+Global $hUVR5Progress = GUICtrlCreateProgress(37, 160, 225, 20, $PBS_SMOOTH)
+GUICtrlSetColor($hUVR5Progress, $TEAL_BLUE)
+GUICtrlSetBkColor($hUVR5Progress, 0xFFFFFF)
+
+Global $hUVR5InputLabel = GUICtrlCreateLabel("Input: ", 10, 190, 280, 40, $SS_CENTER)
+GUICtrlSetFont($hUVR5InputLabel, 9, 400, 0, "Arial")
+Global $hUVR5OutputLabel = GUICtrlCreateLabel("Output: ", 10, 230, 280, 40, $SS_CENTER)
+GUICtrlSetFont($hUVR5OutputLabel, 9, 400, 0, "Arial")
+
+; End tab control
+GUICtrlCreateTabItem("")
+
+GUISetState(@SW_SHOW)
+
+While 1
+    Switch GUIGetMsg()
+        Case $GUI_EVENT_CLOSE
+            Exit
+        Case $hDemucsButton
+            Local $sSongDir = @ScriptDir & "\songs"
+            Local $sFile = FileOpenDialog("Select Audio File", $sSongDir, "Audio Files (*.wav;*.flac;*.mp3)", 1)
+            If @error Then ContinueLoop
+
+            GUICtrlSetData($hDemucsButton, "Working")
+            GUICtrlSetBkColor($hDemucsButton, $GOOGLE_YELLOW)
+            GUICtrlSetState($hDemucsButton, $GUI_DISABLE)
+
+            Local $sOutputDir = @ScriptDir & "\stems"
+            GUICtrlSetData($hDemucsInputLabel, "Input: " & $sFile)
+            GUICtrlSetData($hDemucsOutputLabel, "Output: " & $sOutputDir)
+            GUICtrlSetColor($hDemucsInputLabel, $GOOGLE_YELLOW)
+            GUICtrlSetColor($hDemucsOutputLabel, $GOOGLE_YELLOW)
+            GUICtrlSetData($hDemucsProgress, 0)
+
+            Local $sModel = GUICtrlRead($hDemucsCombo)
+            Local $bUseGPU = GUICtrlRead($hDemucsGPUCheck) = $GUI_CHECKED
+            Local $iResult = _DemucsSeparateSingle($sFile, $sOutputDir, $sModel, $hDemucsProgress, $bUseGPU)
+
+            If $iResult Then
+                GUICtrlSetData($hDemucsButton, "Choose")
+                GUICtrlSetBkColor($hDemucsButton, $GOOGLE_GREEN)
+                GUICtrlSetColor($hDemucsInputLabel, $GOOGLE_GREEN)
+                GUICtrlSetColor($hDemucsOutputLabel, $GOOGLE_GREEN)
+                GUICtrlSetData($hDemucsProgress, 100)
+            Else
+                GUICtrlSetData($hDemucsButton, "Error")
+                GUICtrlSetBkColor($hDemucsButton, 0xFF0000)
+                GUICtrlSetData($hDemucsProgress, 0)
+                MsgBox(16, "Error", "Demucs failed. Check demucs_log.txt in " & @ScriptDir & " for details.")
+            EndIf
+            GUICtrlSetState($hDemucsButton, $GUI_ENABLE)
+
+        Case $hSpleeterButton
+            Local $sSongDir = @ScriptDir & "\songs"
+            Local $sFile = FileOpenDialog("Select Audio File", $sSongDir, "Audio Files (*.wav;*.flac;*.mp3)", 1)
+            If @error Then ContinueLoop
+
+            GUICtrlSetData($hSpleeterButton, "Working")
+            GUICtrlSetBkColor($hSpleeterButton, $GOOGLE_YELLOW)
+            GUICtrlSetState($hSpleeterButton, $GUI_DISABLE)
+
+            Local $sOutputDir = @ScriptDir & "\stems"
+            GUICtrlSetData($hSpleeterInputLabel, "Input: " & $sFile)
+            GUICtrlSetData($hSpleeterOutputLabel, "Output: " & $sOutputDir)
+            GUICtrlSetColor($hSpleeterInputLabel, $GOOGLE_YELLOW)
+            GUICtrlSetColor($hSpleeterOutputLabel, $GOOGLE_YELLOW)
+            GUICtrlSetData($hSpleeterProgress, 0)
+
+            Local $sModel = GUICtrlRead($hSpleeterCombo)
+            Local $bUseGPU = GUICtrlRead($hSpleeterGPUCheck) = $GUI_CHECKED
+            Local $iResult = _SpleeterSeparateSingle($sFile, $sOutputDir, $sModel, $hSpleeterProgress, $bUseGPU)
+
+            If $iResult Then
+                GUICtrlSetData($hSpleeterButton, "Choose")
+                GUICtrlSetBkColor($hSpleeterButton, $GOOGLE_GREEN)
+                GUICtrlSetColor($hSpleeterInputLabel, $GOOGLE_GREEN)
+                GUICtrlSetColor($hSpleeterOutputLabel, $GOOGLE_GREEN)
+                GUICtrlSetData($hSpleeterProgress, 100)
+            Else
+                GUICtrlSetData($hSpleeterButton, "Error")
+                GUICtrlSetBkColor($hSpleeterButton, 0xFF0000)
+                GUICtrlSetData($hSpleeterProgress, 0)
+                MsgBox(16, "Error", "Spleeter failed. Check spleeter_log.txt in " & @ScriptDir & " for details.")
+            EndIf
+            GUICtrlSetState($hSpleeterButton, $GUI_ENABLE)
+
+        Case $hUVR5Button
+            Local $sSongDir = @ScriptDir & "\songs"
+            Local $sFile = FileOpenDialog("Select Audio File", $sSongDir, "Audio Files (*.wav;*.flac;*.mp3)", 1)
+            If @error Then ContinueLoop
+
+            GUICtrlSetData($hUVR5Button, "Working")
+            GUICtrlSetBkColor($hUVR5Button, $GOOGLE_YELLOW)
+            GUICtrlSetState($hUVR5Button, $GUI_DISABLE)
+
+            Local $sOutputDir = @ScriptDir & "\stems"
+            GUICtrlSetData($hUVR5InputLabel, "Input: " & $sFile)
+            GUICtrlSetData($hUVR5OutputLabel, "Output: " & $sOutputDir)
+            GUICtrlSetColor($hUVR5InputLabel, $GOOGLE_YELLOW)
+            GUICtrlSetColor($hUVR5OutputLabel, $GOOGLE_YELLOW)
+            GUICtrlSetData($hUVR5Progress, 0)
+
+            Local $sModel = GUICtrlRead($hUVR5Combo)
+            Local $bUseGPU = GUICtrlRead($hUVR5GPUCheck) = $GUI_CHECKED
+            Local $iResult = _UVR5SeparateSingle($sFile, $sOutputDir, $sModel, $hUVR5Progress, $bUseGPU)
+
+            If $iResult Then
+                GUICtrlSetData($hUVR5Button, "Choose")
+                GUICtrlSetBkColor($hUVR5Button, $GOOGLE_GREEN)
+                GUICtrlSetColor($hUVR5InputLabel, $GOOGLE_GREEN)
+                GUICtrlSetColor($hUVR5OutputLabel, $GOOGLE_GREEN)
+                GUICtrlSetData($hUVR5Progress, 100)
+            Else
+                GUICtrlSetData($hUVR5Button, "Error")
+                GUICtrlSetBkColor($hUVR5Button, 0xFF0000)
+                GUICtrlSetData($hUVR5Progress, 0)
+                MsgBox(16, "Error", "UVR5 failed. Check uvr5_log.txt in " & @ScriptDir & " for details.")
+            EndIf
+            GUICtrlSetState($hUVR5Button, $GUI_ENABLE)
+    EndSwitch
+WEnd

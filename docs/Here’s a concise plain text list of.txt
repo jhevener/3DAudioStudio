@@ -1,0 +1,16 @@
+Here’s a concise plain text list of the key steps we took to get your Minds instance running, highlighting what went beyond the Minds Installation Documentation.
+
+Fixed frontend build: Installer skipped npm run build due to "already installed" state, causing 404. Manually ran npm install --legacy-peer-deps and npm run build -- --configuration production --aot, then copied assets to Nginx.
+
+Handled missing main.css: angular.json referenced src/main.css, but it was missing. Build eventually succeeded, but added touch /opt/minds/front/src/main.css to prevent future failures.
+
+Managed VM lockups: VM (16GB RAM) locked up during build. Added 8GB swap and allocated 14GB RAM/8 CPU cores in VirtualBox. Set NODE_OPTIONS="--max-old-space-size=8192".
+
+Addressed container delays: Cassandra/MySQL took >670s to start. Started containers sequentially (docker-compose up -d mysql, then cassandra, then others) to reduce contention.
+
+Resolved port conflict: System-wide MariaDB on port 3306 conflicted with minds-mysql-1. Stopped it with systemctl stop mariadb and systemctl disable mariadb.
+
+Backend setup pending: Frontend loads at http://10.0.0.11:8080, but /api/v3/status still 404. May need to check settings.php and database initialization.
+
+Suggestions: Add troubleshooting for build failures, port conflicts, and resource tuning to docs. Recommend headless setup for better performance.
+

@@ -1,0 +1,235 @@
+;**************************************************
+;********************Part 3************************
+;**************************************************
+#Region Part3
+#Region ;**** Separation Functions ****
+Func _ProcessDemucs($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessDemucs: File=" & $sSong & ", Model=" & $sModel)
+    Local $sDemucsDir = @ScriptDir & "\installs\Demucs\demucs_env\Scripts"
+    Local $sActivate = $sDemucsDir & "\activate.bat"
+    If Not FileExists($sActivate) Then
+        _Log("Demucs virtual environment not found: " & $sActivate, True)
+        Return SetError(1, 0, False)
+    EndIf
+    _Log("Virtual environment found: " & $sActivate)
+
+    Local $sCmd = 'cmd /c "' & $sActivate & ' && set PATH=%PATH%;' & $sDemucsDir & ' && python.exe -m demucs -n ' & $sModel & ' --device cpu -o "' & $sOutputDir & '" "' & $sSong & '" && exit"'
+    _Log("Demucs command: " & $sCmd)
+
+    Local $sLogFile = @ScriptDir & "\logs\demucs_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2)
+    If $hLogFile = -1 Then
+        _Log("Failed to open demucs_log.txt for writing", True)
+        Return SetError(2, 0, False)
+    EndIf
+    _Log("Opened demucs_log.txt for writing")
+
+    Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    _Log("Started Demucs process with PID: " & $iPID)
+
+    Local $sOutput
+    While ProcessExists($iPID)
+        $sOutput = StdoutRead($iPID)
+        If @error Then ExitLoop
+        If $sOutput <> "" Then
+            _Log("[Demucs STDOUT] " & $sOutput)
+            FileWrite($hLogFile, $sOutput)
+        EndIf
+        $sOutput = StderrRead($iPID)
+        If @error Then ExitLoop
+        If $sOutput <> "" Then
+            _Log("[Demucs STDERR] " & $sOutput)
+            FileWrite($hLogFile, $sOutput)
+        EndIf
+        Sleep(100)
+    WEnd
+
+    FileClose($hLogFile)
+    Local $iExitCode = ProcessWaitClose($iPID)
+    _Log("Demucs process exited with code: " & $iExitCode)
+
+    Local $sOutputPath = $sOutputDir & "\htdemucs\" & StringRegExpReplace($sSong, "^.*\\", "")
+    $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
+    Local $aExpectedFiles[4] = ["vocals.wav", "drums.wav", "bass.wav", "other.wav"]
+    Local $iFound = 0
+    For $i = 0 To UBound($aExpectedFiles) - 1
+        If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
+    Next
+
+    If $iFound = 4 Then
+        _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
+        For $i = 0 To UBound($aExpectedFiles) - 1
+            _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
+        Next
+        Return True
+    Else
+        _Log("Failed to process " & $sSong & ": expected 4 output files, found " & $iFound, True)
+        Return SetError(3, 0, False)
+    EndIf
+EndFunc
+
+Func _ProcessSpleeter($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessSpleeter: File=" & $sSong & ", Model=" & $sModel)
+    Local $sSpleeterDir = @ScriptDir & "\installs\Spleeter\spleeter_env\Scripts"
+    Local $sActivate = $sSpleeterDir & "\activate.bat"
+    If Not FileExists($sActivate) Then
+        _Log("Spleeter virtual environment not found: " & $sActivate, True)
+        Return SetError(1, 0, False)
+    EndIf
+    _Log("Virtual environment found: " & $sActivate)
+
+    Local $sCmd = 'cmd /c "' & $sActivate & ' && set PATH=%PATH%;' & $sSpleeterDir & ' && python.exe -m spleeter separate -p spleeter:' & $sModel & ' -o "' & $sOutputDir & '" "' & $sSong & '" && exit"'
+    _Log("Spleeter command: " & $sCmd)
+
+    Local $sLogFile = @ScriptDir & "\logs\spleeter_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2)
+    If $hLogFile = -1 Then
+        _Log("Failed to open spleeter_log.txt for writing", True)
+        Return SetError(2, 0, False)
+    EndIf
+    _Log("Opened spleeter_log.txt for writing")
+
+    Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    _Log("Started Spleeter process with PID: " & $iPID)
+
+    Local $sOutput
+    While ProcessExists($iPID)
+        $sOutput = StdoutRead($iPID)
+        If @error Then ExitLoop
+        If $sOutput <> "" Then
+            _Log("[Spleeter STDOUT] " & $sOutput)
+            FileWrite($hLogFile, $sOutput)
+        EndIf
+        $sOutput = StderrRead($iPID)
+        If @error Then ExitLoop
+        If $sOutput <> "" Then
+            _Log("[Spleeter STDERR] " & $sOutput)
+            FileWrite($hLogFile, $sOutput)
+        EndIf
+        Sleep(100)
+    WEnd
+
+    FileClose($hLogFile)
+    Local $iExitCode = ProcessWaitClose($iPID)
+    _Log("Spleeter process exited with code: " & $iExitCode)
+
+    Local $sOutputPath = $sOutputDir & "\" & StringRegExpReplace($sSong, "^.*\\", "")
+    $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
+    Local $aExpectedFiles[2] = ["vocals.wav", "accompaniment.wav"]
+    Local $iFound = 0
+    For $i = 0 To UBound($aExpectedFiles) - 1
+        If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
+    Next
+
+    If $iFound = 2 Then
+        _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
+        For $i = 0 To UBound($aExpectedFiles) - 1
+            _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
+        Next
+        Return True
+    Else
+        _Log("Failed to process " & $sSong & ": expected 2 output files, found " & $iFound, True)
+        Return SetError(3, 0, False)
+    EndIf
+EndFunc
+
+Func _ProcessUVR5($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessUVR5: File=" & $sSong & ", Model=" & $sModel)
+    Local $sUVR5Dir = @ScriptDir & "\installs\UVR5\uvr5_env\Scripts"
+    Local $sActivate = $sUVR5Dir & "\activate.bat"
+    If Not FileExists($sActivate) Then
+        _Log("UVR5 virtual environment not found: " & $sActivate, True)
+        Return SetError(1, 0, False)
+    EndIf
+    _Log("Virtual environment found: " & $sActivate)
+
+    Local $sCmd = 'cmd /c "' & $sActivate & ' && set PATH=%PATH%;' & $sUVR5Dir & ' && python.exe -m uvr5 --model ' & $sModel & ' --output_dir "' & $sOutputDir & '" --input_file "' & $sSong & '" && exit"'
+    _Log("UVR5 command: " & $sCmd)
+
+    Local $sLogFile = @ScriptDir & "\logs\uvr5_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2)
+    If $hLogFile = -1 Then
+        _Log("Failed to open uvr5_log.txt for writing", True)
+        Return SetError(2, 0, False)
+    EndIf
+    _Log("Opened uvr5_log.txt for writing")
+
+    Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    _Log("Started UVR5 process with PID: " & $iPID)
+
+    Local $sOutput
+    While ProcessExists($iPID)
+        $sOutput = StdoutRead($iPID)
+        If @error Then ExitLoop
+        If $sOutput <> "" Then
+            _Log("[UVR5 STDOUT] " & $sOutput)
+            FileWrite($hLogFile, $sOutput)
+        EndIf
+        $sOutput = StderrRead($iPID)
+        If @error Then ExitLoop
+        If $sOutput <> "" Then
+            _Log("[UVR5 STDERR] " & $sOutput)
+            FileWrite($hLogFile, $sOutput)
+        EndIf
+        Sleep(100)
+    WEnd
+
+    FileClose($hLogFile)
+    Local $iExitCode = ProcessWaitClose($iPID)
+    _Log("UVR5 process exited with code: " & $iExitCode)
+
+    Local $sOutputPath = $sOutputDir & "\" & StringRegExpReplace($sSong, "^.*\\", "")
+    $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
+    Local $aExpectedFiles[2] = ["vocals.wav", "instrumental.wav"]
+    Local $iFound = 0
+    For $i = 0 To UBound($aExpectedFiles) - 1
+        If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
+    Next
+
+    If $iFound = 2 Then
+        _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
+        For $i = 0 To UBound($aExpectedFiles) - 1
+            _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
+        Next
+        Return True
+    Else
+        _Log("Failed to process " & $sSong & ": expected 2 output files, found " & $iFound, True)
+        Return SetError(3, 0, False)
+    EndIf
+EndFunc
+
+Func _ProcessFile($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessFile: File=" & $sSong & ", Model=" & $sModel & ", OutputDir=" & $sOutputDir)
+    Local $iTabIndex = _GUICtrlTab_GetCurSel($hTab)
+    If Not _IsModelCompatibleWithTab($sModel, $iTabIndex) Then
+        _Log("Model " & $sModel & " is not compatible with the current tab (index " & $iTabIndex & ")", True)
+        MsgBox($MB_ICONERROR, "Error", "Selected model '" & $sModel & "' is not compatible with the current tab.")
+        Return False
+    EndIf
+
+    Local $bSuccess = False
+    Switch $iTabIndex
+        Case 0 ; Demucs
+            _Log("Processing with Demucs using model: " & $sModel)
+            $bSuccess = _ProcessDemucs($sSong, $sModel, $sOutputDir)
+        Case 1 ; Spleeter
+            _Log("Processing with Spleeter using model: " & $sModel)
+            $bSuccess = _ProcessSpleeter($sSong, $sModel, $sOutputDir)
+        Case 2 ; UVR5
+            _Log("Processing with UVR5 using model: " & $sModel)
+            $bSuccess = _ProcessUVR5($sSong, $sModel, $sOutputDir)
+        Case Else
+            _Log("Invalid tab index for processing: " & $iTabIndex, True)
+            Return False
+    EndSwitch
+
+    If $bSuccess Then
+        _Log("File processed successfully: " & $sSong)
+        Return True
+    Else
+        _Log("Failed to process file: " & $sSong, True)
+        Return False
+    EndIf
+EndFunc
+#EndRegion ;**** Separation Functions ****
+#EndRegion Part3

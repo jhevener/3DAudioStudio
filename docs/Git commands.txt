@@ -1,0 +1,85 @@
+Below is a numbered list of all Git commands used in our conversation, with each command summarized in one sentence for clarity. This list is formatted for easy conversion to a PDF reference.
+Git Commands Reference
+git clone https://github.com/jhevener/AudioWizard.git
+Clones the AudioWizard repository from GitHub to your local machine.
+git config --global user.name "Your Name"
+Sets your Git username globally for commit authorship.
+git config --global user.email "your.email@example.com"
+Sets your Git email globally for commit authorship.
+git status
+Displays the current status of your working directory and staging area.
+git add .
+Stages all changes in the current directory for the next commit.
+git add file.txt
+Stages a specific file (e.g., file.txt) for the next commit.
+git commit -m "Commit message"
+Commits staged changes with a descriptive message (e.g., "Initial commit").
+git push
+Pushes committed changes to the remote repository on GitHub.
+git branch
+Lists all branches in the repository, with the current branch marked.
+git branch branch-name
+Creates a new branch named branch-name in the repository.
+git checkout branch-name
+Switches to the specified branch (e.g., branch-name).
+git checkout -b branch-name
+Creates and switches to a new branch named branch-name in one command.
+git pull
+Fetches and merges changes from the remote repository into your local branch.
+git fetch
+Fetches changes from the remote repository without merging them.
+git restore --staged file.txt
+Unstages a specific file (e.g., file.txt) from the next commit.
+git restore file.txt
+Discards uncommitted changes to a specific file (e.g., file.txt).
+git log
+Shows the commit history for the current branch.
+git rm -r --cached folder_name
+Removes a folder (e.g., folder_name) from Git tracking without deleting it locally.
+git stash
+Temporarily saves uncommitted changes to a stash for later use.
+git stash pop
+Reapplies the most recently stashed changes and removes them from the stash.
+git reset --hard
+Resets the working directory and index to the last commit, discarding all uncommitted changes.
+git init
+Initializes a new Git repository in the current directory.
+git commit -m "Initial commit with project files"
+Commits the initial set of project files with a descriptive message.
+git remote add origin https://github.com/<username>/AudioWizard.git
+Adds a remote repository URL (e.g., for AudioWizard) as origin.
+git branch -M main
+Renames the current branch to main and sets it as the default branch.
+git push -u origin main
+Pushes the main branch to the remote repository and sets it as the upstream branch.
+git config --global core.autocrlf false
+Disables automatic line ending conversion to prevent LF/CRLF issues on Windows.
+git filter-repo --invert-paths --path docs/bass-chms.pdf
+Removes a specific file (e.g., bass-chms.pdf) from the entire Git history.
+git log -- docs/bass-chms.pdf
+Checks the commit history for a specific file (e.g., bass-chms.pdf).
+git push -u origin main --force
+Force pushes the main branch to the remote, overwriting its history, and sets upstream.
+git remote -v
+Displays the URLs of the remote repositories associated with the local repo.
+git remote set-url origin https://github.com/jhevener/3DAudioStudio.git
+Updates the remote URL for origin to the correct repository (e.g., 3DAudioStudio).
+git push --set-upstream origin main
+Pushes the main branch to the remote and sets origin/main as the upstream branch.
+git pull origin main
+Fetches and merges changes from the main branch of the origin remote.
+git filter-repo --invert-paths --path src/AutoIt/AudioWizard/sqlite3_x64.dll --path src/AutoIt/AudioWizard/models.db
+Removes specific files (e.g., sqlite3_x64.dll, models.db) from the Git history.
+git rm -r AutoIt Logs
+Removes the AutoIt and Logs directories from Git tracking.
+git add src/AutoIt
+Stages the src/AutoIt directory and its contents for the next commit.
+git checkout abc123 -- .
+Restores all files from a specific commit (e.g., abc123) to the current working directory.
+git log --oneline
+Displays a condensed commit history with one line per commit.
+Notes for PDF
+Copy this list into a text editor (e.g., Word).
+Use a 10pt font (e.g., Arial), set margins to 0.5 inches, and it should fit on 1-2 pages.
+Each command is numbered with a one-sentence explanation for clarity.
+Let me know if you’re ready to proceed with troubleshooting the script or any other task!

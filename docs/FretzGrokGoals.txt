@@ -1,0 +1,36 @@
+Can you please succinctly  summarize what my goals are for my Surround Audio Autoit Script?
+
+
+
+Your goals for your AutoIt-scripted stems studio, based on our conversation thread as of April 3, 2025, are to create a powerful, user-friendly audio processing and mixing environment with the following key objectives:
+Visual Ensembler: Develop a GUI-driven Ensembler that blends outputs from Spleeter and UVR5 (Demucs, MDX-Net) for enhanced stem separation (e.g., synthesizer, guitars), with real-time waveform visuals, blend controls (Average, Inverse), and a preset-saving system for reusable configurations.
+
+3D Audio Mixing Environment: Enable stereo-to-surround (5.1/7.1) mixing using Bass.dll, allowing stems to be positioned in a 3D space (X-axis for front-to-back, Y for left-right, Z for height), with a focus on immersive front-to-back mixing for dynamic, enveloping soundfields.
+
+Further Stem Separation: Enhance stem granularity by soloing/muting left/right channels of stereo stems to isolate elements (e.g., left-panned rhythm guitar vs. right-panned lead), effectively creating sub-stems without reprocessing.
+
+Cutting-Edge GUI: Design a modular, GDI+-based interface that’s futuristic yet intuitive, featuring familiar DAW elements (waveforms, sliders), roll-out info/status windows (e.g., stem stats, FFT visuals), and efficient wide-screen layout management for a professional, uncluttered workspace.
+
+Audio Manipulation Features: Integrate Bass.dll’s capabilities (EQ, reverb, pitch shift, 3D positioning) for real-time effects, add dynamic automation (e.g., stem movement over time), and sync with Audacity for visual mixing, aiming for a versatile “audio Swiss knife” workflow.
+
+Overall, you aim to transform your CLI-driven setup (Spleeter, Demucs, UVR5) into a visually stunning, modular studio that rivals commercial tools like SpectraLayers, offering advanced stem separation, immersive surround mixing, and an innovative GUI tailored for remixers and DIY producers.
+
+GDI+ GUI techniques
+
+3D audio standards
+
+more concise
+
+Ultimate Vocal Remover
+
+
+https://github.com/seanghay/uvr
+
+https://ultimatevocalremover.com/
+
+https://github.com/Anjok07/ultimatevocalremovergui
+
+https://www.reddit.com/r/audioengineering/comments/1bh84b5/ultimate_vocal_remover_5_best_settings_to_use/
+
+https://github.com/Anjok07/ultimatevocalremovergui/discussions
+
