@@ -1,8 +1,6 @@
 venv*/
 __pycache__/
 *.pyc
-output/
-stems/
 installs/
 support/
 *.wav
