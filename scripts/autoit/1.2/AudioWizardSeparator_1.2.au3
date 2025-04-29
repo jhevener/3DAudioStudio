@@ -8,7 +8,7 @@
 #AutoIt3Wrapper_Res_ProductName=Stem Separator
 #AutoIt3Wrapper_Res_ProductVersion=1.0.0
 #AutoIt3Wrapper_Res_CompanyName=FretzCapo
-#AutoIt3Wrapper_Res_LegalCopyright=© 2025 FretzCapo
+#AutoIt3Wrapper_Res_LegalCopyright=� 2025 FretzCapo
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_requestedExecutionLevel=None
@@ -46,9 +46,10 @@ Global Const $GOOGLE_RED = 0xFFDB4437
 Global Const $GOOGLE_PURPLE = 0xFF673AB7
 Global Const $GOOGLE_ORANGE = 0xFFF57C00
 Global Const $GOOGLE_BROWN = 0xFF795548
+Global Const $GOOGLE_TEAL = 0xFF26A69A
 
 Global $hGUI, $hInputListView, $hOutputListView, $hBatchList, $hModelCombo, $hTab
-Global $hInputDirButton, $hOutputDirButton, $hAddButton, $hClearButton, $hDeleteButton, $hSeparateButton, $hSaveSettingsButton
+Global $hInputDirButton, $hOutputDirButton, $hAddButton, $hClearButton, $hDeleteButton, $hSeparateButton, $hSaveSettingsButton, $hManageDbButton
 Global $hModelNameLabel, $hStemsLabel, $hStemsDisplay, $hFocusLabel, $hFocusDisplay
 Global $hDescLabel, $hDescEdit, $hCommentsLabel, $hCommentsEdit
 Global $hProgressLabel, $hCountLabel, $hGraphic
@@ -58,7 +59,7 @@ Global $hDb, $sDbFile
 Global $sSettingsIni = @ScriptDir & "\settings.ini"
 Global $sModelsIni = @ScriptDir & "\Models.ini"
 Global $sUserIni = @ScriptDir & "\user.ini"
-Global $sLogFile
+Global $sLogFile = ""
 Global $sInputPath = @ScriptDir & "\songs"
 Global $sOutputPath = @ScriptDir & "\stems"
 
@@ -71,37 +72,14 @@ If Not FileExists(IniRead($sSettingsIni, "Paths", "LogDir", @ScriptDir & "\logs"
 
 #Region ;**** Logging Functions ****
 Func _Log($sMessage, $bError = False)
-    Local $sLogDir = @ScriptDir & "\logs"
-    Local $bDirCreated = True
-    If Not FileExists($sLogDir) Then
-        $bDirCreated = DirCreate($sLogDir)
-        If Not $bDirCreated Then
-            $sLogDir = @TempDir & "\AudioWizardLogs"
-            If Not FileExists($sLogDir) Then
-                $bDirCreated = DirCreate($sLogDir)
-                If Not $bDirCreated Then
-                    ConsoleWrite("Failed to create log directory: " & $sLogDir & @CRLF)
-                    Return
-                EndIf
-            EndIf
-        EndIf
-    EndIf
-    Local $sTimestamp = @YEAR & @MON & @MDAY & "_" & @HOUR & @MIN & @SEC
-    If $sLogFile = "" Then
-        $sLogFile = $sLogDir & "\StemSeparator_" & $sTimestamp & ".log.txt"
-    EndIf
-    Local $sPrefix = $bError ? "ERROR: " : "INFO: "
-    Local $sHour = (@HOUR > 12) ? @HOUR - 12 : (@HOUR = 0 ? 12 : @HOUR)
-    Local $sAmPm = (@HOUR >= 12) ? "PM" : "AM"
-    Local $sLogMessage = "[" & @MON & "/" & @MDAY & "/" & @YEAR & " " & $sHour & ":" & @MIN & ":" & @SEC & " " & $sAmPm & "] " & $sPrefix & $sMessage & @CRLF
+    Local $sTimestamp = "[" & _Now() & "] " & ($bError ? "ERROR" : "INFO") & ": "
     Local $hFile = FileOpen($sLogFile, 1)
     If $hFile = -1 Then
-        ConsoleWrite("Failed to open log file: " & $sLogFile & @CRLF)
+        ConsoleWrite("Error: Unable to open log file: " & $sLogFile & @CRLF)
         Return
     EndIf
-    FileWrite($hFile, $sLogMessage)
+    FileWrite($hFile, $sTimestamp & $sMessage & @CRLF)
     FileClose($hFile)
-    ConsoleWrite($sLogMessage)
 EndFunc
 
 Func _LogStartupInfo()
@@ -177,13 +155,10 @@ Func _GetModelDetails($sModel)
         Return SetError(3, 0, 0)
     EndIf
     Local $aResult, $iRows, $iCols
-    Local $sQuery = "SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments, " & _
-                    "Params.SegmentSize, Params.Overlap, Params.Denoise, Params.Aggressiveness, Params.TTA " & _
-                    "FROM Models " & _
-                    "LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID " & _
+    Local $sQuery = "SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments " & _
+                    "FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID " & _
                     "LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID " & _
-                    "LEFT JOIN Params ON Models.ModelID = Params.ModelID " & _
-                    "WHERE Models.Name = '" & _SQLite_Escape($sModel) & "';"
+                    "WHERE Models.Name = '" & $sModel & "';"
     _Log("Executing query: " & $sQuery)
     Local $iRet = _SQLite_GetTable2d($hDb, $sQuery, $aResult, $iRows, $iCols)
     If $iRet <> $SQLITE_OK Then
@@ -194,11 +169,11 @@ Func _GetModelDetails($sModel)
         _Log("No details found for model " & $sModel, True)
         Return SetError(2, 0, 0)
     EndIf
-    Local $aReturn[13]
-    For $i = 0 To 12
+    Local $aReturn[8]
+    For $i = 0 To 7
         $aReturn[$i] = $aResult[1][$i] = Null ? "" : $aResult[1][$i]
     Next
-    _Log("Retrieved details for model " & $sModel & ": SegmentSize=" & $aReturn[8] & ", Overlap=" & $aReturn[9] & ", Denoise=" & $aReturn[10] & ", Aggressiveness=" & $aReturn[11] & ", TTA=" & $aReturn[12])
+    _Log("Retrieved details for model " & $sModel)
     Return $aReturn
 EndFunc
 
@@ -260,43 +235,168 @@ Func SetDefaults()
     _Log("Exiting SetDefaults")
 EndFunc
 
+Func _Main()
+    _Log("Entering _Main")
+    _LogStartupInfo()
+    If Not _InitializeModels() Then
+        _Log("Failed to initialize models database", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to initialize models database. See log for details.")
+        Exit 1
+    EndIf
+    _CreateGUI()
+    SetDefaults()
+    _Log("GUI initialized and defaults set")
+    While 1
+        Sleep(100)
+    WEnd
+EndFunc
+
+_Main()
+#EndRegion ;**** Initialization Functions ****
+#EndRegion Part1
+
+
+
+;**************************************************
+;********************Part 2************************
+;**************************************************
+#Region Part2
+#Region ;**** GUI Creation Functions ****
+Func _CreateGUI()
+    _Log("Entering _CreateGUI")
+    $hGUI = GUICreate("Stem Separator", $iGuiWidth, $iGuiHeight, -1, -1, BitOR($WS_CAPTION, $WS_SYSMENU, $WS_SIZEBOX))
+    GUISetBkColor(0xFFFFFF)
+
+    ; Top 30 pixels: Buttons for user interaction
+    Local $iButtonY = 5
+    Local $iButtonCtrlWidth = 80
+    Local $iButtonCtrlHeight = 20
+    Local $iButtonSpacing = 10
+    Local $iTotalButtonWidth = ($iButtonCtrlWidth * 8) + ($iButtonSpacing * 7) ; Updated for 8 buttons
+    Local $iButtonXStart = ($iGuiWidth - $iTotalButtonWidth) / 2
+
+    $hInputDirButton = GUICtrlCreateButton("Input Dir", $iButtonXStart, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hInputDirButton, $GOOGLE_GREEN)
+    $hOutputDirButton = GUICtrlCreateButton("Output Dir", $iButtonXStart + $iButtonCtrlWidth + $iButtonSpacing, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hOutputDirButton, $GOOGLE_GREEN)
+    $hAddButton = GUICtrlCreateButton("Add", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 2, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hAddButton, $GOOGLE_GREEN)
+    $hClearButton = GUICtrlCreateButton("Clear", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 3, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hClearButton, $GOOGLE_GREEN)
+    $hDeleteButton = GUICtrlCreateButton("Delete", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 4, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hDeleteButton, $GOOGLE_GREEN)
+    $hSeparateButton = GUICtrlCreateButton("Separate", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 5, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hSeparateButton, $GOOGLE_GREEN)
+    $hSaveSettingsButton = GUICtrlCreateButton("Save Settings", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 6, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hSaveSettingsButton, $GOOGLE_GREEN)
+    $hManageDbButton = GUICtrlCreateButton("Manage DB", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 7, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
+    GUICtrlSetBkColor($hManageDbButton, $GOOGLE_GREEN)
+
+    ; Layout: Four quadrants below buttons
+    Local $iQuadWidth = ($iGuiWidth - 30) / 2
+    Local $iQuadHeight = ($iGuiHeight - 110) / 2
+    Local $iLeftQuadX = 10
+    Local $iRightQuadX = $iLeftQuadX + $iQuadWidth + 10
+    Local $iTopQuadY = 35
+    Local $iBottomQuadY = $iTopQuadY + $iQuadHeight + 10
+
+    ; Top-left quadrant: Input ListView for selecting audio files
+    $hInputListView = GUICtrlCreateListView("Input Files", $iLeftQuadX, $iTopQuadY, $iQuadWidth, $iQuadHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS, $LVS_EX_CHECKBOXES, $LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
+    _GUICtrlListView_SetColumnWidth($hInputListView, 0, $iQuadWidth - 20)
+
+    ; Top-right quadrant: Tabbed Control (now filling the entire quadrant)
+    $hTab = GUICtrlCreateTab($iRightQuadX, $iTopQuadY, $iQuadWidth, $iQuadHeight)
+
+    ; Tab 1: Demucs
+    GUICtrlCreateTabItem("Demucs")
+    Local $iTabTopY = $iTopQuadY + 30 ; Adjust for tab header height
+    $hModelNameLabel = GUICtrlCreateLabel("Model Name:", $iRightQuadX + 5, $iTabTopY, 70, 20)
+    $hModelCombo = GUICtrlCreateCombo("", $iRightQuadX + 80, $iTabTopY, 150, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+    $hStemsLabel = GUICtrlCreateLabel("Stems:", $iRightQuadX + 235, $iTabTopY, 40, 20)
+    $hStemsDisplay = GUICtrlCreateLabel("", $iRightQuadX + 275, $iTabTopY, 30, 20)
+
+    Local $iDetailsX = $iRightQuadX + 5
+    Local $iDetailsY = $iTabTopY + 30
+    Local $iDetailsWidth = $iQuadWidth - 10
+    Local $iLabelHeight = 20
+    Local $iLabelSpacing = 25
+
+    $hFocusLabel = GUICtrlCreateLabel("Focus:", $iDetailsX, $iDetailsY, 80, $iLabelHeight)
+    $hFocusDisplay = GUICtrlCreateLabel("", $iDetailsX + 80, $iDetailsY, $iDetailsWidth - 80, $iLabelHeight)
+    $hDescLabel = GUICtrlCreateLabel("Description:", $iDetailsX, $iDetailsY + $iLabelSpacing, 80, $iLabelHeight)
+    $hDescEdit = GUICtrlCreateEdit("", $iDetailsX, $iDetailsY + $iLabelSpacing + 20, $iDetailsWidth, 80, BitOR($ES_AUTOVSCROLL, $ES_WANTRETURN, $WS_VSCROLL))
+    $hCommentsLabel = GUICtrlCreateLabel("Comments:", $iDetailsX, $iDetailsY + $iLabelSpacing * 2 + 80, 80, $iLabelHeight)
+    $hCommentsEdit = GUICtrlCreateEdit("", $iDetailsX, $iDetailsY + $iLabelSpacing * 2 + 100, $iDetailsWidth, 80, BitOR($ES_AUTOVSCROLL, $ES_WANTRETURN, $WS_VSCROLL))
+
+    ; Tab 2: Spleeter
+    GUICtrlCreateTabItem("Spleeter")
+    ; Controls are recreated in _TabHandler when the tab is switched
+
+    ; Tab 3: UVR5
+    GUICtrlCreateTabItem("UVR5")
+    ; Controls are recreated in _TabHandler when the tab is switched
+
+    GUICtrlCreateTabItem("")
+
+    ; Bottom-left quadrant: Output ListView for displaying separated stems
+    $hOutputListView = GUICtrlCreateListView("Output Files", $iLeftQuadX, $iBottomQuadY, $iQuadWidth, $iQuadHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS, $LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
+    _GUICtrlListView_SetColumnWidth($hOutputListView, 0, $iQuadWidth - 20)
+
+    ; Bottom-right quadrant: Process Queue for managing files to separate
+    $hBatchList = GUICtrlCreateListView("Process Queue", $iRightQuadX, $iBottomQuadY, $iQuadWidth, $iQuadHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS, $LVS_EX_CHECKBOXES, $LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
+    _GUICtrlListView_SetColumnWidth($hBatchList, 0, $iQuadWidth - 20)
+
+    ; Bottom: Progress bar and labels for task status
+    $hProgressLabel = GUICtrlCreateLabel("Task Progress: 0%", $iLeftQuadX, $iGuiHeight - 65, $iGuiWidth / 2, 20)
+    $hCountLabel = GUICtrlCreateLabel("Tasks Completed: 0/0", $iLeftQuadX, $iGuiHeight - 45, $iGuiWidth / 2, 20)
+    $hGraphic = GUICtrlCreateGraphic($iLeftQuadX, $iGuiHeight - 25, $iGuiWidth - 20, 20)
+    GUICtrlSetBkColor($hGraphic, 0xFFFFFF)
+    GUICtrlSetGraphic($hGraphic, $GUI_GR_RECT, 0, 0, $iGuiWidth - 20, 20)
+    _GDIPlus_Startup()
+    $hGraphicGUI = GUICtrlGetHandle($hGraphic)
+    $hDC = _WinAPI_GetDC($hGraphicGUI)
+    $hGraphics = _GDIPlus_GraphicsCreateFromHDC($hDC)
+    $hBrushGray = _GDIPlus_BrushCreateSolid(0xFFC0C0C0)
+    $hBrushGreen = _GDIPlus_BrushCreateSolid($GOOGLE_GREEN)
+    $hBrushYellow = _GDIPlus_BrushCreateSolid($GOOGLE_YELLOW)
+    $hPen = _GDIPlus_PenCreate(0xFF000000, 1)
+
+    ; Set event handlers for user interaction
+    GUICtrlSetOnEvent($hInputDirButton, "_InputButtonHandler")
+    GUICtrlSetOnEvent($hOutputDirButton, "_OutputButtonHandler")
+    GUICtrlSetOnEvent($hAddButton, "_AddButtonHandler")
+    GUICtrlSetOnEvent($hClearButton, "_ClearButtonHandler")
+    GUICtrlSetOnEvent($hDeleteButton, "_DeleteButtonHandler")
+    GUICtrlSetOnEvent($hSeparateButton, "_SeparateButtonHandler")
+    GUICtrlSetOnEvent($hSaveSettingsButton, "_SaveSettingsButtonHandler")
+    GUICtrlSetOnEvent($hManageDbButton, "_ManageDbButtonHandler") ; New event handler
+    GUICtrlSetOnEvent($hModelCombo, "_ModelComboHandler")
+    GUICtrlSetOnEvent($hTab, "_TabHandler")
+    GUICtrlSetOnEvent($hDescEdit, "_DescEditHandler")
+    GUICtrlSetOnEvent($hCommentsEdit, "_CommentsEditHandler")
+    GUISetOnEvent($GUI_EVENT_CLOSE, "_Exit")
+
+    GUISetState(@SW_SHOW)
+    _Log("Exiting _CreateGUI")
+EndFunc
+#EndRegion ;**** GUI Creation Functions ****
+
+#Region ;**** Model Management Functions ****
 Func _InitializeModels()
     _Log("Entering _InitializeModels")
-    Local $sDllPath = @ScriptDir & "\sqlite3_x64.dll"
-    _Log("Attempting to load SQLite DLL from: " & $sDllPath)
-
-    If Not FileExists($sDllPath) Then
-        _Log("SQLite DLL not found at: " & $sDllPath, True)
-        MsgBox($MB_ICONERROR, "Error", "sqlite3_x64.dll not found at " & $sDllPath)
-        Return SetError(1, 0, False)
-    EndIf
-
-    Local $hDll = DllOpen($sDllPath)
-    If $hDll = -1 Then
-        _Log("DllOpen failed for sqlite3_x64.dll", True)
-        MsgBox($MB_ICONERROR, "Error", "Failed to open SQLite DLL.")
-        Return SetError(1, 0, False)
-    EndIf
-    _Log("DllOpen succeeded, handle: " & $hDll)
-
-    Local $aResult = DllCall($hDll, "int:cdecl", "sqlite3_initialize")
-    If @error Or $aResult[0] <> $SQLITE_OK Then
-        _Log("Failed to initialize SQLite: DllCall Error " & @error & ", Result: " & ($aResult[0] = "" ? "N/A" : $aResult[0]), True)
+    _SQLite_Startup()
+    If @error Then
+        _Log("Failed to start SQLite: Error " & @error, True)
         MsgBox($MB_ICONERROR, "Error", "Unable to initialize SQLite.")
-        DllClose($hDll)
         Return SetError(1, 0, False)
     EndIf
-    _Log("SQLite initialized successfully")
-
-    Global $g_hDll_SQLite = $hDll
 
     If Not FileExists($sDbFile) Then
         _Log("Database file does not exist: " & $sDbFile & ". Creating from Models.ini")
         $hDb = _SQLite_Open($sDbFile)
         If @error Then
             _Log("Failed to create database " & $sDbFile & ": " & _SQLite_ErrMsg(), True)
-            DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-            DllClose($hDll)
+            _SQLite_Shutdown()
             MsgBox($MB_ICONERROR, "Error", "Unable to create models database.")
             Return SetError(2, 0, False)
         EndIf
@@ -308,8 +408,7 @@ Func _InitializeModels()
         If @error Then
             _Log("Failed to create Models table: " & _SQLite_ErrMsg(), True)
             _SQLite_Close($hDb)
-            DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-            DllClose($hDll)
+            _SQLite_Shutdown()
             Return SetError(3, 0, False)
         EndIf
         _Log("Models table created")
@@ -319,8 +418,7 @@ Func _InitializeModels()
         If @error Then
             _Log("Failed to create ModelApps table: " & _SQLite_ErrMsg(), True)
             _SQLite_Close($hDb)
-            DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-            DllClose($hDll)
+            _SQLite_Shutdown()
             Return SetError(4, 0, False)
         EndIf
         _Log("ModelApps table created")
@@ -330,22 +428,10 @@ Func _InitializeModels()
         If @error Then
             _Log("Failed to create ModelFocuses table: " & _SQLite_ErrMsg(), True)
             _SQLite_Close($hDb)
-            DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-            DllClose($hDll)
+            _SQLite_Shutdown()
             Return SetError(5, 0, False)
         EndIf
         _Log("ModelFocuses table created")
-
-        $sQuery = "CREATE TABLE Params (ModelID INTEGER, SegmentSize INTEGER, Overlap REAL, Denoise TEXT, Aggressiveness INTEGER, TTA TEXT, FOREIGN KEY(ModelID) REFERENCES Models(ModelID));"
-        _SQLite_Exec($hDb, $sQuery)
-        If @error Then
-            _Log("Failed to create Params table: " & _SQLite_ErrMsg(), True)
-            _SQLite_Close($hDb)
-            DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-            DllClose($hDll)
-            Return SetError(6, 0, False)
-        EndIf
-        _Log("Params table created")
 
         Local $aSections = IniReadSectionNames($sModelsIni)
         If @error Or Not IsArray($aSections) Then
@@ -359,20 +445,14 @@ Func _InitializeModels()
             Local $sDescription = "Demucs model for separating audio into vocals, drums, bass, and other."
             Local $sComments = "Good for 4-stem separation but may muffle or phase audio in some genres; test with VR models for comparison."
             Local $sCommandLine = 'cmd /c "cd @ScriptDir@\installs\Demucs\demucs_env\Scripts && activate.bat && python.exe -m demucs -o "@OutputDir@" "@SongPath@" && deactivate"'
-            Local $iSegmentSize = 512
-            Local $fOverlap = 0.25
-            Local $sDenoise = "False"
-            Local $iAggressiveness = 5
-            Local $sTTA = "False"
 
             $sQuery = "INSERT INTO Models (ModelID, Name, Path, Description, Comments, CommandLine) VALUES (" & $iModelID & ", '" & $sName & "', '" & $sPath & "', '" & $sDescription & "', '" & $sComments & "', '" & $sCommandLine & "');"
             _SQLite_Exec($hDb, $sQuery)
             If @error Then
                 _Log("Failed to insert default model into Models: " & _SQLite_ErrMsg(), True)
                 _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(7, 0, False)
+                _SQLite_Shutdown()
+                Return SetError(6, 0, False)
             EndIf
             _Log("Inserted default ModelID " & $iModelID & " into Models")
 
@@ -381,9 +461,8 @@ Func _InitializeModels()
             If @error Then
                 _Log("Failed to insert into ModelApps for default model: " & _SQLite_ErrMsg(), True)
                 _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(8, 0, False)
+                _SQLite_Shutdown()
+                Return SetError(7, 0, False)
             EndIf
             _Log("Inserted default ModelID " & $iModelID & " into ModelApps")
 
@@ -392,23 +471,12 @@ Func _InitializeModels()
             If @error Then
                 _Log("Failed to insert into ModelFocuses for default model: " & _SQLite_ErrMsg(), True)
                 _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(9, 0, False)
+                _SQLite_Shutdown()
+                Return SetError(8, 0, False)
             EndIf
             _Log("Inserted default ModelID " & $iModelID & " into ModelFocuses")
 
-            $sQuery = "INSERT INTO Params (ModelID, SegmentSize, Overlap, Denoise, Aggressiveness, TTA) VALUES (" & $iModelID & ", " & $iSegmentSize & ", " & $fOverlap & ", '" & $sDenoise & "', " & $iAggressiveness & ", '" & $sTTA & "');"
-            _SQLite_Exec($hDb, $sQuery)
-            If @error Then
-                _Log("Failed to insert into Params for default model: " & _SQLite_ErrMsg(), True)
-                _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(10, 0, False)
-            EndIf
-            _Log("Inserted default ModelID " & $iModelID & " into Params")
-
+            ; Add Spleeter model (2stems) as a default
             $iModelID = 2
             $sName = "2stems"
             $sApp = "Spleeter"
@@ -418,20 +486,14 @@ Func _InitializeModels()
             $sDescription = "Basic Spleeter model for separating audio into vocals and instrumental."
             $sComments = "Older model, less effective than UVR; good for quick separation but may leave artifacts."
             $sCommandLine = 'cmd /c "cd @ScriptDir@\installs\Spleeter\spleeter_env\Scripts && activate.bat && python.exe -m spleeter separate -o "@OutputDir@" "@SongPath@" && deactivate"'
-            $iSegmentSize = 512
-            $fOverlap = 0.25
-            $sDenoise = "False"
-            $iAggressiveness = 5
-            $sTTA = "False"
 
             $sQuery = "INSERT INTO Models (ModelID, Name, Path, Description, Comments, CommandLine) VALUES (" & $iModelID & ", '" & $sName & "', '" & $sPath & "', '" & $sDescription & "', '" & $sComments & "', '" & $sCommandLine & "');"
             _SQLite_Exec($hDb, $sQuery)
             If @error Then
                 _Log("Failed to insert Spleeter model into Models: " & _SQLite_ErrMsg(), True)
                 _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(11, 0, False)
+                _SQLite_Shutdown()
+                Return SetError(9, 0, False)
             EndIf
             _Log("Inserted Spleeter ModelID " & $iModelID & " into Models")
 
@@ -440,9 +502,8 @@ Func _InitializeModels()
             If @error Then
                 _Log("Failed to insert into ModelApps for Spleeter model: " & _SQLite_ErrMsg(), True)
                 _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(12, 0, False)
+                _SQLite_Shutdown()
+                Return SetError(10, 0, False)
             EndIf
             _Log("Inserted Spleeter ModelID " & $iModelID & " into ModelApps")
 
@@ -451,22 +512,10 @@ Func _InitializeModels()
             If @error Then
                 _Log("Failed to insert into ModelFocuses for Spleeter model: " & _SQLite_ErrMsg(), True)
                 _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(13, 0, False)
+                _SQLite_Shutdown()
+                Return SetError(11, 0, False)
             EndIf
             _Log("Inserted Spleeter ModelID " & $iModelID & " into ModelFocuses")
-
-            $sQuery = "INSERT INTO Params (ModelID, SegmentSize, Overlap, Denoise, Aggressiveness, TTA) VALUES (" & $iModelID & ", " & $iSegmentSize & ", " & $fOverlap & ", '" & $sDenoise & "', " & $iAggressiveness & ", '" & $sTTA & "');"
-            _SQLite_Exec($hDb, $sQuery)
-            If @error Then
-                _Log("Failed to insert into Params for Spleeter model: " & _SQLite_ErrMsg(), True)
-                _SQLite_Close($hDb)
-                DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-                DllClose($hDll)
-                Return SetError(14, 0, False)
-            EndIf
-            _Log("Inserted Spleeter ModelID " & $iModelID & " into Params")
         Else
             _Log("Found " & $aSections[0] & " sections in Models.ini")
             For $i = 1 To $aSections[0]
@@ -482,11 +531,6 @@ Func _InitializeModels()
                 Local $sModelDesc = IniRead($sModelsIni, $sSection, "Description", "")
                 Local $sModelComments = IniRead($sModelsIni, $sSection, "Comments", "")
                 Local $sModelCmd = IniRead($sModelsIni, $sSection, "CommandLine", "")
-                Local $iSegmentSize = IniRead($sModelsIni, $sSection, "SegmentSize", 512)
-                Local $fOverlap = IniRead($sModelsIni, $sSection, "Overlap", 0.25)
-                Local $sDenoise = IniRead($sModelsIni, $sSection, "Denoise", "False")
-                Local $iAggressiveness = IniRead($sModelsIni, $sSection, "Aggressiveness", 5)
-                Local $sTTA = IniRead($sModelsIni, $sSection, "TTA", "False")
 
                 If $sModelName = "" And $sModelID = 2 Then
                     $sModelName = "2stems"
@@ -498,45 +542,37 @@ Func _InitializeModels()
                     ContinueLoop
                 EndIf
 
-                $sQuery = "INSERT INTO Models (ModelID, Name, Path, Description, Comments, CommandLine) VALUES (" & $sModelID & ",'" & _SQLite_Escape($sModelName) & "','" & _SQLite_Escape($sModelPath) & "','" & _SQLite_Escape($sModelDesc) & "','" & _SQLite_Escape($sModelComments) & "','" & _SQLite_Escape($sModelCmd) & "')"
+                $sQuery = "INSERT INTO Models (ModelID, Name, Path, Description, Comments, CommandLine) VALUES (" & $sModelID & ",'" & $sModelName & "','" & $sModelPath & "','" & $sModelDesc & "','" & $sModelComments & "','" & $sModelCmd & "')"
                 _SQLite_Exec($hDb, $sQuery)
                 If @error Then
                     _Log("Failed to insert model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
                     ContinueLoop
                 EndIf
 
-                $sQuery = "INSERT INTO ModelApps (ModelID, App) VALUES (" & $sModelID & ",'" & _SQLite_Escape($sModelApp) & "')"
+                $sQuery = "INSERT INTO ModelApps (ModelID, App) VALUES (" & $sModelID & ",'" & $sModelApp & "')"
                 _SQLite_Exec($hDb, $sQuery)
                 If @error Then
                     _Log("Failed to insert app for model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
                     ContinueLoop
                 EndIf
 
-                $sQuery = "INSERT INTO ModelFocuses (ModelID, Focus, Stems) VALUES (" & $sModelID & ",'" & _SQLite_Escape($sModelFocus) & "'," & $iModelStems & ")"
+                $sQuery = "INSERT INTO ModelFocuses (ModelID, Focus, Stems) VALUES (" & $sModelID & ",'" & $sModelFocus & "'," & $iModelStems & ")"
                 _SQLite_Exec($hDb, $sQuery)
                 If @error Then
                     _Log("Failed to insert focus for model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
                     ContinueLoop
                 EndIf
 
-                $sQuery = "INSERT INTO Params (ModelID, SegmentSize, Overlap, Denoise, Aggressiveness, TTA) VALUES (" & $sModelID & ", " & $iSegmentSize & ", " & $fOverlap & ", '" & _SQLite_Escape($sDenoise) & "', " & $iAggressiveness & ", '" & _SQLite_Escape($sTTA) & "')"
-                _SQLite_Exec($hDb, $sQuery)
-                If @error Then
-                    _Log("Failed to insert params for model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
-                    ContinueLoop
-                EndIf
-
-                _Log("Added model " & $sModelName & " (App: " & $sModelApp & ") to database with params: SegmentSize=" & $iSegmentSize & ", Overlap=" & $fOverlap & ", Denoise=" & $sDenoise & ", Aggressiveness=" & $iAggressiveness & ", TTA=" & $sTTA)
+                _Log("Added model " & $sModelName & " (App: " & $sModelApp & ") to database")
             Next
         EndIf
     Else
         $hDb = _SQLite_Open($sDbFile)
         If @error Then
             _Log("Failed to open database " & $sDbFile & ": " & _SQLite_ErrMsg(), True)
-            DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-            DllClose($hDll)
+            _SQLite_Shutdown()
             MsgBox($MB_ICONERROR, "Error", "Unable to open models database.")
-            Return SetError(15, 0, False)
+            Return SetError(12, 0, False)
         EndIf
         _Log("Opened existing database: " & $sDbFile)
     EndIf
@@ -549,9 +585,8 @@ Func _InitializeModels()
         _Log("No models found in database", True)
         MsgBox($MB_ICONERROR, "Error", "No models found in database.")
         _SQLite_Close($hDb)
-        DllCall($hDll, "int:cdecl", "sqlite3_shutdown")
-        DllClose($hDll)
-        Return SetError(16, 0, False)
+        _SQLite_Shutdown()
+        Return SetError(13, 0, False)
     EndIf
     _Log("Found " & $aResult[1][0] & " models in database")
 
@@ -579,134 +614,6 @@ Func _InitializeModels()
     Return True
 EndFunc
 
-Func _Main()
-    _Log("Entering _Main")
-    _LogStartupInfo()
-    If Not _InitializeModels() Then
-        _Log("Failed to initialize models database", True)
-        MsgBox($MB_ICONERROR, "Error", "Failed to initialize models database. See log for details.")
-        Exit 1
-    EndIf
-    _CreateGUI()
-    SetDefaults()
-    _Log("GUI initialized and defaults set")
-    While 1
-        Sleep(100)
-    WEnd
-EndFunc
-
-_Main()
-#EndRegion ;**** Initialization Functions ****
-#EndRegion Part1
-
-
-;**************************************************
-;********************Part 2************************
-;**************************************************
-#Region Part2
-#Region ;**** GUI Creation Functions ****
-Func _CreateGUI()
-    _Log("Entering _CreateGUI")
-    $hGUI = GUICreate("Stem Separator", $iGuiWidth, $iGuiHeight, -1, -1, BitOR($WS_CAPTION, $WS_SYSMENU, $WS_SIZEBOX))
-    GUISetBkColor(0xFFFFFF)
-
-    Local $iButtonY = 5
-    Local $iButtonCtrlWidth = 80
-    Local $iButtonCtrlHeight = 20
-    Local $iButtonSpacing = 10
-    Local $iTotalButtonWidth = ($iButtonCtrlWidth * 7) + ($iButtonSpacing * 6)
-    Local $iButtonXStart = ($iGuiWidth - $iTotalButtonWidth) / 2
-
-    $hInputDirButton = GUICtrlCreateButton("Input Dir", $iButtonXStart, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hInputDirButton, $GOOGLE_GREEN)
-    $hOutputDirButton = GUICtrlCreateButton("Output Dir", $iButtonXStart + $iButtonCtrlWidth + $iButtonSpacing, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hOutputDirButton, $GOOGLE_GREEN)
-    $hAddButton = GUICtrlCreateButton("Add", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 2, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hAddButton, $GOOGLE_GREEN)
-    $hClearButton = GUICtrlCreateButton("Clear", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 3, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hClearButton, $GOOGLE_GREEN)
-    $hDeleteButton = GUICtrlCreateButton("Delete", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 4, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hDeleteButton, $GOOGLE_GREEN)
-    $hSeparateButton = GUICtrlCreateButton("Separate", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 5, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hSeparateButton, $GOOGLE_GREEN)
-    $hSaveSettingsButton = GUICtrlCreateButton("Save Settings", $iButtonXStart + ($iButtonCtrlWidth + $iButtonSpacing) * 6, $iButtonY, $iButtonCtrlWidth, $iButtonCtrlHeight)
-    GUICtrlSetBkColor($hSaveSettingsButton, $GOOGLE_GREEN)
-
-    Local $iQuadWidth = ($iGuiWidth - 30) / 2
-    Local $iQuadHeight = ($iGuiHeight - 110) / 2
-    Local $iLeftQuadX = 10
-    Local $iRightQuadX = $iLeftQuadX + $iQuadWidth + 10
-    Local $iTopQuadY = 35
-    Local $iBottomQuadY = $iTopQuadY + $iQuadHeight + 10
-
-    $hInputListView = GUICtrlCreateListView("Input Files", $iLeftQuadX, $iTopQuadY, $iQuadWidth, $iQuadHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS, $LVS_EX_CHECKBOXES, $LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-    _GUICtrlListView_SetColumnWidth($hInputListView, 0, $iQuadWidth - 20)
-
-    $hTab = GUICtrlCreateTab($iRightQuadX, $iTopQuadY, $iQuadWidth, $iQuadHeight)
-
-    GUICtrlCreateTabItem("Demucs")
-    Local $iTabTopY = $iTopQuadY + 30
-    $hModelNameLabel = GUICtrlCreateLabel("Model Name:", $iRightQuadX + 5, $iTabTopY, 70, 20)
-    $hModelCombo = GUICtrlCreateCombo("", $iRightQuadX + 80, $iTabTopY, 150, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
-    $hStemsLabel = GUICtrlCreateLabel("Stems:", $iRightQuadX + 235, $iTabTopY, 40, 20)
-    $hStemsDisplay = GUICtrlCreateLabel("", $iRightQuadX + 275, $iTabTopY, 30, 20)
-
-    Local $iDetailsX = $iRightQuadX + 5
-    Local $iDetailsY = $iTabTopY + 30
-    Local $iDetailsWidth = $iQuadWidth - 10
-    Local $iLabelHeight = 20
-    Local $iLabelSpacing = 25
-
-    $hFocusLabel = GUICtrlCreateLabel("Focus:", $iDetailsX, $iDetailsY, 80, $iLabelHeight)
-    $hFocusDisplay = GUICtrlCreateLabel("", $iDetailsX + 80, $iDetailsY, $iDetailsWidth - 80, $iLabelHeight)
-    $hDescLabel = GUICtrlCreateLabel("Description:", $iDetailsX, $iDetailsY + $iLabelSpacing, 80, $iLabelHeight)
-    $hDescEdit = GUICtrlCreateEdit("", $iDetailsX, $iDetailsY + $iLabelSpacing + 20, $iDetailsWidth, 80, BitOR($ES_AUTOVSCROLL, $ES_WANTRETURN, $WS_VSCROLL))
-    $hCommentsLabel = GUICtrlCreateLabel("Comments:", $iDetailsX, $iDetailsY + $iLabelSpacing * 2 + 80, 80, $iLabelHeight)
-    $hCommentsEdit = GUICtrlCreateEdit("", $iDetailsX, $iDetailsY + $iLabelSpacing * 2 + 100, $iDetailsWidth, 80, BitOR($ES_AUTOVSCROLL, $ES_WANTRETURN, $WS_VSCROLL))
-
-    GUICtrlCreateTabItem("Spleeter")
-    GUICtrlCreateTabItem("UVR5")
-    GUICtrlCreateTabItem("")
-
-    $hOutputListView = GUICtrlCreateListView("Output Files", $iLeftQuadX, $iBottomQuadY, $iQuadWidth, $iQuadHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS, $LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-    _GUICtrlListView_SetColumnWidth($hOutputListView, 0, $iQuadWidth - 20)
-
-    $hBatchList = GUICtrlCreateListView("Process Queue", $iRightQuadX, $iBottomQuadY, $iQuadWidth, $iQuadHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS, $LVS_EX_CHECKBOXES, $LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-    _GUICtrlListView_SetColumnWidth($hBatchList, 0, $iQuadWidth - 20)
-
-    $hProgressLabel = GUICtrlCreateLabel("Task Progress: 0%", $iLeftQuadX, $iGuiHeight - 65, $iGuiWidth / 2, 20)
-    $hCountLabel = GUICtrlCreateLabel("Tasks Completed: 0/0", $iLeftQuadX, $iGuiHeight - 45, $iGuiWidth / 2, 20)
-    $hGraphic = GUICtrlCreateGraphic($iLeftQuadX, $iGuiHeight - 25, $iGuiWidth - 20, 20)
-    GUICtrlSetBkColor($hGraphic, 0xFFFFFF)
-    GUICtrlSetGraphic($hGraphic, $GUI_GR_RECT, 0, 0, $iGuiWidth - 20, 20)
-    _GDIPlus_Startup()
-    $hGraphicGUI = GUICtrlGetHandle($hGraphic)
-    $hDC = _WinAPI_GetDC($hGraphicGUI)
-    $hGraphics = _GDIPlus_GraphicsCreateFromHDC($hDC)
-    $hBrushGray = _GDIPlus_BrushCreateSolid(0xFFC0C0C0)
-    $hBrushGreen = _GDIPlus_BrushCreateSolid($GOOGLE_GREEN)
-    $hBrushYellow = _GDIPlus_BrushCreateSolid($GOOGLE_YELLOW)
-    $hPen = _GDIPlus_PenCreate(0xFF000000, 1)
-
-    GUICtrlSetOnEvent($hInputDirButton, "_InputButtonHandler")
-    GUICtrlSetOnEvent($hOutputDirButton, "_OutputButtonHandler")
-    GUICtrlSetOnEvent($hAddButton, "_AddButtonHandler")
-    GUICtrlSetOnEvent($hClearButton, "_ClearButtonHandler")
-    GUICtrlSetOnEvent($hDeleteButton, "_DeleteButtonHandler")
-    GUICtrlSetOnEvent($hSeparateButton, "_SeparateButtonHandler")
-    GUICtrlSetOnEvent($hSaveSettingsButton, "_SaveSettingsButtonHandler")
-    GUICtrlSetOnEvent($hModelCombo, "_ModelComboHandler")
-    GUICtrlSetOnEvent($hTab, "_TabHandler")
-    GUICtrlSetOnEvent($hDescEdit, "_DescEditHandler")
-    GUICtrlSetOnEvent($hCommentsEdit, "_CommentsEditHandler")
-    GUISetOnEvent($GUI_EVENT_CLOSE, "_Exit")
-
-    GUISetState(@SW_SHOW)
-    _Log("Exiting _CreateGUI")
-EndFunc
-#EndRegion ;**** GUI Creation Functions ****
-
-#Region ;**** Model Management Functions ****
 Func _UpdateModelDetails($sModel)
     _Log("Entering _UpdateModelDetails for model: " & $sModel)
     If $sModel = "" Then
@@ -726,7 +633,6 @@ Func _UpdateModelDetails($sModel)
             GUICtrlSetData($hDescEdit, $aDetails[6])
             _Log("Setting Comments: " & $aDetails[7])
             GUICtrlSetData($hCommentsEdit, $aDetails[7])
-            _Log("Model parameters - SegmentSize: " & $aDetails[8] & ", Overlap: " & $aDetails[9] & ", Denoise: " & $aDetails[10] & ", Aggressiveness: " & $aDetails[11] & ", TTA: " & $aDetails[12])
             _Log("Updated model details display for " & $sModel)
         Else
             _Log("Failed to update details for " & $sModel, True)
@@ -741,7 +647,7 @@ EndFunc
 
 Func _SaveModelDetails($sModel, $sDescription, $sComments)
     _Log("Entering _SaveModelDetails for model: " & $sModel)
-    Local $sQuery = "UPDATE Models SET Description = '" & _SQLite_Escape($sDescription) & "', Comments = '" & _SQLite_Escape($sComments) & "' WHERE Name = '" & _SQLite_Escape($sModel) & "'"
+    Local $sQuery = "UPDATE Models SET Description = '" & $sDescription & "', Comments = '" & $sComments & "' WHERE Name = '" & $sModel & "'"
     _Log("Executing query: " & $sQuery)
     Local $iRet = _SQLite_Exec($hDb, $sQuery)
     If $iRet <> $SQLITE_OK Then
@@ -784,201 +690,454 @@ EndFunc
 #Region ;**** Separation Functions ****
 Func _ProcessDemucs($sSong, $sModel, $sOutputDir)
     _Log("Entering _ProcessDemucs: File=" & $sSong & ", Model=" & $sModel)
-    Local $sDemucsDir = @ScriptDir & "\installs\Demucs\demucs_env\Scripts"
-    Local $sActivate = $sDemucsDir & "\activate.bat"
-    If Not FileExists($sActivate) Then
-        _Log("Demucs virtual environment not found: " & $sActivate, True)
+
+    ; Define the full path to Demucs's python.exe
+    Local $sPythonPath = @ScriptDir & "\installs\Demucs\demucs_env\Scripts\python.exe"
+    If Not FileExists($sPythonPath) Then
+        _Log("Python executable not found in Demucs virtual environment: " & $sPythonPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Python executable not found at " & $sPythonPath & ". Please ensure the Demucs virtual environment is correctly set up.")
         Return SetError(1, 0, False)
     EndIf
-    _Log("Virtual environment found: " & $sActivate)
 
-    Local $sCmd = 'cmd /c "' & $sActivate & ' && set PATH=%PATH%;' & $sDemucsDir & ' && python.exe -m demucs -n ' & $sModel & ' --device cpu -o "' & $sOutputDir & '" "' & $sSong & '" && exit"'
-    _Log("Demucs command: " & $sCmd)
-
-    Local $sLogFile = @ScriptDir & "\logs\demucs_log.txt"
-    Local $hLogFile = FileOpen($sLogFile, 2)
-    If $hLogFile = -1 Then
-        _Log("Failed to open demucs_log.txt for writing", True)
+    ; Validate the Python version
+    Local $sPythonCheck = Run('"' & $sPythonPath & '" --version', "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $sPythonCheck = 0 Then
+        _Log("Failed to run Python version check", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to run Python version check for " & $sPythonPath)
         Return SetError(2, 0, False)
     EndIf
+    Local $sOutput = "", $sVersionOutput = ""
+    While ProcessExists($sPythonCheck)
+        $sOutput = StdoutRead($sPythonCheck)
+        If Not @error And $sOutput <> "" Then
+            $sVersionOutput &= $sOutput
+        EndIf
+        $sOutput = StderrRead($sPythonCheck)
+        If Not @error And $sOutput <> "" Then
+            $sVersionOutput &= $sOutput
+        EndIf
+        Sleep(10)
+    WEnd
+    ProcessWaitClose($sPythonCheck)
+    _Log("Demucs Python version: " & $sVersionOutput)
+
+    ; Ensure output directory exists
+    If Not FileExists($sOutputDir) Then
+        DirCreate($sOutputDir)
+        If Not FileExists($sOutputDir) Then
+            _Log("Failed to create output directory: " & $sOutputDir, True)
+            MsgBox($MB_ICONERROR, "Error", "Failed to create output directory: " & $sOutputDir)
+            Return SetError(3, 0, False)
+        EndIf
+    EndIf
+
+    ; Create model-specific subdirectory (e.g., htdemucs, htdemucs_6s)
+    Local $sModelSubDir = $sOutputDir & "\" & $sModel
+    If Not FileExists($sModelSubDir) Then
+        DirCreate($sModelSubDir)
+        If Not FileExists($sModelSubDir) Then
+            _Log("Failed to create model subdirectory: " & $sModelSubDir, True)
+            MsgBox($MB_ICONERROR, "Error", "Failed to create model subdirectory: " & $sModelSubDir)
+            Return SetError(4, 0, False)
+        EndIf
+    EndIf
+
+    ; Construct the command using the full path to python.exe
+    Local $sCmd
+    If $sModel = "htdemucs_2s" Then
+        $sCmd = '"' & $sPythonPath & '" -m demucs --two-stems vocals --device cpu -o "' & $sModelSubDir & '" "' & $sSong & '"'
+    ElseIf $sModel = "htdemucs_6s" Then
+        $sCmd = '"' & $sPythonPath & '" -m demucs -n htdemucs_6s --device cpu -o "' & $sModelSubDir & '" "' & $sSong & '"'
+    Else
+        $sCmd = '"' & $sPythonPath & '" -m demucs --device cpu -o "' & $sModelSubDir & '" "' & $sSong & '"'
+    EndIf
+
+    Local $sLogFile = @ScriptDir & "\logs\demucs_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
+    If $hLogFile = -1 Then
+        _Log("Failed to open demucs_log.txt for writing", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to open demucs_log.txt for writing")
+        Return SetError(7, 0, False)
+    EndIf
     _Log("Opened demucs_log.txt for writing")
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
 
     Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $iPID = 0 Then
+        _Log("Failed to start Demucs command: " & $sCmd, True)
+        FileWrite($hLogFile, "Error: Failed to start Demucs command: " & $sCmd & @CRLF)
+        FileClose($hLogFile)
+        MsgBox($MB_ICONERROR, "Error", "Failed to start Demucs command. Check log for details.")
+        Return SetError(8, 0, False)
+    EndIf
     _Log("Started Demucs process with PID: " & $iPID)
 
-    Local $sOutput
+    ; Create a Google Blue brush for the progress bar
+    Local $hBrushTeal = _GDIPlus_BrushCreateSolid($GOOGLE_BLUE)
+
+    Local $sOutput, $iProgress = 0
     While ProcessExists($iPID)
         $sOutput = StdoutRead($iPID)
-        If @error Then ExitLoop
-        If $sOutput <> "" Then
+        If Not @error And $sOutput <> "" Then
             _Log("[Demucs STDOUT] " & $sOutput)
-            FileWrite($hLogFile, $sOutput)
+            FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+            ; Parse for progress percentage (e.g., "45% |")
+            Local $aMatch = StringRegExp($sOutput, "(\d+)%\s*\|", 1)
+            If Not @error Then
+                $iProgress = Number($aMatch[0])
+                _Log("Progress updated to: " & $iProgress & "%")
+                GUICtrlSetData($hProgressLabel, "Task Progress: " & $iProgress & "%")
+                _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, ($iGuiWidth - 20) * $iProgress / 100, 20, $hBrushTeal)
+            EndIf
         EndIf
         $sOutput = StderrRead($iPID)
-        If @error Then ExitLoop
-        If $sOutput <> "" Then
+        If Not @error And $sOutput <> "" Then
             _Log("[Demucs STDERR] " & $sOutput)
-            FileWrite($hLogFile, $sOutput)
+            FileWrite($hLogFile, "[STDERR] " & $sOutput)
         EndIf
         Sleep(100)
     WEnd
 
-    FileClose($hLogFile)
-    Local $iExitCode = ProcessWaitClose($iPID)
-    _Log("Demucs process exited with code: " & $iExitCode)
+    ; Capture any remaining output
+    $sOutput = StdoutRead($iPID)
+    If Not @error And $sOutput <> "" Then
+        _Log("[Demucs STDOUT] " & $sOutput)
+        FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+    EndIf
+    $sOutput = StderrRead($iPID)
+    If Not @error And $sOutput <> "" Then
+        _Log("[Demucs STDERR] " & $sOutput)
+        FileWrite($hLogFile, "[STDERR] " & $sOutput)
+    EndIf
 
-    Local $sOutputPath = $sOutputDir & "\htdemucs\" & StringRegExpReplace($sSong, "^.*\\", "")
+    Local $iExitCode = ProcessWaitClose($iPID)
+    If $iExitCode <> 0 Then
+        _Log("Demucs process exited with non-zero code: " & $iExitCode & ". Output files were generated successfully, but this may indicate a minor issue.", True)
+    Else
+        _Log("Demucs process exited with code: " & $iExitCode)
+    EndIf
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    ; Clean up the brush
+    _GDIPlus_BrushDispose($hBrushTeal)
+
+    ; Check for expected output files
+    Local $sOutputPath = $sModelSubDir & "\" & StringRegExpReplace($sSong, "^.*\\", "")
     $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
     Local $aExpectedFiles[4] = ["vocals.wav", "drums.wav", "bass.wav", "other.wav"]
+    If $sModel = "htdemucs_2s" Then
+        Dim $aExpectedFiles[2] = ["vocals.wav", "other.wav"]
+    ElseIf $sModel = "htdemucs_6s" Then
+        Dim $aExpectedFiles[6] = ["vocals.wav", "drums.wav", "bass.wav", "guitar.wav", "piano.wav", "other.wav"]
+    EndIf
     Local $iFound = 0
     For $i = 0 To UBound($aExpectedFiles) - 1
         If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
     Next
 
-    If $iFound = 4 Then
+    If $iFound = UBound($aExpectedFiles) Then
         _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
         For $i = 0 To UBound($aExpectedFiles) - 1
             _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
         Next
         Return True
     Else
-        _Log("Failed to process " & $sSong & ": expected 4 output files, found " & $iFound, True)
-        Return SetError(3, 0, False)
+        _Log("Failed to process " & $sSong & ": expected " & UBound($aExpectedFiles) & " output files, found " & $iFound, True)
+        Local $sLogContent = FileRead($sLogFile)
+        If StringLen($sLogContent) > 1000 Then
+            $sLogContent = StringLeft($sLogContent, 1000) & "... (see full log at " & $sLogFile & ")"
+        EndIf
+        MsgBox($MB_ICONERROR, "Demucs Error", "Failed to process " & $sSong & ". Expected " & UBound($aExpectedFiles) & " output files, found " & $iFound & "." & @CRLF & @CRLF & "Log Details:" & @CRLF & $sLogContent)
+        Return SetError(9, 0, False)
     EndIf
 EndFunc
 
 Func _ProcessSpleeter($sSong, $sModel, $sOutputDir)
     _Log("Entering _ProcessSpleeter: File=" & $sSong & ", Model=" & $sModel)
-    Local $sSpleeterDir = @ScriptDir & "\installs\Spleeter\spleeter_env\Scripts"
-    Local $sActivate = $sSpleeterDir & "\activate.bat"
-    If Not FileExists($sActivate) Then
-        _Log("Spleeter virtual environment not found: " & $sActivate, True)
+
+    ; Define the full path to Spleeter's python.exe
+    Local $sPythonPath = @ScriptDir & "\installs\Spleeter\spleeter_env\Scripts\python.exe"
+    If Not FileExists($sPythonPath) Then
+        _Log("Python executable not found in Spleeter virtual environment: " & $sPythonPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Python executable not found at " & $sPythonPath & ". Please ensure the Spleeter virtual environment is correctly set up.")
         Return SetError(1, 0, False)
     EndIf
-    _Log("Virtual environment found: " & $sActivate)
 
-    Local $sCmd = 'cmd /c "' & $sActivate & ' && set PATH=%PATH%;' & $sSpleeterDir & ' && python.exe -m spleeter separate -p spleeter:' & $sModel & ' -o "' & $sOutputDir & '" "' & $sSong & '" && exit"'
-    _Log("Spleeter command: " & $sCmd)
-
-    Local $sLogFile = @ScriptDir & "\logs\spleeter_log.txt"
-    Local $hLogFile = FileOpen($sLogFile, 2)
-    If $hLogFile = -1 Then
-        _Log("Failed to open spleeter_log.txt for writing", True)
+    ; Validate the Python version
+    Local $sPythonCheck = Run('"' & $sPythonPath & '" --version', "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $sPythonCheck = 0 Then
+        _Log("Failed to run Python version check", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to run Python version check for " & $sPythonPath)
         Return SetError(2, 0, False)
     EndIf
+    Local $sOutput
+    While ProcessExists($sPythonCheck)
+        $sOutput &= StdoutRead($sPythonCheck)
+        $sOutput &= StderrRead($sPythonCheck)
+        Sleep(10)
+    WEnd
+    ProcessWaitClose($sPythonCheck)
+    _Log("Spleeter Python version: " & $sOutput)
+
+    ; Ensure output directory exists
+    If Not FileExists($sOutputDir) Then
+        DirCreate($sOutputDir)
+        If Not FileExists($sOutputDir) Then
+            _Log("Failed to create output directory: " & $sOutputDir, True)
+            MsgBox($MB_ICONERROR, "Error", "Failed to create output directory: " & $sOutputDir)
+            Return SetError(3, 0, False)
+        EndIf
+    EndIf
+
+    ; Create model-specific subdirectory (e.g., 2stems, 4stems)
+    Local $sModelSubDir = $sOutputDir & "\" & $sModel
+    If Not FileExists($sModelSubDir) Then
+        DirCreate($sModelSubDir)
+        If Not FileExists($sModelSubDir) Then
+            _Log("Failed to create model subdirectory: " & $sModelSubDir, True)
+            MsgBox($MB_ICONERROR, "Error", "Failed to create model subdirectory: " & $sModelSubDir)
+            Return SetError(4, 0, False)
+        EndIf
+    EndIf
+
+    ; Construct the command using the full path to python.exe
+    Local $sStemConfig = "spleeter:" & $sModel
+    Local $sCmd = '"' & $sPythonPath & '" -m spleeter separate -p ' & $sStemConfig & ' -o "' & $sModelSubDir & '" "' & $sSong & '"'
+
+    Local $sLogFile = @ScriptDir & "\logs\spleeter_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
+    If $hLogFile = -1 Then
+        _Log("Failed to open spleeter_log.txt for writing", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to open spleeter_log.txt for writing")
+        Return SetError(7, 0, False)
+    EndIf
     _Log("Opened spleeter_log.txt for writing")
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
 
     Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $iPID = 0 Then
+        _Log("Failed to start Spleeter command: " & $sCmd, True)
+        FileWrite($hLogFile, "Error: Failed to start Spleeter command: " & $sCmd & @CRLF)
+        FileClose($hLogFile)
+        MsgBox($MB_ICONERROR, "Error", "Failed to start Spleeter command. Check log for details.")
+        Return SetError(8, 0, False)
+    EndIf
     _Log("Started Spleeter process with PID: " & $iPID)
 
-    Local $sOutput
+    ; Create a Google Blue brush for the progress bar
+    Local $hBrushTeal = _GDIPlus_BrushCreateSolid($GOOGLE_BLUE)
+
+    Local $sOutput, $iProgress = 0
     While ProcessExists($iPID)
         $sOutput = StdoutRead($iPID)
-        If @error Then ExitLoop
-        If $sOutput <> "" Then
+        If Not @error And $sOutput <> "" Then
             _Log("[Spleeter STDOUT] " & $sOutput)
-            FileWrite($hLogFile, $sOutput)
+            FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+            ; Parse for progress percentage (e.g., "45%")
+            Local $aMatch = StringRegExp($sOutput, "(\d+)%", 1)
+            If Not @error Then
+                $iProgress = Number($aMatch[0])
+                _Log("Progress updated to: " & $iProgress & "%")
+                GUICtrlSetData($hProgressLabel, "Task Progress: " & $iProgress & "%")
+                _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, ($iGuiWidth - 20) * $iProgress / 100, 20, $hBrushTeal)
+            EndIf
         EndIf
         $sOutput = StderrRead($iPID)
-        If @error Then ExitLoop
-        If $sOutput <> "" Then
+        If Not @error And $sOutput <> "" Then
             _Log("[Spleeter STDERR] " & $sOutput)
-            FileWrite($hLogFile, $sOutput)
+            FileWrite($hLogFile, "[STDERR] " & $sOutput)
         EndIf
         Sleep(100)
     WEnd
 
-    FileClose($hLogFile)
+    ; Capture any remaining output
+    $sOutput = StdoutRead($iPID)
+    If $sOutput <> "" Then
+        _Log("[Spleeter STDOUT] " & $sOutput)
+        FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+    EndIf
+    $sOutput = StderrRead($iPID)
+    If $sOutput <> "" Then
+        _Log("[Spleeter STDERR] " & $sOutput)
+        FileWrite($hLogFile, "[STDERR] " & $sOutput)
+    EndIf
+
     Local $iExitCode = ProcessWaitClose($iPID)
     _Log("Spleeter process exited with code: " & $iExitCode)
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
 
-    Local $sOutputPath = $sOutputDir & "\" & StringRegExpReplace($sSong, "^.*\\", "")
-    $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
+    ; Clean up the brush
+    _GDIPlus_BrushDispose($hBrushTeal)
+
+    ; Check for expected output files
+    Local $sFileName = StringRegExpReplace($sSong, "^.*\\", "")
+    $sFileName = StringRegExpReplace($sFileName, "\.[^.]+$", "")
+    Local $sOutputPath = $sModelSubDir & "\" & $sFileName
     Local $aExpectedFiles[2] = ["vocals.wav", "accompaniment.wav"]
+    If $sModel = "4stems" Then
+        Dim $aExpectedFiles[4] = ["vocals.wav", "drums.wav", "bass.wav", "other.wav"]
+    ElseIf $sModel = "5stems" Then
+        Dim $aExpectedFiles[5] = ["vocals.wav", "drums.wav", "bass.wav", "piano.wav", "other.wav"]
+    EndIf
     Local $iFound = 0
     For $i = 0 To UBound($aExpectedFiles) - 1
         If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
     Next
 
-    If $iFound = 2 Then
+    If $iFound = UBound($aExpectedFiles) Then
         _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
         For $i = 0 To UBound($aExpectedFiles) - 1
             _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
         Next
         Return True
     Else
-        _Log("Failed to process " & $sSong & ": expected 2 output files, found " & $iFound, True)
-        Return SetError(3, 0, False)
+        _Log("Failed to process " & $sSong & ": expected " & UBound($aExpectedFiles) & " output files, found " & $iFound, True)
+        Local $sLogContent = FileRead($sLogFile)
+        If StringLen($sLogContent) > 1000 Then
+            $sLogContent = StringLeft($sLogContent, 1000) & "... (see full log at " & $sLogFile & ")"
+        EndIf
+        MsgBox($MB_ICONERROR, "Spleeter Error", "Failed to process " & $sSong & ". Expected " & UBound($aExpectedFiles) & " output files, found " & $iFound & "." & @CRLF & @CRLF & "Log Details:" & @CRLF & $sLogContent)
+        Return SetError(9, 0, False)
     EndIf
 EndFunc
 
 Func _ProcessUVR5($sSong, $sModel, $sOutputDir)
     _Log("Entering _ProcessUVR5: File=" & $sSong & ", Model=" & $sModel)
-    Local $sUVR5Dir = @ScriptDir & "\installs\UVR5\uvr5_env\Scripts"
-    Local $sActivate = $sUVR5Dir & "\activate.bat"
-    If Not FileExists($sActivate) Then
-        _Log("UVR5 virtual environment not found: " & $sActivate, True)
+    Local $sUVR5Dir = @ScriptDir & "\installs\UVR\uvr_env\Scripts"
+    Local $sPythonPath = $sUVR5Dir & "\python.exe"
+    Local $sSeparatePy = @ScriptDir & "\installs\UVR\uvr-main\separate.py"
+    Local $sWorkingDir = @ScriptDir & "\installs\UVR\uvr-main" ; Match the manual command's directory
+
+    If Not FileExists($sPythonPath) Then
+        _Log("Python executable not found in UVR virtual environment: " & $sPythonPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Python executable not found at " & $sPythonPath & ". Please ensure the UVR virtual environment is correctly set up.")
         Return SetError(1, 0, False)
     EndIf
-    _Log("Virtual environment found: " & $sActivate)
-
-    Local $aDetails = _GetModelDetails($sModel)
-    If @error Then
-        _Log("Failed to get model details for " & $sModel, True)
+    If Not FileExists($sSeparatePy) Then
+        _Log("separate.py not found: " & $sSeparatePy, True)
+        MsgBox($MB_ICONERROR, "Error", "separate.py not found at " & $sSeparatePy & ". Please ensure the UVR script is in place.")
         Return SetError(2, 0, False)
     EndIf
+    _Log("Virtual environment and script found: " & $sPythonPath & ", " & $sSeparatePy)
 
-    Local $iSegmentSize = $aDetails[8]
-    Local $fOverlap = $aDetails[9]
-    Local $sDenoise = $aDetails[10] == "True" ? "true" : "false"
-    Local $iAggressiveness = $aDetails[11]
-    Local $sTTA = $aDetails[12] == "True" ? "true" : "false"
+    ; Get the model path from the database
+    Local $sModelPath = _GetModelPath($sModel)
+    If $sModelPath = "" Then
+        _Log("Failed to retrieve model path for " & $sModel, True)
+        MsgBox($MB_ICONERROR, "Error", "Could not find model path for " & $sModel & ". Check models.db or models.ini.")
+        Return SetError(3, 0, False)
+    EndIf
+    _Log("Retrieved raw model path: " & $sModelPath)
 
-    Local $sCmdTemplate = $aDetails[5]
-    Local $sCmd = StringReplace($sCmdTemplate, "@SongPath@", $sSong)
-    $sCmd = StringReplace($sCmd, "@OutputDir@", $sOutputDir)
-    $sCmd = StringReplace($sCmd, "@SegmentSize@", $iSegmentSize)
-    $sCmd = StringReplace($sCmd, "@Overlap@", $fOverlap)
-    $sCmd = StringReplace($sCmd, "@Denoise@", $sDenoise)
-    $sCmd = StringReplace($sCmd, "@Aggressiveness@", $iAggressiveness)
-    $sCmd = StringReplace($sCmd, "@TTA@", $sTTA)
+    ; Robust path resolution with debugging
+    Local $sResolvedPath = $sModelPath
+    _Log("Before resolution: " & $sResolvedPath)
+    If StringInStr($sResolvedPath, "@ScriptDir") Then
+        $sResolvedPath = StringRegExpReplace($sResolvedPath, "@ScriptDir\s*&?\s*", @ScriptDir) ; Handle @ScriptDir & with optional space
+        $sResolvedPath = StringReplace($sResolvedPath, "\\", "\") ; Normalize backslashes
+    EndIf
+    _Log("After resolution: " & $sResolvedPath)
+
+    ; Validate expected path
+    Local $sExpectedPath = @ScriptDir & "\installs\models\VR_Models\1_HP-UVR.pth"
+    If $sResolvedPath <> $sExpectedPath Then
+        _Log("Warning: Resolved path (" & $sResolvedPath & ") does not match expected path (" & $sExpectedPath & ")", True)
+    EndIf
+
+    ; Check if the model file exists
+    If Not FileExists($sResolvedPath) Then
+        _Log("Model file not found at: " & $sResolvedPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Model file not found at " & $sResolvedPath & ". Please verify the file exists and the path in models.ini is correct. Expected: " & $sExpectedPath)
+        Return SetError(4, 0, False)
+    EndIf
+    _Log("Model file verified at: " & $sResolvedPath)
+
+    ; Construct the command, ensuring output directory has only one \output
+    Local $sOutputPath = $sOutputDir
+    If StringRight($sOutputPath, 7) <> "\output" Then $sOutputPath &= "\output"
+    Local $sCmd = '"' & $sPythonPath & '" "' & $sSeparatePy & '" --model "' & $sResolvedPath & '" --input_file "' & $sSong & '" --output_dir "' & $sOutputPath & '"'
     _Log("UVR5 command: " & $sCmd)
 
     Local $sLogFile = @ScriptDir & "\logs\uvr5_log.txt"
-    Local $hLogFile = FileOpen($sLogFile, 2)
+    Local $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
     If $hLogFile = -1 Then
         _Log("Failed to open uvr5_log.txt for writing", True)
-        Return SetError(3, 0, False)
+        MsgBox($MB_ICONERROR, "Error", "Failed to open uvr5_log.txt for writing")
+        Return SetError(5, 0, False)
     EndIf
     _Log("Opened uvr5_log.txt for writing")
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
 
-    Local $iPID = Run($sCmd, "", @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    ; Run the command in the correct working directory
+    Local $iPID = Run($sCmd, $sWorkingDir, @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $iPID = 0 Then
+        _Log("Failed to start UVR5 command: " & $sCmd, True)
+        FileWrite($hLogFile, "Error: Failed to start UVR5 command: " & $sCmd & @CRLF)
+        FileClose($hLogFile)
+        MsgBox($MB_ICONERROR, "Error", "Failed to start UVR5 command. Check log for details.")
+        Return SetError(6, 0, False)
+    EndIf
     _Log("Started UVR5 process with PID: " & $iPID)
 
-    Local $sOutput
+    ; Create a Google Blue brush for the progress bar
+    Local $hBrushTeal = _GDIPlus_BrushCreateSolid($GOOGLE_BLUE)
+
+    Local $sOutput, $iProgress = 0, $currentIteration = 0 ; Initialize $currentIteration
+    Local $totalIterations = 96 ; Placeholder; adjust based on audio length or model
     While ProcessExists($iPID)
         $sOutput = StdoutRead($iPID)
-        If @error Then ExitLoop
-        If $sOutput <> "" Then
+        If Not @error And $sOutput <> "" Then
             _Log("[UVR5 STDOUT] " & $sOutput)
-            FileWrite($hLogFile, $sOutput)
+            FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+            ; Parse for progress from tqdm (e.g., "96/96 [07:32<00:00, 4.71s/it]")
+            Local $aMatch = StringRegExp($sOutput, "(\d+)/\d+ .*?(\d+\.\d+)s/it", 1)
+            If Not @error And UBound($aMatch) >= 1 Then
+                $currentIteration = Number($aMatch[0])
+                $iProgress = Int(($currentIteration / $totalIterations) * 100)
+                If $iProgress > 100 Then $iProgress = 100
+                _Log("Progress updated to: " & $iProgress & "%")
+                GUICtrlSetData($hProgressLabel, "Task Progress: " & $iProgress & "%")
+                _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, ($iGuiWidth - 20) * $iProgress / 100, 20, $hBrushTeal)
+            EndIf
         EndIf
         $sOutput = StderrRead($iPID)
-        If @error Then ExitLoop
-        If $sOutput <> "" Then
+        If Not @error And $sOutput <> "" Then
             _Log("[UVR5 STDERR] " & $sOutput)
-            FileWrite($hLogFile, $sOutput)
+            FileWrite($hLogFile, "[STDERR] " & $sOutput)
         EndIf
         Sleep(100)
     WEnd
 
-    FileClose($hLogFile)
-    Local $iExitCode = ProcessWaitClose($iPID)
-    _Log("UVR5 process exited with code: " & $iExitCode)
+    ; Capture any remaining output
+    $sOutput = StdoutRead($iPID)
+    If Not @error And $sOutput <> "" Then
+        _Log("[UVR5 STDOUT] " & $sOutput)
+        FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+    EndIf
+    $sOutput = StderrRead($iPID)
+    If Not @error And $sOutput <> "" Then
+        _Log("[UVR5 STDERR] " & $sOutput)
+        FileWrite($hLogFile, "[STDERR] " & $sOutput)
+    EndIf
 
-    Local $sOutputPath = $sOutputDir & "\" & StringRegExpReplace($sSong, "^.*\\", "")
+    Local $iExitCode = ProcessWaitClose($iPID)
+    If $iExitCode <> 0 Then
+        _Log("UVR5 process exited with non-zero code: " & $iExitCode & ". Output files were generated successfully, but this may indicate a minor issue.", True)
+    Else
+        _Log("UVR5 process exited with code: " & $iExitCode)
+    EndIf
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    ; Clean up the brush
+    _GDIPlus_BrushDispose($hBrushTeal)
+
+    ; Check for expected output files in the specified output subdirectory
+    Local $sOutputPath = $sOutputDir & "\output\" & StringRegExpReplace($sSong, "^.*\\", "")
     $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
-    Local $aExpectedFiles[2] = ["vocals.wav", "instrumental.wav"]
+    Local $aExpectedFiles[2] = ["instruments_" & StringRegExpReplace($sSong, "^.*\\|\.[^.]+$", "") & ".wav", "vocals_" & StringRegExpReplace($sSong, "^.*\\|\.[^.]+$", "") & ".wav"]
     Local $iFound = 0
     For $i = 0 To UBound($aExpectedFiles) - 1
         If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
@@ -992,10 +1151,22 @@ Func _ProcessUVR5($sSong, $sModel, $sOutputDir)
         Return True
     Else
         _Log("Failed to process " & $sSong & ": expected 2 output files, found " & $iFound, True)
-        Return SetError(4, 0, False)
+        Local $sLogContent = FileRead($sLogFile)
+        If StringLen($sLogContent) > 1000 Then
+            $sLogContent = StringLeft($sLogContent, 1000) & "... (see full log at " & $sLogFile & ")"
+        EndIf
+        MsgBox($MB_ICONERROR, "UVR5 Error", "Failed to process " & $sSong & ". Expected 2 output files, found " & $iFound & "." & @CRLF & @CRLF & "Log Details:" & @CRLF & $sLogContent)
+        Return SetError(7, 0, False)
     EndIf
 EndFunc
 
+
+
+
+Func _ProcessFile($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessFile: File=" & $sSong & ", Model=" & $sModel & ", OutputDir=" & $sOutputDir)
+    Local $iTabIndex = _GUICtrlTab_GetCurSel($hTab)
+    If Not _IsModelCompatibleWithTab($sModel, $iTabIndex) Then
         _Log("Model " & $sModel & " is not compatible with the current tab (index " & $iTabIndex & ")", True)
         MsgBox($MB_ICONERROR, "Error", "Selected model '" & $sModel & "' is not compatible with the current tab.")
         Return False
@@ -1025,8 +1196,27 @@ EndFunc
         Return False
     EndIf
 EndFunc
+
+; Helper function to get model path from database
+Func _GetModelPath($sModelName)
+    _Log("Entering _GetModelPath for model: " & $sModelName)
+    Local $sQuery = "SELECT Path FROM Models WHERE Name = '" & StringReplace($sModelName, "'", "''") & "';"
+    Local $hQuery, $aRow
+    Local $sModelPath = ""
+    _SQLite_Query($hDB, $sQuery, $hQuery)
+    While _SQLite_FetchData($hQuery, $aRow) = $SQLITE_OK
+        $sModelPath = $aRow[0]
+        ExitLoop ; Take the first match
+    WEnd
+    _SQLite_QueryFinalize($hQuery)
+    _Log("Retrieved model path: " & $sModelPath)
+    Return $sModelPath
+EndFunc
 #EndRegion ;**** Separation Functions ****
 #EndRegion Part3
+
+
+
 
 
 ;**************************************************
@@ -1191,6 +1381,19 @@ Func _SaveSettingsButtonHandler()
     _Log("Exiting _SaveSettingsButtonHandler")
 EndFunc
 
+Func _ManageDbButtonHandler()
+    _Log("Entering _ManageDbButtonHandler")
+    Local $sExePath = @ScriptDir & "\ModelsDbApp.exe"
+    If FileExists($sExePath) Then
+        _Log("Launching ModelsDbApp.exe: " & $sExePath)
+        ShellExecute($sExePath)
+    Else
+        _Log("ModelsDbApp.exe not found at: " & $sExePath, True)
+        MsgBox($MB_ICONERROR, "Error", "ModelsDbApp.exe not found at " & $sExePath)
+    EndIf
+    _Log("Exiting _ManageDbButtonHandler")
+EndFunc
+
 Func _ModelComboHandler()
     _Log("Entering _ModelComboHandler")
     Local $sModel = GUICtrlRead($hModelCombo)
@@ -1261,7 +1464,7 @@ Func _TabHandler()
         Case 1
             $sDefaultModel = "2stems"
         Case 2
-            $sDefaultModel = "UVR-MDX-NET-Inst_Main"
+            $sDefaultModel = "UVR-MDX-NET-Inst_Main" ; Set a default UVR5 model
     EndSwitch
 
     If $sDefaultModel <> "" Then
@@ -1325,12 +1528,14 @@ Func _Exit()
     _WinAPI_ReleaseDC($hGraphicGUI, $hDC)
     _GDIPlus_Shutdown()
     _SQLite_Close($hDb)
-    If IsDeclared("g_hDll_SQLite") Then
-        DllCall($g_hDll_SQLite, "int:cdecl", "sqlite3_shutdown")
-        DllClose($g_hDll_SQLite)
-    EndIf
+    _SQLite_Shutdown()
     _Log("Exiting application")
     Exit
 EndFunc
 #EndRegion ;**** Event Handlers ****
 #EndRegion Part4
+
+
+
+
+

@@ -1,17 +1,25 @@
+;**************************************************
+;******************** Part 1 **********************
+;**************************************************
+#Region Part1
 #Region ;**** Directives and Includes ****
-#AutoIt3Wrapper_Res_Description=AudioWizardSeparator
-#AutoIt3Wrapper_Res_Fileversion=1.0.2.3
-#AutoIt3Wrapper_Res_ProductName=Stem Separator
-#AutoIt3Wrapper_Res_ProductVersion=1.0.2
+; 3DAudioStudioSeparator_2.43.au3
+; Version: 0.2.43
+; Last Updated: 2025-04-27 16:29
+; Changelog:version test
+; - Initial version with SQLite integration
+; - three separation routines and MDX params added.
+; - Tagged as v2.43 in Git.
+#AutoIt3Wrapper_Res_Description=3DAudioStudioSeparator
+#AutoIt3Wrapper_Res_Fileversion=0.2.4.3
 #AutoIt3Wrapper_Res_CompanyName=FretzCapo
-#AutoIt3Wrapper_Res_LegalCopyright=© 2025 FretzCapo
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_requestedExecutionLevel=None
 #AutoIt3Wrapper_Run_AU3Check=Y
 #AutoIt3Wrapper_AU3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w 7
 
-; Includes (keep all, even if not used in scipt... yet)
+; Includes for GUI, database, and file operations
 #include <Array.au3>
 #include <Constants.au3>
 #include <File.au3>
@@ -33,18 +41,16 @@
 #include <WinAPIFiles.au3>
 #include <WinAPISys.au3>
 #include <Date.au3>
-
-
-
 #EndRegion ;**** Directives and Includes ****
+
 Opt("GUIOnEventMode", 1)
-#EndRegion ;**** Directives and Includes ****
+
 #Region ;**** Global Variables and Constants ****
-
+; Database and process variables
 Global $sModelsDb = @ScriptDir & "\models.db"
-Global $iPID = 0 ; Process ID for running separation tasks
+Global $iPID = 0 ; Process ID for separation tasks
 
-; Color Constants for GUI elements
+; Color constants for GUI elements
 Global Const $GOOGLE_GREEN = 0xFF34C759
 Global Const $GOOGLE_YELLOW = 0xFFF4B400
 Global Const $GOOGLE_BLUE = 0xFF4285F4
@@ -55,53 +61,47 @@ Global Const $GOOGLE_BROWN = 0xFF795548
 Global Const $GOOGLE_TEAL = 0xFF26A69A
 Global Const $GOOGLE_BLACK = 0xFF000000
 Global Const $GRAY = 0xFF808080
-; GUI divided into quadrants
-; upper left=input_listview, upper right=model details data display, lower left=coutput_listview, lower right=process list_listview
+
+; GUI elements (quadrants: input, model details, output, process list)
 Global $hGUI, $hInputListView, $hOutputListView, $hBatchList, $hModelCombo, $hTab
 Global $hInputDirButton, $hOutputDirButton, $hAddButton, $hClearButton, $hDeleteButton, $hSeparateButton, $hSaveSettingsButton
 Global $hModelNameLabel, $hStemsLabel, $hStemsDisplay, $hFocusLabel, $hFocusDisplay
 Global $hComments, $hCommentsLabel, $hCommentsEdit, $hDescEdit, $hDescLabel
-
 Global $hProgressLabel, $hCountLabel, $hGraphic
 Global $hGraphicGUI, $hDC, $hGraphics, $hBrushGray, $hBrushGreen, $hBrushYellow, $hPen
 Global $iGuiWidth, $iGuiHeight
 Global $hDb, $sDbFile
 Global $sSettingsIni = @ScriptDir & "\settings.ini"
-Global $sModelsIni = @ScriptDir & "\Models.ini"
+Global $sModelsIni = @ScriptDir & "\models.ini"
 Global $sUserIni = @ScriptDir & "\user.ini"
 
-
+; Paths for input and output
 Global $sInputPath = @ScriptDir & "\songs"
 Global $sOutputPath = @ScriptDir & "\stems"
 Global $hAggressivenessLabel, $hAggressivenessInput, $hTTACheckbox, $hHighEndProcessLabel, $hHighEndProcessCombo
 
-; UVR5 Controls (from _CreateGUI)
-
+; UVR5 controls
 Global $hInputList, $hOutputList
 Global $hDemucsModelCombo, $hDemucsStemsLabel, $hDemucsStems, $hDemucsFocusLabel, $hDemucsFocus
 Global $hSpleeterModelCombo, $hSpleeterStemsLabel, $hSpleeterStems, $hSpleeterFocusLabel, $hSpleeterFocus
 Global $hUVR5ModelCombo, $hUVR5StemsLabel, $hUVR5Stems, $hUVR5FocusLabel, $hUVR5Focus, $hDescription, $hDescriptionLabel
 Global $hSegmentSizeLabel, $hSegmentSizeInput, $hOverlapLabel, $hOverlapInput, $hDenoiseCheckbox, $hBatchSizeLabel, $hBatchSizeInput
 
-
-
-
-; Check if settings.ini exists; if not, create it with defaults
+; Initialize settings.ini with defaults if it doesn’t exist
 If Not FileExists($sSettingsIni) Then
+    _Log("Creating settings.ini with default values")
     ; GUI defaults
-    IniWrite($sSettingsIni, "GUI", "Width", @DesktopWidth * 0.75)  ; e.g., 1440
-    IniWrite($sSettingsIni, "GUI", "Height", @DesktopHeight * 0.75)  ; e.g., 810
+    IniWrite($sSettingsIni, "GUI", "Width", @DesktopWidth * 0.75)
+    IniWrite($sSettingsIni, "GUI", "Height", @DesktopHeight * 0.75)
     IniWrite($sSettingsIni, "GUI", "LastModel", "htdemucs")
     IniWrite($sSettingsIni, "GUI", "LastTab", "0")
     IniWrite($sSettingsIni, "GUI", "LastSong", @ScriptDir & "\songs\song5.flac")
-
     ; Paths
     IniWrite($sSettingsIni, "Paths", "DbFile", @ScriptDir & "\models.db")
     IniWrite($sSettingsIni, "Paths", "LogDir", @ScriptDir & "\logs")
     IniWrite($sSettingsIni, "Paths", "InputDir", @ScriptDir & "\songs")
     IniWrite($sSettingsIni, "Paths", "OutputDir", @ScriptDir & "\stems")
     IniWrite($sSettingsIni, "Paths", "FFmpegPath", @ScriptDir & "\installs\uvr\ffmpeg\bin\ffmpeg.exe")
-
     ; MDXNet/UVR5 defaults
     IniWrite($sSettingsIni, "MDXNet", "SegmentSize", "256")
     IniWrite($sSettingsIni, "MDXNet", "Overlap", "0.25")
@@ -110,8 +110,7 @@ If Not FileExists($sSettingsIni) Then
     IniWrite($sSettingsIni, "MDXNet", "Aggressiveness", "10")
     IniWrite($sSettingsIni, "MDXNet", "TTA", "false")
     IniWrite($sSettingsIni, "MDXNet", "HighEndProcess", "mirroring")
-
-    ; MDX (likely legacy or alternate UVR5 settings)
+    ; MDX settings (legacy or alternate)
     IniWrite($sSettingsIni, "MDX", "SegmentSize", "256")
     IniWrite($sSettingsIni, "MDX", "Overlap", "0.25")
     IniWrite($sSettingsIni, "MDX", "Denoise", "0")
@@ -119,7 +118,6 @@ If Not FileExists($sSettingsIni) Then
     IniWrite($sSettingsIni, "MDX", "Aggressiveness", "10")
     IniWrite($sSettingsIni, "MDX", "TTA", "0")
     IniWrite($sSettingsIni, "MDX", "HighEndProcess", "mirroring")
-
     ; Defaults
     IniWrite($sSettingsIni, "Defaults", "DefaultModel", "htdemucs")
     IniWrite($sSettingsIni, "Defaults", "DefaultTab", "0")
@@ -129,48 +127,44 @@ EndIf
 ; Read GUI dimensions from settings.ini
 $iGuiWidth = Int(IniRead($sSettingsIni, "GUI", "Width", @DesktopWidth * 0.75))
 $iGuiHeight = Int(IniRead($sSettingsIni, "GUI", "Height", @DesktopHeight * 0.75))
+_Log("GUI dimensions set: Width=" & $iGuiWidth & ", Height=" & $iGuiHeight)
 
-
-; Ensure the logs directory exists, create it only if it doesn't
+; Ensure logs directory exists
 If Not FileExists(@ScriptDir & "\logs") Then
     DirCreate(@ScriptDir & "\logs")
+    _Log("Created logs directory: " & @ScriptDir & "\logs")
 EndIf
-; Define the path for the log file with a timestamp to ensure uniqueness
+
+; Define log file path with timestamp
 Global $sLogFile = @ScriptDir & "\logs\StemSeparator_" & @YEAR & @MON & @MDAY & "_" & @HOUR & @MIN & @SEC & ".log.txt"
-; Initialize the log file handle (0 means the file is not yet open)
-Global $hLogFile = 0
-; Debug: Confirm the log file path
-ConsoleWrite("Log file path set to: " & $sLogFile & @CRLF)
+Global $hLogFile = 0 ; Initialize log file handle
+_Log("Log file path set to: " & $sLogFile)
+#EndRegion ;**** Global Variables and Constants ****
 
-#EndRegion
-#Region ;**** Logging Initialization ****
-
-
-#EndRegion
 #Region ;**** Logging Functions ****
-
-; Initialize the log file for the application
+; Initialize the log file
 Func _InitializeLog()
     Local $sLogDir = IniRead($sSettingsIni, "Paths", "LogDir", @ScriptDir & "\logs")
     If Not FileExists($sLogDir) Then
         DirCreate($sLogDir)
+        _Log("Created log directory: " & $sLogDir)
     EndIf
     $sLogFile = $sLogDir & "\StemSeparator_" & @YEAR & @MON & @MDAY & "_" & @HOUR & @MIN & @SEC & ".log.txt"
-    $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
+    $hLogFile = FileOpen($sLogFile, $FO_OVERWRITE + $FO_CREATEPATH)
     If $hLogFile = -1 Then
         MsgBox($MB_ICONERROR, "Error", "Unable to open log file: " & $sLogFile)
         Exit
     EndIf
     FileWriteLine($hLogFile, @YEAR & "-" & @MON & "-" & @MDAY & " " & @HOUR & ":" & @MIN & ":" & @SEC & ": Script started")
+    _Log("Log file initialized: " & $sLogFile)
 EndFunc
 
+; Write log messages to file and console
 Func _Log($sMessage, $bError = False)
     Local $sPrefix = @YEAR & "-" & @MON & "-" & @MDAY & " " & @HOUR & ":" & @MIN & ":" & @SEC
     Local $sLevel = $bError ? "ERROR" : "INFO"
     Local $sLogLine = "[" & $sPrefix & "] " & $sLevel & ": " & $sMessage
     If $hLogFile = 0 Then
-        ; Debug: Log the path we're trying to open
-        ConsoleWrite("Attempting to open log file: " & $sLogFile & @CRLF)
         $hLogFile = FileOpen($sLogFile, $FO_APPEND + $FO_CREATEPATH)
         If $hLogFile = -1 Then
             ConsoleWrite("Error: Unable to open log file: " & $sLogFile & @CRLF)
@@ -183,6 +177,7 @@ Func _Log($sMessage, $bError = False)
     ConsoleWrite($sLogLine & @CRLF)
 EndFunc
 
+; Log startup information
 Func _LogStartupInfo()
     _Log("Entering _LogStartupInfo")
     _Log("Script started")
@@ -190,8 +185,8 @@ Func _LogStartupInfo()
     _Log("Working Directory: " & @WorkingDir)
     _Log("OS: " & @OSVersion & " (" & @OSArch & ")")
     _Log("User: " & @UserName)
-    _Log("FFmpeg Path: " & IniRead($sSettingsIni, "Paths", "FFmpegPath", "C:\temp\s2S\installs\uvr\ffmpeg\bin\ffmpeg.exe"))
-    _Log("Models Database File: " & $sDbFile)
+    _Log("FFmpeg Path: " & IniRead($sSettingsIni, "Paths", "FFmpegPath", @ScriptDir & "\installs\uvr\ffmpeg\bin\ffmpeg.exe"))
+    _Log("Models Database File: " & $sModelsDb)
     _Log("Settings INI: " & $sSettingsIni)
     _Log("Models INI: " & $sModelsIni)
     _Log("User INI: " & $sUserIni)
@@ -200,6 +195,7 @@ EndFunc
 #EndRegion ;**** Logging Functions ****
 
 #Region ;**** Initialization Functions ****
+; Update model dropdown based on selected tab
 Func _UpdateModelDroplist()
     _Log("Entering _UpdateModelDroplist")
     Local $iTabIndex = _GUICtrlTab_GetCurSel($hTab)
@@ -212,7 +208,7 @@ Func _UpdateModelDroplist()
         Case 2
             $sAppFilter = "UVR5"
         Case Else
-            _Log("Invalid tab index: " & $iTabIndex, True)
+            _Log("Error: Invalid tab index: " & $iTabIndex, True)
             GUICtrlSetData($hModelCombo, "|No models available")
             Return
     EndSwitch
@@ -222,7 +218,7 @@ Func _UpdateModelDroplist()
     _Log("Executing query: " & $sQuery)
     Local $iRet = _SQLite_GetTable2d($hDb, $sQuery, $aResult, $iRows, $iCols)
     If $iRet <> $SQLITE_OK Then
-        _Log("Failed to query models: " & _SQLite_ErrMsg(), True)
+        _Log("Error: Failed to query models: " & _SQLite_ErrMsg(), True)
         GUICtrlSetData($hModelCombo, "|No models available")
         Return
     EndIf
@@ -242,7 +238,7 @@ Func _UpdateModelDroplist()
         $sModelList = StringTrimRight($sModelList, 1)
         _Log("Model list string: " & $sModelList)
         GUICtrlSetData($hModelCombo, "|" & $sModelList)
-        ; Set the default model for the tab
+        ; Set default model for the tab
         Local $sDefaultModel = ($iTabIndex = 0) ? "htdemucs" : ($iTabIndex = 1) ? "2stems" : "UVR-MDX-NET-Inst-1"
         GUICtrlSetData($hModelCombo, $sDefaultModel)
     Else
@@ -250,34 +246,34 @@ Func _UpdateModelDroplist()
         GUICtrlSetData($hModelCombo, "|No models available")
     EndIf
 
-    ; Update the model's description and comments
+    ; Update model description and comments
     Local $sSelectedModel = GUICtrlRead($hModelCombo)
     If $sSelectedModel And $sSelectedModel <> "No models available" Then
         Local $aDetails = _GetModelDetails($sSelectedModel)
         If Not @error Then
-            Local $sDescription = $aDetails[6] ; Description field from _GetModelDetails
-            Local $sComments = $aDetails[7] ; Comments field from _GetModelDetails
+            Local $sDescription = $aDetails[6]
+            Local $sComments = $aDetails[7]
             GUICtrlSetData($hDescription, $sDescription <> "" ? $sDescription : "No description available.")
             GUICtrlSetData($hComments, $sComments <> "" ? $sComments : "No comments available.")
             _Log("Updated description and comments for model " & $sSelectedModel)
         Else
             GUICtrlSetData($hDescription, "Error retrieving description.")
             GUICtrlSetData($hComments, "Error retrieving comments.")
-            _Log("Failed to update description and comments for model " & $sSelectedModel, True)
+            _Log("Error: Failed to update description and comments for model " & $sSelectedModel, True)
         EndIf
     Else
         GUICtrlSetData($hDescription, "No model selected.")
         GUICtrlSetData($hComments, "No model selected.")
         _Log("No model selected to update description and comments")
     EndIf
-
     _Log("Exiting _UpdateModelDroplist")
 EndFunc
 
+; Retrieve model details from database
 Func _GetModelDetails($sModel)
     _Log("Entering _GetModelDetails for model: " & $sModel)
     If $sModel = "" Then
-        _Log("Model name is empty", True)
+        _Log("Error: Model name is empty", True)
         Return SetError(3, 0, 0)
     EndIf
     Local $aResult, $iRows, $iCols
@@ -288,11 +284,11 @@ Func _GetModelDetails($sModel)
     _Log("Executing query: " & $sQuery)
     Local $iRet = _SQLite_GetTable2d($hDb, $sQuery, $aResult, $iRows, $iCols)
     If $iRet <> $SQLITE_OK Then
-        _Log("SQLite query failed for model " & $sModel & ": " & _SQLite_ErrMsg(), True)
+        _Log("Error: SQLite query failed for model " & $sModel & ": " & _SQLite_ErrMsg(), True)
         Return SetError(1, 0, 0)
     EndIf
     If $iRows = 0 Or Not IsArray($aResult) Or UBound($aResult, 1) < 2 Then
-        _Log("No details found for model " & $sModel, True)
+        _Log("Error: No details found for model " & $sModel, True)
         Return SetError(2, 0, 0)
     EndIf
     Local $aReturn[8]
@@ -303,19 +299,128 @@ Func _GetModelDetails($sModel)
     Return $aReturn
 EndFunc
 
+; Initialize models database from models.ini
+Func _InitializeModels()
+    _Log("Entering _InitializeModels")
+    If Not FileExists($sModelsIni) Then
+        _Log("Error: models.ini not found at " & $sModelsIni, True)
+        MsgBox($MB_ICONERROR, "Error", "Models configuration file not found: " & $sModelsIni)
+        Exit
+    EndIf
+
+    ; Check if models.db exists and if models.ini is newer
+    Local $bRebuildDb = False
+    If Not FileExists($sModelsDb) Then
+        _Log("models.db not found, creating new database")
+        $bRebuildDb = True
+    Else
+        Local $aIniTime = FileGetTime($sModelsIni, $FT_MODIFIED)
+        Local $aDbTime = FileGetTime($sModelsDb, $FT_MODIFIED)
+        If IsArray($aIniTime) And IsArray($aDbTime) Then
+            Local $sIniTime = $aIniTime[0] & $aIniTime[1] & $aIniTime[2] & $aIniTime[3] & $aIniTime[4] & $aIniTime[5]
+            Local $sDbTime = $aDbTime[0] & $aDbTime[1] & $aDbTime[2] & $aDbTime[3] & $aDbTime[4] & $aDbTime[5]
+            If $sIniTime > $sDbTime Then
+                _Log("models.ini is newer than models.db, rebuilding database")
+                $bRebuildDb = True
+            EndIf
+        EndIf
+    EndIf
+
+    If $bRebuildDb Then
+        ; Delete existing database if it exists
+        If FileExists($sModelsDb) Then
+            FileDelete($sModelsDb)
+            _Log("Deleted existing models.db for rebuild")
+        EndIf
+
+        ; Create database and tables
+        Local $iRet = _SQLite_Exec($hDb, "CREATE TABLE Models (ModelID INTEGER PRIMARY KEY, Name TEXT, Path TEXT, CommandLine TEXT, Description TEXT, Comments TEXT);")
+        If $iRet <> $SQLITE_OK Then
+            _Log("Error: Failed to create Models table: " & _SQLite_ErrMsg(), True)
+            Return
+        EndIf
+        $iRet = _SQLite_Exec($hDb, "CREATE TABLE ModelApps (ModelID INTEGER, App TEXT, FOREIGN KEY(ModelID) REFERENCES Models(ModelID));")
+        If $iRet <> $SQLITE_OK Then
+            _Log("Error: Failed to create ModelApps table: " & _SQLite_ErrMsg(), True)
+            Return
+        EndIf
+        $iRet = _SQLite_Exec($hDb, "CREATE TABLE ModelFocuses (ModelID INTEGER, Focus TEXT, Stems INTEGER, FOREIGN KEY(ModelID) REFERENCES Models(ModelID));")
+        If $iRet <> $SQLITE_OK Then
+            _Log("Error: Failed to create ModelFocuses table: " & _SQLite_ErrMsg(), True)
+            Return
+        EndIf
+        $iRet = _SQLite_Exec($hDb, "CREATE TABLE ModelParams (ModelID INTEGER, SegmentSize INTEGER, Overlap REAL, Denoise INTEGER, BatchSize INTEGER, FOREIGN KEY(ModelID) REFERENCES Models(ModelID));")
+        If $iRet <> $SQLITE_OK Then
+            _Log("Error: Failed to create ModelParams table: " & _SQLite_ErrMsg(), True)
+            Return
+        EndIf
+
+        ; Read models.ini and populate database
+        Local $aSections = IniReadSectionNames($sModelsIni)
+        If @error Then
+            _Log("Error: Failed to read models.ini sections", True)
+            Return
+        EndIf
+        For $i = 1 To $aSections[0]
+            Local $sModelName = $aSections[$i]
+            Local $sApp = IniRead($sModelsIni, $sModelName, "App", "")
+            Local $sPath = IniRead($sModelsIni, $sModelName, "Path", "")
+            Local $sCommandLine = IniRead($sModelsIni, $sModelName, "CommandLine", "")
+            Local $sDescription = IniRead($sModelsIni, $sModelName, "Description", "")
+            Local $sComments = IniRead($sModelsIni, $sModelName, "Comments", "")
+            Local $sFocus = IniRead($sModelsIni, $sModelName, "Focus", "")
+            Local $iStems = Int(IniRead($sModelsIni, $sModelName, "Stems", "2"))
+            Local $iSegmentSize = Int(IniRead($sModelsIni, $sModelName, "SegmentSize", "256"))
+            Local $fOverlap = Number(IniRead($sModelsIni, $sModelName, "Overlap", "0.25"))
+            Local $iDenoise = Int(IniRead($sModelsIni, $sModelName, "Denoise", "0"))
+            Local $iBatchSize = Int(IniRead($sModelsIni, $sModelName, "BatchSize", "1"))
+
+            ; Insert into Models table
+            $iRet = _SQLite_Exec($hDb, "INSERT INTO Models (Name, Path, CommandLine, Description, Comments) VALUES (" & _
+                _SQLite_FastEscape($sModelName) & "," & _SQLite_FastEscape($sPath) & "," & _SQLite_FastEscape($sCommandLine) & "," & _
+                _SQLite_FastEscape($sDescription) & "," & _SQLite_FastEscape($sComments) & ");")
+            If $iRet <> $SQLITE_OK Then
+                _Log("Error: Failed to insert model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
+                ContinueLoop
+            EndIf
+            Local $iModelID = _SQLite_LastInsertRowID($hDb)
+
+            ; Insert into ModelApps table
+            $iRet = _SQLite_Exec($hDb, "INSERT INTO ModelApps (ModelID, App) VALUES (" & $iModelID & "," & _SQLite_FastEscape($sApp) & ");")
+            If $iRet <> $SQLITE_OK Then
+                _Log("Error: Failed to insert app for model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
+            EndIf
+
+            ; Insert into ModelFocuses table
+            $iRet = _SQLite_Exec($hDb, "INSERT INTO ModelFocuses (ModelID, Focus, Stems) VALUES (" & $iModelID & "," & _SQLite_FastEscape($sFocus) & "," & $iStems & ");")
+            If $iRet <> $SQLITE_OK Then
+                _Log("Error: Failed to insert focus for model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
+            EndIf
+
+            ; Insert into ModelParams table (UVR5-specific)
+            $iRet = _SQLite_Exec($hDb, "INSERT INTO ModelParams (ModelID, SegmentSize, Overlap, Denoise, BatchSize) VALUES (" & _
+                $iModelID & "," & $iSegmentSize & "," & $fOverlap & "," & $iDenoise & "," & $iBatchSize & ");")
+            If $iRet <> $SQLITE_OK Then
+                _Log("Error: Failed to insert params for model " & $sModelName & ": " & _SQLite_ErrMsg(), True)
+            EndIf
+        Next
+        _Log("Database rebuilt successfully from models.ini")
+    Else
+        _Log("Using existing models.db, no rebuild needed")
+    EndIf
+    _Log("Exiting _InitializeModels")
+EndFunc
+
+; Set default GUI and file settings
 Func SetDefaults()
     _Log("Entering SetDefaults")
-
     Local $iDefaultTab = 0
     _Log("Setting default tab to Demucs (index " & $iDefaultTab & ")")
     _GUICtrlTab_SetCurSel($hTab, $iDefaultTab)
-
-    _Log("Triggering _TabHandler to initialize Demucs tab controls and set default model")
+    _Log("Triggering _TabHandler to initialize Demucs tab controls")
     _TabHandler()
 
-    ; Declare variables once for reuse
     Local $sDrive, $sDir, $sFileName, $sExtension, $sDisplayName
-
     $sInputPath = IniRead($sSettingsIni, "Paths", "InputDir", @ScriptDir & "\songs")
     _Log("Setting default input path to " & $sInputPath)
     If FileExists($sInputPath) Then
@@ -332,7 +437,7 @@ Func SetDefaults()
             _Log("No audio files found in " & $sInputPath)
         EndIf
     Else
-        _Log("Default input path " & $sInputPath & " does not exist", True)
+        _Log("Error: Default input path " & $sInputPath & " does not exist", True)
     EndIf
 
     $sOutputPath = IniRead($sSettingsIni, "Paths", "OutputDir", @ScriptDir & "\stems")
@@ -351,7 +456,7 @@ Func SetDefaults()
             _Log("No audio files found in " & $sOutputPath)
         EndIf
     Else
-        _Log("Default output path " & $sOutputPath & " does not exist", True)
+        _Log("Error: Default output path " & $sOutputPath & " does not exist", True)
     EndIf
 
     Local $sDefaultSong = IniRead($sSettingsIni, "GUI", "LastSong", @ScriptDir & "\songs\song5.flac")
@@ -364,34 +469,54 @@ Func SetDefaults()
         _GUICtrlListView_SetItemChecked($hBatchList, 0, True)
         _Log("Default song " & $sDefaultSong & " added and checked successfully")
     Else
-        _Log("Default song " & $sDefaultSong & " does not exist", True)
+        _Log("Error: Default song " & $sDefaultSong & " does not exist", True)
     EndIf
-
     _Log("Exiting SetDefaults")
 EndFunc
 
+; Main application entry point
 Func _Main()
     _Log("Entering _Main")
-
-    ; Initialize resources
+    ; Initialize logging
+    _InitializeLog()
     _LogStartupInfo()
+
+    ; Initialize GDIPlus
     _GDIPlus_Startup()
+    If @error Then
+        _Log("Error: Failed to initialize GDIPlus", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to initialize GDIPlus")
+        Exit
+    EndIf
     _Log("GDIPlus initialized successfully")
+
+    ; Initialize SQLite and open database
     _SQLite_Startup()
     If @error Then
+        _Log("Error: Failed to initialize SQLite. Error code: " & @error, True)
         MsgBox($MB_ICONERROR, "Error", "Failed to initialize SQLite. Error code: " & @error)
         Exit
     EndIf
     $hDb = _SQLite_Open($sModelsDb)
     If @error Then
+        _Log("Error: Failed to open database: " & $sModelsDb & ". Error code: " & @error, True)
         MsgBox($MB_ICONERROR, "Error", "Failed to open database: " & $sModelsDb & @CRLF & "Error code: " & @error)
         _SQLite_Shutdown()
         Exit
     EndIf
-    _Log("Opened existing database: " & $sModelsDb)
+    _Log("Database opened successfully: " & $sModelsDb)
+
+    ; Initialize models (rebuild database if needed)
+    _InitializeModels()
 
     ; Create GUI
     _CreateGUI()
+    If Not WinExists($hGUI) Then
+        _Log("Error: Failed to create GUI", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to create GUI")
+        _Exit()
+    EndIf
+    _Log("GUI created successfully")
 
     ; Set event handlers
     GUISetOnEvent($GUI_EVENT_CLOSE, "_Exit", $hGUI)
@@ -404,11 +529,10 @@ Func _Main()
     GUICtrlSetOnEvent($hSaveSettingsButton, "_SaveSettingsButtonHandler")
     GUICtrlSetOnEvent($hTab, "_TabHandler")
 
-    ; Initialize models and set defaults
-    _InitializeModels()
+    ; Set defaults
     SetDefaults()
 
-    ; Start graphics for progress bar
+    ; Initialize progress bar graphics
     $hGraphicGUI = GUICreate("", $iGuiWidth - 20, 20, 10, $iGuiHeight - 30, $WS_POPUP, $WS_EX_MDICHILD, $hGUI)
     GUISetOnEvent($GUI_EVENT_CLOSE, "_Exit", $hGraphicGUI)
     $hDC = _WinAPI_GetDC($hGraphicGUI)
@@ -419,10 +543,7 @@ Func _Main()
     $hPen = _GDIPlus_PenCreate($GOOGLE_BLUE, 2)
     _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, $iGuiWidth - 20, 20, $hBrushGray)
     GUISetState(@SW_SHOW, $hGraphicGUI)
-
     $hProgressLabel = GUICtrlCreateLabel("Task Progress: 0%", 10, $iGuiHeight - 50, 120, 20)
-
-    ; Reset progress bar to ensure it starts gray
     _ResetProgressBar()
 
     _Log("Entering main event loop")
@@ -435,16 +556,33 @@ Func _Main()
     WEnd
 EndFunc
 
-
-
-
+; Reset progress bar to initial state
 Func _ResetProgressBar()
     _Log("Resetting progress bar")
     _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, $iGuiWidth - 20, 20, $hBrushGray)
     GUICtrlSetData($hProgressLabel, "Task Progress: 0%")
 EndFunc
 
+; Application exit cleanup
+Func _Exit()
+    _Log("Entering _Exit")
+    _GDIPlus_BrushDispose($hBrushGray)
+    _GDIPlus_BrushDispose($hBrushGreen)
+    _GDIPlus_BrushDispose($hBrushYellow)
+    _GDIPlus_PenDispose($hPen)
+    _GDIPlus_GraphicsDispose($hGraphics)
+    _WinAPI_ReleaseDC($hGraphicGUI, $hDC)
+    _GDIPlus_Shutdown()
+    _SQLite_Close($hDb)
+    _SQLite_Shutdown()
+    If $hLogFile <> 0 Then
+        FileClose($hLogFile)
+    EndIf
+    _Log("Script terminated")
+    Exit
+EndFunc
 
+; Start the application
 _Main()
 #EndRegion ;**** Initialization Functions ****
 #EndRegion Part1
@@ -452,9 +590,363 @@ _Main()
 
 
 ;**************************************************
-;********************Part 2************************
+; AudioWizardSeparator.au3 - Part 2
 ;**************************************************
 #Region Part2
+#Region ;**** GUI Creation ****
+Func _CreateGUI()
+    _Log("Entering _CreateGUI")
+    $hGUI = GUICreate("AudioWizardSeparator", $iGuiWidth, $iGuiHeight, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX))
+    GUISetOnEvent($GUI_EVENT_CLOSE, "_Exit")
+    GUISetBkColor(0xFFFFFF)
+    Local $iMargin = 10
+    Local $iButtonWidth = 100
+    Local $iButtonHeight = 30
+    Local $iListViewWidth = ($iGuiWidth - 3 * $iMargin) / 2
+    Local $iListViewHeight = 150
+    Local $iControlWidth = $iListViewWidth
+    Local $iLabelHeight = 20
+    Local $iComboHeight = 25
+    Local $iQuadrantHeight = 120
+    Local $iDescEditHeight = 40
+    Local $iCommentsHeight = 60
+    Local $iBottomControlsHeight = $iButtonHeight + $iLabelHeight + 20 + $iMargin
+    $hTab = GUICtrlCreateTab($iMargin, $iMargin, $iGuiWidth - 2 * $iMargin, $iGuiHeight - 2 * $iMargin)
+    GUICtrlCreateTabItem("Demucs")
+    GUICtrlCreateTabItem("Spleeter")
+    GUICtrlCreateTabItem("UVR5")
+    GUICtrlCreateTabItem("")
+    GUICtrlSetOnEvent($hTab, "_TabHandler")
+    $hInputListView = GUICtrlCreateListView("Input Files", $iMargin, $iMargin + 30, $iListViewWidth, $iListViewHeight)
+    _GUICtrlListView_SetExtendedListViewStyle($hInputListView, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_GRIDLINES, $LVS_EX_CHECKBOXES, $LVS_EX_DOUBLEBUFFER, $LVS_EX_INFOTIP))
+    GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    Local $hContextMenu = GUICtrlCreateContextMenu($hInputListView)
+    Local $hAddMenuItem = GUICtrlCreateMenuItem("Add to Queue", $hContextMenu)
+    GUICtrlSetOnEvent(-1, "_AddButtonHandler")
+    $hOutputListView = GUICtrlCreateListView("Output Files", $iMargin + $iListViewWidth + $iMargin, $iMargin + 30, $iListViewWidth, $iListViewHeight)
+    _GUICtrlListView_SetExtendedListViewStyle($hOutputListView, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_GRIDLINES, $LVS_EX_DOUBLEBUFFER))
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hInputDirButton = GUICtrlCreateButton("Select Input Dir", $iMargin, $iMargin + $iListViewHeight + $iMargin + 30, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_InputDirButtonHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hOutputDirButton = GUICtrlCreateButton("Select Output Dir", $iMargin + $iListViewWidth + $iMargin, $iMargin + $iListViewHeight + $iMargin + 30, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_OutputDirButtonHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hAddButton = GUICtrlCreateButton("Add Files", $iMargin + $iButtonWidth + $iMargin, $iMargin + $iListViewHeight + $iMargin + 30, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_AddButtonHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hClearButton = GUICtrlCreateButton("Clear Queue", $iMargin + $iListViewWidth + $iMargin + $iButtonWidth + $iMargin, $iMargin + $iListViewHeight + $iMargin + 30, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_ClearButtonHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hDeleteButton = GUICtrlCreateButton("Delete Selected", $iMargin + $iListViewWidth + $iMargin + 2 * $iButtonWidth + 2 * $iMargin, $iMargin + $iListViewHeight + $iMargin + 30, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_DeleteButtonHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hBatchList = GUICtrlCreateListView("Process Queue|Selected", $iMargin, $iMargin + $iListViewHeight + 2 * $iMargin + $iButtonHeight + 30, $iGuiWidth - 2 * $iMargin, $iListViewHeight, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
+    _GUICtrlListView_SetExtendedListViewStyle($hBatchList, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_GRIDLINES, $LVS_EX_CHECKBOXES, $LVS_EX_DOUBLEBUFFER))
+    GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hAppCombo = GUICtrlCreateCombo("", $iMargin + $iListViewWidth + $iMargin, $iMargin + 2 * $iListViewHeight + 3 * $iMargin + $iButtonHeight + 30, $iControlWidth, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+    GUICtrlSetData(-1, "Demucs|Spleeter|UVR5", "Demucs")
+    GUICtrlSetOnEvent(-1, "_AppComboHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    Local $iBaseY = $iMargin + 2 * $iListViewHeight + 4 * $iMargin + $iButtonHeight + $iComboHeight + 30
+    $hSettingsCombo = GUICtrlCreateCombo("", $iMargin + $iListViewWidth + $iMargin, $iBaseY, $iControlWidth, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+    GUICtrlSetOnEvent(-1, "_LoadSettings")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    $hModelCombo = GUICtrlCreateCombo("", $iMargin + $iListViewWidth + $iMargin, $iBaseY + $iComboHeight + $iMargin, $iControlWidth, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+    GUICtrlSetOnEvent(-1, "_ModelComboHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    Local $iParamY = $iBaseY + 2 * $iComboHeight + 2 * $iMargin
+    If GUICtrlRead($hAppCombo) = "UVR5" Then
+        $hSegmentSizeLabel = GUICtrlCreateLabel("Segment Size:", $iMargin + $iControlWidth + $iMargin, $iParamY, 80, $iLabelHeight)
+        $hSegmentSizeCombo = GUICtrlCreateCombo("", $iMargin + $iControlWidth + $iMargin + 80, $iParamY, 80, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+        GUICtrlSetData(-1, "256|512|1024", "512")
+        $hOverlapLabel = GUICtrlCreateLabel("Overlap:", $iMargin + $iControlWidth + $iMargin + 160, $iParamY, 80, $iLabelHeight)
+        $hOverlapInput = GUICtrlCreateInput("", $iMargin + $iControlWidth + $iMargin + 240, $iParamY, 80, $iComboHeight)
+        GUICtrlSetLimit($hOverlapInput, 4, 1)
+        GUICtrlSetResizing($hSegmentSizeLabel, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hSegmentSizeCombo, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hOverlapLabel, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hOverlapInput, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        $iParamY += $iComboHeight + $iMargin
+        $hAggressivenessLabel = GUICtrlCreateLabel("Aggressiveness:", $iMargin + $iControlWidth + $iMargin, $iParamY, 80, $iLabelHeight)
+        $hAggressivenessInput = GUICtrlCreateInput("", $iMargin + $iControlWidth + $iMargin + 80, $iParamY, 80, $iComboHeight)
+        GUICtrlSetLimit($hAggressivenessInput, 2, 1)
+        $hDenoiseCheckbox = GUICtrlCreateCheckbox("Denoise", $iMargin + $iControlWidth + $iMargin + 160, $iParamY, 60, $iLabelHeight)
+        $hTTACheckbox = GUICtrlCreateCheckbox("TTA", $iMargin + $iControlWidth + $iMargin + 220, $iParamY, 60, $iLabelHeight)
+        GUICtrlSetResizing($hAggressivenessLabel, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hAggressivenessInput, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hDenoiseCheckbox, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hTTACheckbox, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        _Log("Created UVR5 parameter controls at Y=" & $iParamY)
+    EndIf
+    Local $iLowerControlsY = $iBaseY + $iQuadrantHeight + $iMargin
+    $hModelNameLabel = GUICtrlCreateLabel("Model Name:", $iMargin, $iLowerControlsY, $iControlWidth, $iLabelHeight)
+    $hStemsLabel = GUICtrlCreateLabel("Stems:", $iMargin, $iLowerControlsY + $iLabelHeight + $iMargin, $iControlWidth / 2, $iLabelHeight)
+    $hStemsDisplay = GUICtrlCreateLabel("", $iMargin + $iControlWidth / 2, $iLowerControlsY + $iLabelHeight + $iMargin, $iControlWidth / 2, $iLabelHeight)
+    $hFocusLabel = GUICtrlCreateLabel("Focus:", $iMargin, $iLowerControlsY + 2 * ($iLabelHeight + $iMargin), $iControlWidth / 2, $iLabelHeight)
+    $hFocusDisplay = GUICtrlCreateLabel("", $iMargin + $iControlWidth / 2, $iLowerControlsY + 2 * ($iLabelHeight + $iMargin), $iControlWidth / 2, $iLabelHeight)
+    $hDescLabel = GUICtrlCreateLabel("Description:", $iMargin, $iLowerControlsY + 3 * ($iLabelHeight + $iMargin), $iControlWidth, $iLabelHeight)
+    $hDescEdit = GUICtrlCreateEdit("", $iMargin, $iLowerControlsY + 4 * ($iLabelHeight + $iMargin), $iControlWidth, $iDescEditHeight, BitOR($ES_MULTILINE, $ES_AUTOVSCROLL, $WS_VSCROLL))
+    GUICtrlSetOnEvent(-1, "_DescEditHandler")
+    Local $iCommentsY = $iLowerControlsY + 4 * ($iLabelHeight + $iMargin) + $iDescEditHeight + $iMargin
+    $hCommentsLabel = GUICtrlCreateLabel("Comments:", $iMargin, $iCommentsY, $iControlWidth, $iLabelHeight)
+    $hCommentsEdit = GUICtrlCreateEdit("", $iMargin, $iCommentsY + $iLabelHeight, $iControlWidth, $iCommentsHeight, BitOR($ES_MULTILINE, $ES_AUTOVSCROLL, $WS_VSCROLL))
+    GUICtrlSetOnEvent(-1, "_CommentsEditHandler")
+    $hSeparateButton = GUICtrlCreateButton("Separate", $iMargin, $iGuiHeight - $iBottomControlsHeight + $iMargin, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_SeparateButtonHandler")
+    $hSaveSettingsButton = GUICtrlCreateButton("Save Settings", $iMargin + $iButtonWidth + $iMargin, $iGuiHeight - $iBottomControlsHeight + $iMargin, $iButtonWidth, $iButtonHeight)
+    GUICtrlSetOnEvent(-1, "_SaveSettingsButtonHandler")
+    $hProgressLabel = GUICtrlCreateLabel("Progress: 0%", $iGuiWidth - $iMargin - $iControlWidth / 2, $iGuiHeight - $iLabelHeight - 20 - $iMargin, $iControlWidth / 2, $iLabelHeight)
+    $hCountLabel = GUICtrlCreateLabel("0 of 0", $iGuiWidth - $iMargin - $iControlWidth / 2, $iGuiHeight - 20 - $iMargin, $iControlWidth / 2, $iLabelHeight)
+    $hGraphic = GUICtrlCreateGraphic($iMargin, $iGuiHeight - 20 - $iMargin, $iGuiWidth - 2 * $iMargin, 20)
+    _GDIPlus_Startup()
+    $hGraphicGUI = _GDIPlus_GraphicsCreateFromHWND(GUICtrlGetHandle($hGraphic))
+    $hDC = _WinAPI_GetDC(GUICtrlGetHandle($hGraphic))
+    $hGraphics = _GDIPlus_GraphicsCreateFromHDC($hDC)
+    $hBrushGray = _GDIPlus_BrushCreateSolid(0xFF808080)
+    $hBrushGreen = _GDIPlus_BrushCreateSolid($GOOGLE_GREEN)
+    $hBrushYellow = _GDIPlus_BrushCreateSolid($GOOGLE_YELLOW)
+    $hPen = _GDIPlus_PenCreate(0xFF000000, 1)
+    GUIRegisterMsg($WM_NOTIFY, "_WM_NOTIFY")
+    GUISetState(@SW_SHOW)
+    _UpdateAppControls($iListViewWidth, $iListViewHeight, $iButtonHeight, $iMargin, $iControlWidth, $iComboHeight)
+    _Log("GUI created successfully")
+    _Log("Exiting _CreateGUI")
+EndFunc
+#EndRegion ;**** GUI Creation ****
+
+#Region ;**** Model Management ****
+Func _UpdateAppControls($iListViewWidth, $iListViewHeight, $iButtonHeight, $iMargin, $iControlWidth, $iComboHeight)
+    _Log("Entering _UpdateAppControls")
+    Local $sApp = GUICtrlRead($hAppCombo)
+    _Log("Selected app: " & $sApp)
+    If $hSettingsCombo <> 0 Then
+        _Log("Deleting control: hSettingsCombo")
+        GUICtrlDelete($hSettingsCombo)
+    EndIf
+    If $hModelCombo <> 0 Then
+        _Log("Deleting control: hModelCombo")
+        GUICtrlDelete($hModelCombo)
+    EndIf
+    If $hSegmentSizeLabel <> 0 Then
+        _Log("Deleting control: hSegmentSizeLabel")
+        GUICtrlDelete($hSegmentSizeLabel)
+    EndIf
+    If $hSegmentSizeCombo <> 0 Then
+        _Log("Deleting control: hSegmentSizeCombo")
+        GUICtrlDelete($hSegmentSizeCombo)
+    EndIf
+    If $hOverlapLabel <> 0 Then
+        _Log("Deleting control: hOverlapLabel")
+        GUICtrlDelete($hOverlapLabel)
+    EndIf
+    If $hOverlapInput <> 0 Then
+        _Log("Deleting control: hOverlapInput")
+        GUICtrlDelete($hOverlapInput)
+    EndIf
+    If $hDenoiseCheckbox <> 0 Then
+        _Log("Deleting control: hDenoiseCheckbox")
+        GUICtrlDelete($hDenoiseCheckbox)
+    EndIf
+    If $hAggressivenessLabel <> 0 Then
+        _Log("Deleting control: hAggressivenessLabel")
+        GUICtrlDelete($hAggressivenessLabel)
+    EndIf
+    If $hAggressivenessInput <> 0 Then
+        _Log("Deleting control: hAggressivenessInput")
+        GUICtrlDelete($hAggressivenessInput)
+    EndIf
+    If $hTTACheckbox <> 0 Then
+        _Log("Deleting control: hTTACheckbox")
+        GUICtrlDelete($hTTACheckbox)
+    EndIf
+    $hSettingsCombo = 0
+    $hModelCombo = 0
+    $hSegmentSizeLabel = 0
+    $hSegmentSizeCombo = 0
+    $hOverlapLabel = 0
+    $hOverlapInput = 0
+    $hDenoiseCheckbox = 0
+    $hAggressivenessLabel = 0
+    $hAggressivenessInput = 0
+    $hTTACheckbox = 0
+    Local $iLabelHeight = 20
+    Local $iInputHeight = 25
+    Local $iBaseY = $iMargin + 2 * $iListViewHeight + 4 * $iMargin + $iButtonHeight + $iComboHeight + 30
+    $hSettingsCombo = GUICtrlCreateCombo("", $iMargin + $iListViewWidth + $iMargin, $iBaseY, $iControlWidth, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+    GUICtrlSetOnEvent(-1, "_LoadSettings")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    _Log("Created SettingsCombo at Y=" & $iBaseY)
+    $hModelCombo = GUICtrlCreateCombo("", $iMargin + $iListViewWidth + $iMargin, $iBaseY + $iComboHeight + $iMargin, $iControlWidth, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+    GUICtrlSetOnEvent(-1, "_ModelComboHandler")
+    GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+    _Log("Created ModelCombo at Y=" & $iBaseY + $iComboHeight + $iMargin)
+    If $sApp = "UVR5" Then
+        Local $iParamY = $iBaseY + 2 * $iComboHeight + 2 * $iMargin
+        $hSegmentSizeLabel = GUICtrlCreateLabel("Segment Size:", $iMargin + $iControlWidth + $iMargin, $iParamY, 80, $iLabelHeight)
+        $hSegmentSizeCombo = GUICtrlCreateCombo("", $iMargin + $iControlWidth + $iMargin + 80, $iParamY, 80, $iComboHeight, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+        GUICtrlSetData(-1, "256|512|1024", "512")
+        $hOverlapLabel = GUICtrlCreateLabel("Overlap:", $iMargin + $iControlWidth + $iMargin + 160, $iParamY, 80, $iLabelHeight)
+        $hOverlapInput = GUICtrlCreateInput("", $iMargin + $iControlWidth + $iMargin + 240, $iParamY, 80, $iInputHeight)
+        GUICtrlSetLimit($hOverlapInput, 4, 1)
+        GUICtrlSetResizing($hSegmentSizeLabel, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hSegmentSizeCombo, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hOverlapLabel, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hOverlapInput, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        $iParamY += $iInputHeight + $iMargin
+        $hAggressivenessLabel = GUICtrlCreateLabel("Aggressiveness:", $iMargin + $iControlWidth + $iMargin, $iParamY, 80, $iLabelHeight)
+        $hAggressivenessInput = GUICtrlCreateInput("", $iMargin + $iControlWidth + $iMargin + 80, $iParamY, 80, $iInputHeight)
+        GUICtrlSetLimit($hAggressivenessInput, 2, 1)
+        $hDenoiseCheckbox = GUICtrlCreateCheckbox("Denoise", $iMargin + $iControlWidth + $iMargin + 160, $iParamY, 60, $iLabelHeight)
+        $hTTACheckbox = GUICtrlCreateCheckbox("TTA", $iMargin + $iControlWidth + $iMargin + 220, $iParamY, 60, $iLabelHeight)
+        GUICtrlSetResizing($hAggressivenessLabel, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hAggressivenessInput, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hDenoiseCheckbox, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        GUICtrlSetResizing($hTTACheckbox, $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+        _Log("Created UVR5 parameter controls at Y=" & $iParamY)
+    EndIf
+    _UpdateSettingsDroplist()
+    _UpdateModelDroplist()
+    Local $sCurrentModel = GUICtrlRead($hModelCombo)
+    If $sCurrentModel <> "" And $sCurrentModel <> "No models available" Then
+        _UpdateModelDetails($sCurrentModel)
+    Else
+        _UpdateModelDetails("")
+    EndIf
+    _Log("Exiting _UpdateAppControls")
+EndFunc
+
+Func _UpdateSettingsDroplist()
+    _Log("Entering _UpdateSettingsDroplist")
+    Local $sQuery = "SELECT Name FROM SavedSettings ORDER BY Name;"
+    Local $aResult, $iRows, $iCols
+    Local $iRet = _SQLite_GetTable2d($hDb, $sQuery, $aResult, $iRows, $iCols)
+    If $iRet <> $SQLITE_OK Then
+        _Log("Failed to query saved settings: " & _SQLite_ErrMsg(), True)
+        GUICtrlSetData($hSettingsCombo, "|No settings available")
+        Return
+    EndIf
+    GUICtrlSetData($hSettingsCombo, "")
+    Local $sSettingsList = ""
+    If $iRows > 0 And IsArray($aResult) And UBound($aResult, 1) >= 2 Then
+        For $i = 1 To $iRows
+            Local $sSettingName = $aResult[$i][0]
+            If $sSettingName <> "" Then
+                $sSettingsList &= $sSettingName & "|"
+            EndIf
+        Next
+    EndIf
+    If $sSettingsList <> "" Then
+        $sSettingsList = StringTrimRight($sSettingsList, 1)
+        _Log("Settings list string: " & $sSettingsList)
+        GUICtrlSetData($hSettingsCombo, "|" & $sSettingsList)
+    Else
+        _Log("No saved settings found")
+        GUICtrlSetData($hSettingsCombo, "|No settings available")
+    EndIf
+    _Log("Exiting _UpdateSettingsDroplist")
+EndFunc
+
+Func _UpdateModelDroplist()
+    _Log("Entering _UpdateModelDroplist")
+    Local $sAppFilter = GUICtrlRead($hAppCombo)
+    If $sAppFilter = "" Then
+        _Log("No app selected in AppCombo", True)
+        GUICtrlSetData($hModelCombo, "|No models available")
+        Return
+    EndIf
+    Local $aResult, $iRows, $iCols
+    Local $sQuery = "SELECT Models.Name FROM Models INNER JOIN ModelApps ON Models.ModelID = ModelApps.ModelID WHERE ModelApps.App = '" & _SQLite_Escape($sAppFilter) & "' ORDER BY Models.Name;"
+    _Log("Executing query: " & $sQuery)
+    Local $iRet = _SQLite_GetTable2d($hDb, $sQuery, $aResult, $iRows, $iCols)
+    If $iRet <> $SQLITE_OK Then
+        _Log("Failed to query models: " & _SQLite_ErrMsg(), True)
+        GUICtrlSetData($hModelCombo, "|No models available")
+        Return
+    EndIf
+    GUICtrlSetData($hModelCombo, "")
+    Local $sModelList = ""
+    If $iRows > 0 And IsArray($aResult) And UBound($aResult, 1) >= 2 Then
+        For $i = 1 To $iRows
+            Local $sModelName = $aResult[$i][0]
+            If $sModelName <> "" Then
+                $sModelList &= $sModelName & "|"
+            EndIf
+        Next
+    EndIf
+    If $sModelList <> "" Then
+        $sModelList = StringTrimRight($sModelList, 1)
+        _Log("Model list string: " & $sModelList)
+        GUICtrlSetData($hModelCombo, "|" & $sModelList, StringSplit($sModelList, "|", $STR_NOCOUNT)[0])
+    Else
+        _Log("No models found for " & $sAppFilter)
+        GUICtrlSetData($hModelCombo, "|No models available")
+    EndIf
+    _Log("Exiting _UpdateModelDroplist")
+EndFunc
+
+Func _UpdateModelDetails($sModel)
+    _Log("Entering _UpdateModelDetails for model: " & $sModel)
+    If $sModel = "" Then
+        _Log("Model name is empty", True)
+        GUICtrlSetData($hModelNameLabel, "Model Name: None")
+        GUICtrlSetData($hStemsDisplay, "")
+        GUICtrlSetData($hFocusDisplay, "")
+        GUICtrlSetData($hDescEdit, "")
+        GUICtrlSetData($hCommentsEdit, "")
+        If $hSegmentSizeCombo <> 0 Then GUICtrlSetData($hSegmentSizeCombo, "512")
+        If $hOverlapInput <> 0 Then GUICtrlSetData($hOverlapInput, "")
+        If $hDenoiseCheckbox <> 0 Then GUICtrlSetState($hDenoiseCheckbox, $GUI_UNCHECKED)
+        If $hAggressivenessInput <> 0 Then GUICtrlSetData($hAggressivenessInput, "")
+        If $hTTACheckbox <> 0 Then GUICtrlSetState($hTTACheckbox, $GUI_UNCHECKED)
+        Return
+    EndIf
+    Local $aDetails = _GetModelDetails($sModel)
+    If @error Then
+        _Log("Failed to get details for model " & $sModel, True)
+        Return
+    EndIf
+    GUICtrlSetData($hModelNameLabel, "Model Name: " & $aDetails[2])
+    GUICtrlSetData($hStemsDisplay, $aDetails[3])
+    GUICtrlSetData($hFocusDisplay, $aDetails[1])
+    GUICtrlSetData($hDescEdit, $aDetails[6])
+    GUICtrlSetData($hCommentsEdit, $aDetails[7])
+    Local $aParams = _GetModelParameters($sModel)
+    If @error Or GUICtrlRead($hAppCombo) <> "UVR5" Then
+        _Log("No parameters available for model " & $sModel & " or non-UVR5 app selected")
+        If $hSegmentSizeCombo <> 0 Then GUICtrlSetData($hSegmentSizeCombo, "512")
+        If $hOverlapInput <> 0 Then GUICtrlSetData($hOverlapInput, "")
+        If $hDenoiseCheckbox <> 0 Then GUICtrlSetState($hDenoiseCheckbox, $GUI_UNCHECKED)
+        If $hAggressivenessInput <> 0 Then GUICtrlSetData($hAggressivenessInput, "")
+        If $hTTACheckbox <> 0 Then GUICtrlSetState($hTTACheckbox, $GUI_UNCHECKED)
+        Return
+    EndIf
+    If $hSegmentSizeCombo <> 0 Then GUICtrlSetData($hSegmentSizeCombo, $aParams[0] = "" ? "512" : $aParams[0])
+    If $hOverlapInput <> 0 Then GUICtrlSetData($hOverlapInput, $aParams[1] = "" ? "0.0" : $aParams[1])
+    If $hDenoiseCheckbox <> 0 Then GUICtrlSetState($hDenoiseCheckbox, $aParams[2] = "True" ? $GUI_CHECKED : $GUI_UNCHECKED)
+    If $hAggressivenessInput <> 0 Then GUICtrlSetData($hAggressivenessInput, $aParams[3] = "" ? "10" : $aParams[3])
+    If $hTTACheckbox <> 0 Then GUICtrlSetState($hTTACheckbox, $aParams[4] = "True" ? $GUI_CHECKED : $GUI_UNCHECKED)
+    _Log("Exiting _UpdateModelDetails")
+EndFunc
+
+Func _AppComboHandler()
+    _Log("Entering _AppComboHandler")
+    Local $iMargin = 10
+    Local $iListViewWidth = ($iGuiWidth - 3 * $iMargin) / 2
+    Local $iListViewHeight = 150
+    Local $iButtonHeight = 30
+    Local $iControlWidth = $iListViewWidth
+    Local $iComboHeight = 25
+    _UpdateAppControls($iListViewWidth, $iListViewHeight, $iButtonHeight, $iMargin, $iControlWidth, $iComboHeight)
+    _Log("Exiting _AppComboHandler")
+EndFunc
+#EndRegion ;**** Model Management ****
+#EndRegion Part2
+
+
+
+
+
 
 #Region ;**** Model Management Functions ****
 Func _CreateGUI()
@@ -831,7 +1323,7 @@ Func _IsModelCompatibleWithTab($sModel, $iTabIndex)
 EndFunc
 #EndRegion ;**** Model Management Functions ****
 #EndRegion Part2
-#EndRegion Part2
+
 
 
 

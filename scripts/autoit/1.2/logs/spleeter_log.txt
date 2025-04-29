@@ -1,0 +1,11 @@
+Command: "C:\Git\3DAudioStudio\scripts\autoit\installs\Spleeter\spleeter_env\Scripts\python.exe" -m spleeter separate -p spleeter:5stems -o "C:\Git\3DAudioStudio\scripts\autoit\stems\5stems" "C:\Git\3DAudioStudio\scripts\autoit\songs\song5.flac"
+[STDOUT] INFO:spleeter:Downloading model archive https://github.com/deezer/spleeter/releases/download/v1.4.0/5stems.tar.gz
+[STDOUT] INFO:spleeter:Validating archive checksum
+[STDOUT] INFO:spleeter:Extracting downloaded 5stems archive
+[STDOUT] INFO:spleeter:5stems model file(s) extracted
+[STDOUT] INFO:spleeter:File C:\Git\3DAudioStudio\scripts\autoit\stems\5stems\song5/piano.wav written succesfully
+INFO:spleeter:File C:\Git\3DAudioStudio\scripts\autoit\stems\5stems\song5/other.wav written succesfully
+INFO:spleeter:File C:\Git\3DAudioStudio\scripts\autoit\stems\5stems\song5/bass.wav written succesfully
+INFO:spleeter:File C:\Git\3DAudioStudio\scripts\autoit\stems\5stems\song5/drums.wav written succesfully
+INFO:spleeter:File C:\Git\3DAudioStudio\scripts\autoit\stems\5stems\song5/vocals.wav written succesfully
+Process exited with code: 1
