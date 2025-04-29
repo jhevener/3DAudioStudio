@@ -8,7 +8,7 @@
 #AutoIt3Wrapper_Res_ProductName=Stem Separator
 #AutoIt3Wrapper_Res_ProductVersion=1.0.0
 #AutoIt3Wrapper_Res_CompanyName=FretzCapo
-#AutoIt3Wrapper_Res_LegalCopyright=© 2025 FretzCapo
+#AutoIt3Wrapper_Res_LegalCopyright=ï¿½ 2025 FretzCapo
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_requestedExecutionLevel=None
@@ -59,7 +59,7 @@ Global $hDb, $sDbFile
 Global $sSettingsIni = @ScriptDir & "\settings.ini"
 Global $sModelsIni = @ScriptDir & "\Models.ini"
 Global $sUserIni = @ScriptDir & "\user.ini"
-Global $sLogFile
+Global $sLogFile = @ScriptDir & "\logs
 Global $sInputPath = @ScriptDir & "\songs"
 Global $sOutputPath = @ScriptDir & "\stems"
 
