@@ -1,0 +1,243 @@
+[04/28/2025 3:21:02 PM] INFO: Starting Model Database Browser
+[04/28/2025 3:21:02 PM] INFO: SQLite started
+[04/28/2025 3:21:02 PM] INFO: Starting database creation
+[04/28/2025 3:21:02 PM] INFO: SQLite started
+[04/28/2025 3:21:02 PM] INFO: Database opened: C:\Git\3DAudioStudio\src\AutoIt\models.db
+[04/28/2025 3:21:02 PM] INFO: Models table created
+[04/28/2025 3:21:02 PM] INFO: ModelApps table created
+[04/28/2025 3:21:02 PM] INFO: ModelFocuses table created
+[04/28/2025 3:21:02 PM] INFO: Found 53 sections in ini file
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 0 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 0 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 0 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 1 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 1 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 1 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 2 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 2 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 2 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 3 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 3 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 3 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 4 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 4 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 4 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 5 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 5 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 5 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 6 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 6 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 6 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 7 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 7 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 7 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 8 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 8 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 8 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 9 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 9 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 9 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 10 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 10 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 10 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 11 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 11 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 11 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 12 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 12 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 12 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 13 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 13 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 13 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 14 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 14 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 14 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 15 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 15 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 15 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 16 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 16 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 16 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 17 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 17 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 17 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 18 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 18 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 18 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 19 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 19 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 19 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 20 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 20 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 20 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 21 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 21 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 21 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 22 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 22 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 22 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 23 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 23 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 23 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 24 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 24 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 24 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 25 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 25 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 25 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 26 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 26 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 26 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 27 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 27 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 27 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 28 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 28 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 28 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 29 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 29 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 29 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 30 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 30 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 30 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 31 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 31 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 31 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 32 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 32 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 32 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 33 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 33 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 33 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 34 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 34 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 34 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 35 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 35 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 35 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 36 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 36 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 36 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 37 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 37 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 37 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 38 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 38 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 38 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 39 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 39 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 39 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 40 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 40 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 40 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 41 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 41 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 41 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 42 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 42 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 42 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 43 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 43 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 43 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 44 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 44 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 44 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 45 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 45 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 45 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 46 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 46 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 46 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 47 into Models
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 47 into ModelApps
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 47 into ModelFocuses
+[04/28/2025 3:21:03 PM] INFO: Inserted ModelID 48 into Models
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 48 into ModelApps
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 48 into ModelFocuses
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 49 into Models
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 49 into ModelApps
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 49 into ModelFocuses
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 50 into Models
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 50 into ModelApps
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 50 into ModelFocuses
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 51 into Models
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 51 into ModelApps
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 51 into ModelFocuses
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 52 into Models
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 52 into ModelApps
+[04/28/2025 3:21:04 PM] INFO: Inserted ModelID 52 into ModelFocuses
+[04/28/2025 3:21:04 PM] INFO: Database creation completed
+[04/28/2025 3:21:04 PM] INFO: Database opened: C:\Git\3DAudioStudio\src\AutoIt\models.db
+[04/28/2025 3:21:04 PM] INFO: Checking database tables
+[04/28/2025 3:21:04 PM] INFO: ModelApps table: Found
+[04/28/2025 3:21:04 PM] INFO: ModelFocuses table: Found
+[04/28/2025 3:21:04 PM] INFO: Initializing database indices
+[04/28/2025 3:21:04 PM] INFO: Database indices created
+[04/28/2025 3:21:04 PM] INFO: Creating GUI
+[04/28/2025 3:21:04 PM] INFO: Theme applied: Dark
+[04/28/2025 3:21:04 PM] INFO: GUI displayed
+[04/28/2025 3:21:04 PM] INFO: Loading data for table: Models
+[04/28/2025 3:21:04 PM] INFO: Loaded 53 rows into ListView for table Models
+[04/28/2025 3:21:04 PM] INFO: Updating filter combos
+[04/28/2025 3:21:04 PM] INFO: Updated App filter with 3 entries
+[04/28/2025 3:21:04 PM] INFO: Updated Stems filter with 5 entries
+[04/28/2025 3:21:04 PM] INFO: Filter combos update completed
+[04/28/2025 3:21:04 PM] INFO: Initial data load completed
+[04/28/2025 3:21:04 PM] INFO: Event handlers registered
+[04/28/2025 3:21:09 PM] INFO: Shutting down
+[04/28/2025 3:21:09 PM] INFO: WM_COMMAND received
+[04/28/2025 3:21:09 PM] INFO: WM_COMMAND received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received
+[04/28/2025 3:21:09 PM] INFO: WM_NOTIFY received

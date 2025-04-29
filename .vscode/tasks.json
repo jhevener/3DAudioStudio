@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run AutoIt Script",
+        "type": "shell",
+        "command": "C:\\Program Files (x86)\\AutoIt3\\AutoIt3.exe",
+        "args": ["${file}"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": [],
+        "detail": "Run the current AutoIt (.au3) script"
+      },
+      {
+        "label": "Run Python Script",
+        "type": "shell",
+        "command": "C:\\Git\\3DAudioStudio\\scripts\\installs\\Demucs\\demucs_env\\Scripts\\python.exe",
+        "args": ["${file}"],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "problemMatcher": [],
+        "detail": "Run the current Python (.py) script using demucs_env"
+      },
+      {
+        "label": "Compile AutoIt Script to EXE",
+        "type": "shell",
+        "command": "C:\\Program Files (x86)\\AutoIt3\\Aut2Exe\\Aut2Exe.exe",
+        "args": ["/in", "${file}", "/out", "${fileDirname}\\${fileBasenameNoExtension}.exe"],
+        "group": "build",
+        "problemMatcher": [],
+        "detail": "Compile the current AutoIt (.au3) script to an executable"
+      }
+    ]
+  }
