@@ -1,0 +1,239 @@
+[4/29/2025 7:43:40 AM] INFO: Entering _Main
+[4/29/2025 7:43:40 AM] INFO: Entering _LogStartupInfo
+[4/29/2025 7:43:40 AM] INFO: Script started
+[4/29/2025 7:43:40 AM] INFO: Script Directory: C:\Git\3DAudioStudio\scripts\autoit
+[4/29/2025 7:43:40 AM] INFO: Working Directory: C:\Git\3DAudioStudio\scripts\autoit
+[4/29/2025 7:43:40 AM] INFO: OS: WIN_11 (X64)
+[4/29/2025 7:43:40 AM] INFO: User: FretzCapo
+[4/29/2025 7:43:40 AM] INFO: FFmpeg Path: C:\Git\3DAudioStudio\scripts\autoit\installs\uvr\ffmpeg\bin\ffmpeg.exe
+[4/29/2025 7:43:40 AM] INFO: Models Database File: C:\Git\3DAudioStudio\scripts\autoit\models.db
+[4/29/2025 7:43:40 AM] INFO: Settings INI: C:\Git\3DAudioStudio\scripts\autoit\settings.ini
+[4/29/2025 7:43:40 AM] INFO: Models INI: C:\Git\3DAudioStudio\scripts\autoit\Models.ini
+[4/29/2025 7:43:40 AM] INFO: User INI: C:\Git\3DAudioStudio\scripts\autoit\user.ini
+[4/29/2025 7:43:40 AM] INFO: Exiting _LogStartupInfo
+[4/29/2025 7:43:40 AM] INFO: Entering _InitializeModels
+[4/29/2025 7:43:40 AM] INFO: Database file does not exist: C:\Git\3DAudioStudio\scripts\autoit\models.db. Creating from Models.ini
+[4/29/2025 7:43:40 AM] INFO: Created new database: C:\Git\3DAudioStudio\scripts\autoit\models.db
+[4/29/2025 7:43:40 AM] INFO: Models table created
+[4/29/2025 7:43:40 AM] INFO: ModelApps table created
+[4/29/2025 7:43:40 AM] INFO: ModelFocuses table created
+[4/29/2025 7:43:40 AM] INFO: Found 53 sections in Models.ini
+[4/29/2025 7:43:40 AM] INFO: Added model 2stems (App: Spleeter) to database
+[4/29/2025 7:43:40 AM] INFO: Added model 4stems (App: Spleeter) to database
+[4/29/2025 7:43:40 AM] INFO: Added model 5stems (App: Spleeter) to database
+[4/29/2025 7:43:40 AM] INFO: Added model htdemucs_2s (App: Demucs) to database
+[4/29/2025 7:43:40 AM] INFO: Added model htdemucs (App: Demucs) to database
+[4/29/2025 7:43:40 AM] INFO: Added model htdemucs_6s (App: Demucs) to database
+[4/29/2025 7:43:40 AM] INFO: Added model mdx_extra_q (App: Demucs) to database
+[4/29/2025 7:43:41 AM] INFO: Added model htdemucs_ft (App: Demucs) to database
+[4/29/2025 7:43:41 AM] INFO: Added model Demucs_extra (App: Demucs) to database
+[4/29/2025 7:43:41 AM] INFO: Added model demucs48_hq (App: Demucs) to database
+[4/29/2025 7:43:41 AM] INFO: Added model Kim_Inst (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model Kim_Vocal_1 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model Kim_Vocal_2 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_a_bass (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_a_drums (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_a_other (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_a_vocals (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_b_bass (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_b_drums (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_b_other (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model kuielab_b_vocals (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model MDX23C-8KFFT-InstVoc_HQ (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model Reverb_HQ_By_FoxJoy (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_1 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_2 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_3 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_HQ_1 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_HQ_2 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_HQ_3 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_HQ_4 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_HQ_5 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Inst_Main (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET-Voc_FT (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-MDX-NET_Crowd_HQ_1 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR_MDXNET_KARA (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR_MDXNET_KARA_2 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR_MDXNET_Main (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 1_HP-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 2_HP-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 3_HP-Vocal-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 4_HP-Vocal-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 5_HP-Karaoke-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 6_HP-Karaoke-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 7_HP2-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 8_HP2-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 9_HP2-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model 17_HP-Wind_Inst-UVR (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model MGM_MAIN_v4 (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-De-Echo-Aggressive (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-De-Echo-Normal (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-DeEcho-DeReverb (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-DeNoise (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Added model UVR-DeNoise-Lite (App: UVR5) to database
+[4/29/2025 7:43:41 AM] INFO: Executing query: SELECT COUNT(*) FROM Models
+[4/29/2025 7:43:41 AM] INFO: Found 53 models in database
+[4/29/2025 7:43:41 AM] INFO: Executing query: SELECT Name FROM Models WHERE Name = 'htdemucs'
+[4/29/2025 7:43:41 AM] INFO: Confirmed default model 'htdemucs' exists
+[4/29/2025 7:43:41 AM] INFO: Executing query: SELECT Name FROM Models WHERE Name = '2stems'
+[4/29/2025 7:43:42 AM] INFO: Confirmed Spleeter model '2stems' exists
+[4/29/2025 7:43:42 AM] INFO: Exiting _InitializeModels
+[4/29/2025 7:43:42 AM] INFO: Entering _CreateGUI
+[4/29/2025 7:43:42 AM] INFO: Exiting _CreateGUI
+[4/29/2025 7:43:42 AM] INFO: Entering SetDefaults
+[4/29/2025 7:43:42 AM] INFO: Setting default tab to Demucs (index 0)
+[4/29/2025 7:43:42 AM] INFO: Triggering _TabHandler to initialize Demucs tab controls and set default model
+[4/29/2025 7:43:42 AM] INFO: Entering _TabHandler
+[4/29/2025 7:43:42 AM] INFO: Tab switched to index: 0
+[4/29/2025 7:43:42 AM] INFO: Entering _UpdateModelDroplist
+[4/29/2025 7:43:42 AM] INFO: Executing query: SELECT Models.Name FROM Models INNER JOIN ModelApps ON Models.ModelID = ModelApps.ModelID WHERE ModelApps.App = 'Demucs' ORDER BY Models.Name;
+[4/29/2025 7:43:42 AM] INFO: Model list string: Demucs_extra|demucs48_hq|htdemucs|htdemucs_2s|htdemucs_6s|htdemucs_ft|mdx_extra_q
+[4/29/2025 7:43:42 AM] INFO: Exiting _UpdateModelDroplist
+[4/29/2025 7:43:42 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 7:43:42 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 7:43:42 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 7:43:42 AM] INFO: Entering _IsModelCompatibleWithTab: Model=htdemucs, TabIndex=0
+[4/29/2025 7:43:42 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 7:43:42 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 7:43:42 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 7:43:42 AM] INFO: Model compatibility check: htdemucs (App: Demucs) is compatible with tab 0
+[4/29/2025 7:43:42 AM] INFO: Setting default model for tab 0: htdemucs
+[4/29/2025 7:43:42 AM] INFO: Default model htdemucs set successfully
+[4/29/2025 7:43:42 AM] INFO: Entering _UpdateModelDetails for model: htdemucs
+[4/29/2025 7:43:42 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 7:43:42 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 7:43:42 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 7:43:42 AM] INFO: Setting Stems: 4
+[4/29/2025 7:43:42 AM] INFO: Setting Focus: Vocals, Drums, Bass, Other
+[4/29/2025 7:43:42 AM] INFO: Setting Description: Demucs model for separating audio into vocals, drums, bass, and other.
+[4/29/2025 7:43:42 AM] INFO: Setting Comments: Good for 4-stem separation but may muffle or phase audio in some genres; test with VR models for comparison.
+[4/29/2025 7:43:42 AM] INFO: Updated model details display for htdemucs
+[4/29/2025 7:43:42 AM] INFO: Exiting _UpdateModelDetails
+[4/29/2025 7:43:42 AM] INFO: Exiting _TabHandler
+[4/29/2025 7:43:42 AM] INFO: Setting default input path to C:\Git\3DAudioStudio\scripts\autoit\songs
+[4/29/2025 7:43:42 AM] INFO: Found 3 audio files in C:\Git\3DAudioStudio\scripts\autoit\songs
+[4/29/2025 7:43:42 AM] INFO: Setting default output path to C:\Git\3DAudioStudio\scripts\autoit\stems
+[4/29/2025 7:43:42 AM] INFO: No audio files found in C:\Git\3DAudioStudio\scripts\autoit\stems
+[4/29/2025 7:43:42 AM] INFO: Adding default song C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav to Process Queue
+[4/29/2025 7:43:42 AM] INFO: Default song C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav added and checked successfully
+[4/29/2025 7:43:42 AM] INFO: Exiting SetDefaults
+[4/29/2025 7:43:42 AM] INFO: GUI initialized and defaults set
+[4/29/2025 8:52:06 AM] INFO: Entering _SeparateButtonHandler
+[4/29/2025 8:52:06 AM] INFO: Processing song: C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav
+[4/29/2025 8:52:06 AM] INFO: Entering _ProcessFile: File=C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav, Model=htdemucs, OutputDir=C:\Git\3DAudioStudio\scripts\autoit\stems
+[4/29/2025 8:52:06 AM] INFO: Entering _IsModelCompatibleWithTab: Model=htdemucs, TabIndex=0
+[4/29/2025 8:52:06 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 8:52:06 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 8:52:06 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 8:52:06 AM] INFO: Model compatibility check: htdemucs (App: Demucs) is compatible with tab 0
+[4/29/2025 8:52:06 AM] INFO: Processing with Demucs using model: htdemucs
+[4/29/2025 8:52:06 AM] INFO: Entering _ProcessDemucs: File=C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav, Model=htdemucs
+[4/29/2025 8:52:06 AM] INFO: Demucs Python version: 
+[4/29/2025 8:52:06 AM] INFO: Opened demucs_log.txt for writing
+[4/29/2025 8:52:06 AM] INFO: Started Demucs process with PID: 27492
+[4/29/2025 8:52:11 AM] INFO: [Demucs STDOUT] [1mImportant: the default model was recently changed to `htdemucs`[0m the latest Hybrid Transformer Demucs model. In some cases, this model can actually perform worse than previous models. To get back the old default model use `-n mdx_extra_q`.
+Selected model is a bag of 1 models. You will see that many progress bars per track.
+Separated tracks will be stored in C:\Git\3DAudioStudio\scripts\autoit\stems\htdemucs\htdemucs
+Separating track C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav
+  0%|                                                                     | 0.0/269.09999999999997 [00:00<?, ?seconds/s]
+[4/29/2025 8:52:11 AM] INFO: Progress updated to: 0%
+[4/29/2025 8:52:16 AM] INFO: [Demucs STDOUT]   2%|#3                                                          | 5.85/269.09999999999997 [00:04<03:30,  1.25seconds/s]
+[4/29/2025 8:52:16 AM] INFO: Progress updated to: 2%
+[4/29/2025 8:52:18 AM] INFO: [Demucs STDOUT]   4%|##6                                                         | 11.7/269.09999999999997 [00:07<02:25,  1.77seconds/s]
+[4/29/2025 8:52:18 AM] INFO: Progress updated to: 4%
+[4/29/2025 8:52:20 AM] INFO: [Demucs STDOUT]   7%|###                                           | 17.549999999999997/269.09999999999997 [00:09<02:01,  2.07seconds/s]
+[4/29/2025 8:52:20 AM] INFO: Progress updated to: 7%
+[4/29/2025 8:52:23 AM] INFO: [Demucs STDOUT]   9%|#####2                                                      | 23.4/269.09999999999997 [00:11<01:50,  2.23seconds/s]
+[4/29/2025 8:52:23 AM] INFO: Progress updated to: 9%
+[4/29/2025 8:52:25 AM] INFO: [Demucs STDOUT]  11%|######4                                                    | 29.25/269.09999999999997 [00:13<01:42,  2.34seconds/s]
+[4/29/2025 8:52:25 AM] INFO: Progress updated to: 11%
+[4/29/2025 8:52:27 AM] INFO: [Demucs STDOUT]  13%|######                                        | 35.099999999999994/269.09999999999997 [00:16<01:36,  2.41seconds/s]
+[4/29/2025 8:52:27 AM] INFO: Progress updated to: 13%
+[4/29/2025 8:52:30 AM] INFO: [Demucs STDOUT]  15%|#######                                       | 40.949999999999996/269.09999999999997 [00:18<01:32,  2.46seconds/s]
+[4/29/2025 8:52:30 AM] INFO: Progress updated to: 15%
+[4/29/2025 8:52:32 AM] INFO: [Demucs STDOUT]  17%|##########4                                                 | 46.8/269.09999999999997 [00:20<01:29,  2.48seconds/s]
+[4/29/2025 8:52:32 AM] INFO: Progress updated to: 17%
+[4/29/2025 8:52:34 AM] INFO: [Demucs STDOUT]  20%|###########5                                               | 52.65/269.09999999999997 [00:23<01:26,  2.50seconds/s]
+[4/29/2025 8:52:34 AM] INFO: Progress updated to: 20%
+[4/29/2025 8:52:37 AM] INFO: [Demucs STDOUT]  22%|#############                                               | 58.5/269.09999999999997 [00:25<01:28,  2.38seconds/s]
+[4/29/2025 8:52:37 AM] INFO: Progress updated to: 22%
+[4/29/2025 8:52:40 AM] INFO: [Demucs STDOUT]  24%|##############1                                            | 64.35/269.09999999999997 [00:28<01:29,  2.29seconds/s]
+[4/29/2025 8:52:40 AM] INFO: Progress updated to: 24%
+[4/29/2025 8:52:42 AM] INFO: [Demucs STDOUT]  26%|############2                                  | 70.19999999999999/269.09999999999997 [00:31<01:28,  2.25seconds/s]
+[4/29/2025 8:52:42 AM] INFO: Progress updated to: 26%
+[4/29/2025 8:52:45 AM] INFO: [Demucs STDOUT]  28%|################6                                          | 76.05/269.09999999999997 [00:34<01:27,  2.21seconds/s]
+[4/29/2025 8:52:45 AM] INFO: Progress updated to: 28%
+[4/29/2025 8:52:48 AM] INFO: [Demucs STDOUT]  30%|##############3                                | 81.89999999999999/269.09999999999997 [00:36<01:25,  2.18seconds/s]
+[4/29/2025 8:52:48 AM] INFO: Progress updated to: 30%
+[4/29/2025 8:52:51 AM] INFO: [Demucs STDOUT]  33%|###################2                                       | 87.75/269.09999999999997 [00:39<01:24,  2.15seconds/s]
+[4/29/2025 8:52:51 AM] INFO: Progress updated to: 33%
+[4/29/2025 8:52:53 AM] INFO: [Demucs STDOUT]  35%|####################8                                       | 93.6/269.09999999999997 [00:42<01:21,  2.15seconds/s]
+[4/29/2025 8:52:53 AM] INFO: Progress updated to: 35%
+[4/29/2025 8:52:56 AM] INFO: [Demucs STDOUT]  37%|#################3                             | 99.44999999999999/269.09999999999997 [00:45<01:19,  2.14seconds/s]
+[4/29/2025 8:52:56 AM] INFO: Progress updated to: 37%
+[4/29/2025 8:52:59 AM] INFO: [Demucs STDOUT]  39%|#######################                                    | 105.3/269.09999999999997 [00:47<01:16,  2.14seconds/s]
+[4/29/2025 8:52:59 AM] INFO: Progress updated to: 39%
+[4/29/2025 8:53:02 AM] INFO: [Demucs STDOUT]  41%|###################                           | 111.14999999999999/269.09999999999997 [00:50<01:13,  2.15seconds/s]
+[4/29/2025 8:53:02 AM] INFO: Progress updated to: 41%
+[4/29/2025 8:53:04 AM] INFO: [Demucs STDOUT]  43%|#########################6                                 | 117.0/269.09999999999997 [00:53<01:10,  2.15seconds/s]
+[4/29/2025 8:53:04 AM] INFO: Progress updated to: 43%
+[4/29/2025 8:53:07 AM] INFO: [Demucs STDOUT]  46%|##########################4                               | 122.85/269.09999999999997 [00:55<01:07,  2.16seconds/s]
+[4/29/2025 8:53:07 AM] INFO: Progress updated to: 46%
+[4/29/2025 8:53:10 AM] INFO: [Demucs STDOUT]  48%|############################2                              | 128.7/269.09999999999997 [00:58<01:04,  2.17seconds/s]
+[4/29/2025 8:53:10 AM] INFO: Progress updated to: 48%
+[4/29/2025 8:53:12 AM] INFO: [Demucs STDOUT]  50%|#######################                       | 134.54999999999998/269.09999999999997 [01:01<01:02,  2.17seconds/s]
+[4/29/2025 8:53:12 AM] INFO: Progress updated to: 50%
+[4/29/2025 8:53:15 AM] INFO: [Demucs STDOUT]  52%|########################                      | 140.39999999999998/269.09999999999997 [01:03<00:59,  2.17seconds/s]
+[4/29/2025 8:53:15 AM] INFO: Progress updated to: 52%
+[4/29/2025 8:53:18 AM] INFO: [Demucs STDOUT]  54%|###############################5                          | 146.25/269.09999999999997 [01:06<00:56,  2.16seconds/s]
+[4/29/2025 8:53:18 AM] INFO: Progress updated to: 54%
+[4/29/2025 8:53:21 AM] INFO: [Demucs STDOUT]  57%|#################################3                         | 152.1/269.09999999999997 [01:09<00:54,  2.16seconds/s]
+[4/29/2025 8:53:21 AM] INFO: Progress updated to: 57%
+[4/29/2025 8:53:23 AM] INFO: [Demucs STDOUT]  59%|##################################                        | 157.95/269.09999999999997 [01:12<00:51,  2.15seconds/s]
+[4/29/2025 8:53:23 AM] INFO: Progress updated to: 59%
+[4/29/2025 8:53:26 AM] INFO: [Demucs STDOUT]  61%|############################                  | 163.79999999999998/269.09999999999997 [01:14<00:48,  2.15seconds/s]
+[4/29/2025 8:53:26 AM] INFO: Progress updated to: 61%
+[4/29/2025 8:53:29 AM] INFO: [Demucs STDOUT]  63%|#############################                 | 169.64999999999998/269.09999999999997 [01:17<00:46,  2.15seconds/s]
+[4/29/2025 8:53:29 AM] INFO: Progress updated to: 63%
+[4/29/2025 8:53:31 AM] INFO: [Demucs STDOUT]  65%|######################################4                    | 175.5/269.09999999999997 [01:20<00:43,  2.15seconds/s]
+[4/29/2025 8:53:31 AM] INFO: Progress updated to: 65%
+[4/29/2025 8:53:34 AM] INFO: [Demucs STDOUT]  67%|#######################################                   | 181.35/269.09999999999997 [01:22<00:40,  2.16seconds/s]
+[4/29/2025 8:53:34 AM] INFO: Progress updated to: 67%
+[4/29/2025 8:53:37 AM] INFO: [Demucs STDOUT]  70%|#########################################                  | 187.2/269.09999999999997 [01:25<00:37,  2.16seconds/s]
+[4/29/2025 8:53:37 AM] INFO: Progress updated to: 70%
+[4/29/2025 8:53:40 AM] INFO: [Demucs STDOUT]  72%|#################################             | 193.04999999999998/269.09999999999997 [01:28<00:34,  2.17seconds/s]
+[4/29/2025 8:53:40 AM] INFO: Progress updated to: 72%
+[4/29/2025 8:53:42 AM] INFO: [Demucs STDOUT]  74%|##################################            | 198.89999999999998/269.09999999999997 [01:31<00:32,  2.17seconds/s]
+[4/29/2025 8:53:42 AM] INFO: Progress updated to: 74%
+[4/29/2025 8:53:45 AM] INFO: [Demucs STDOUT]  76%|############################################1             | 204.75/269.09999999999997 [01:33<00:29,  2.17seconds/s]
+[4/29/2025 8:53:45 AM] INFO: Progress updated to: 76%
+[4/29/2025 8:53:48 AM] INFO: [Demucs STDOUT]  78%|##############################################1            | 210.6/269.09999999999997 [01:36<00:26,  2.17seconds/s]
+[4/29/2025 8:53:48 AM] INFO: Progress updated to: 78%
+[4/29/2025 8:53:50 AM] INFO: [Demucs STDOUT]  80%|##############################################6           | 216.45/269.09999999999997 [01:39<00:24,  2.16seconds/s]
+[4/29/2025 8:53:50 AM] INFO: Progress updated to: 80%
+[4/29/2025 8:53:53 AM] INFO: [Demucs STDOUT]  83%|######################################        | 222.29999999999998/269.09999999999997 [01:41<00:21,  2.17seconds/s]
+[4/29/2025 8:53:53 AM] INFO: Progress updated to: 83%
+[4/29/2025 8:53:56 AM] INFO: [Demucs STDOUT]  85%|#######################################       | 228.14999999999998/269.09999999999997 [01:44<00:19,  2.14seconds/s]
+[4/29/2025 8:53:56 AM] INFO: Progress updated to: 85%
+[4/29/2025 8:53:59 AM] INFO: [Demucs STDOUT]  87%|###################################################3       | 234.0/269.09999999999997 [01:47<00:16,  2.11seconds/s]
+[4/29/2025 8:53:59 AM] INFO: Progress updated to: 87%
+[4/29/2025 8:54:01 AM] INFO: [Demucs STDOUT]  89%|###################################################6      | 239.85/269.09999999999997 [01:50<00:13,  2.12seconds/s]
+[4/29/2025 8:54:01 AM] INFO: Progress updated to: 89%
+[4/29/2025 8:54:04 AM] INFO: [Demucs STDOUT]  91%|#####################################################8     | 245.7/269.09999999999997 [01:52<00:10,  2.13seconds/s]
+[4/29/2025 8:54:04 AM] INFO: Progress updated to: 91%
+[4/29/2025 8:54:07 AM] INFO: [Demucs STDOUT]  93%|###########################################   | 251.54999999999998/269.09999999999997 [01:55<00:08,  2.07seconds/s]
+[4/29/2025 8:54:07 AM] INFO: Progress updated to: 93%
+[4/29/2025 8:54:10 AM] INFO: [Demucs STDOUT]  96%|########################################################4  | 257.4/269.09999999999997 [01:59<00:05,  2.01seconds/s]
+[4/29/2025 8:54:10 AM] INFO: Progress updated to: 96%
+[4/29/2025 8:54:14 AM] INFO: [Demucs STDOUT]  98%|########################################################7 | 263.25/269.09999999999997 [02:02<00:03,  1.92seconds/s]
+[4/29/2025 8:54:14 AM] INFO: Progress updated to: 98%
+[4/29/2025 8:54:17 AM] INFO: [Demucs STDOUT] 100%|##############################################| 269.09999999999997/269.09999999999997 [02:06<00:00,  1.77seconds/s]100%|##############################################| 269.09999999999997/269.09999999999997 [02:06<00:00,  2.13seconds/s]
+
+[4/29/2025 8:54:17 AM] INFO: Progress updated to: 100%
+[4/29/2025 8:54:20 AM] ERROR: Demucs process exited with non-zero code: 1. Output files were generated successfully, but this may indicate a minor issue.
+[4/29/2025 8:54:20 AM] ERROR: Failed to process C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav: expected 4 output files, found 0
+[4/29/2025 8:55:28 AM] ERROR: Failed to process file: C:\Git\3DAudioStudio\scripts\autoit\songs\song6.wav
+[4/29/2025 8:55:28 AM] INFO: Processing complete: 0/1 tasks successful
+[4/29/2025 8:55:30 AM] INFO: Exiting _SeparateButtonHandler
+[4/29/2025 8:57:35 AM] INFO: Entering _Exit
+[4/29/2025 8:57:35 AM] INFO: Exiting application

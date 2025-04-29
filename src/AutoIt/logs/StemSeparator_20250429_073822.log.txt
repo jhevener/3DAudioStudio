@@ -1,0 +1,66 @@
+[4/29/2025 7:38:22 AM] INFO: Entering _Main
+[4/29/2025 7:38:22 AM] INFO: Entering _LogStartupInfo
+[4/29/2025 7:38:22 AM] INFO: Script started
+[4/29/2025 7:38:22 AM] INFO: Script Directory: C:\Git\3DAudioStudio\scripts\autoit
+[4/29/2025 7:38:22 AM] INFO: Working Directory: C:\Git\3DAudioStudio\scripts\autoit
+[4/29/2025 7:38:22 AM] INFO: OS: WIN_11 (X64)
+[4/29/2025 7:38:22 AM] INFO: User: FretzCapo
+[4/29/2025 7:38:22 AM] INFO: FFmpeg Path: C:\Git\3DAudioStudio\src\AutoIt\installs\uvr\ffmpeg\bin\ffmpeg.exe
+[4/29/2025 7:38:22 AM] INFO: Models Database File: C:\Git\3DAudioStudio\src\AutoIt\models.db
+[4/29/2025 7:38:22 AM] INFO: Settings INI: C:\Git\3DAudioStudio\scripts\autoit\settings.ini
+[4/29/2025 7:38:23 AM] INFO: Models INI: C:\Git\3DAudioStudio\scripts\autoit\Models.ini
+[4/29/2025 7:38:23 AM] INFO: User INI: C:\Git\3DAudioStudio\scripts\autoit\user.ini
+[4/29/2025 7:38:23 AM] INFO: Exiting _LogStartupInfo
+[4/29/2025 7:38:23 AM] INFO: Entering _InitializeModels
+[4/29/2025 7:38:23 AM] INFO: Opened existing database: C:\Git\3DAudioStudio\src\AutoIt\models.db
+[4/29/2025 7:38:23 AM] INFO: Executing query: SELECT COUNT(*) FROM Models
+[4/29/2025 7:38:23 AM] INFO: Found 53 models in database
+[4/29/2025 7:38:23 AM] INFO: Executing query: SELECT Name FROM Models WHERE Name = 'htdemucs'
+[4/29/2025 7:38:23 AM] INFO: Confirmed default model 'htdemucs' exists
+[4/29/2025 7:38:23 AM] INFO: Executing query: SELECT Name FROM Models WHERE Name = '2stems'
+[4/29/2025 7:38:23 AM] INFO: Confirmed Spleeter model '2stems' exists
+[4/29/2025 7:38:23 AM] INFO: Exiting _InitializeModels
+[4/29/2025 7:38:23 AM] INFO: Entering _CreateGUI
+[4/29/2025 7:38:23 AM] INFO: Exiting _CreateGUI
+[4/29/2025 7:38:23 AM] INFO: Entering SetDefaults
+[4/29/2025 7:38:23 AM] INFO: Setting default tab to Demucs (index 0)
+[4/29/2025 7:38:23 AM] INFO: Triggering _TabHandler to initialize Demucs tab controls and set default model
+[4/29/2025 7:38:23 AM] INFO: Entering _TabHandler
+[4/29/2025 7:38:23 AM] INFO: Tab switched to index: 0
+[4/29/2025 7:38:23 AM] INFO: Entering _UpdateModelDroplist
+[4/29/2025 7:38:23 AM] INFO: Executing query: SELECT Models.Name FROM Models INNER JOIN ModelApps ON Models.ModelID = ModelApps.ModelID WHERE ModelApps.App = 'Demucs' ORDER BY Models.Name;
+[4/29/2025 7:38:23 AM] INFO: Model list string: Demucs_extra|demucs48_hq|htdemucs|htdemucs_2s|htdemucs_6s|htdemucs_ft|mdx_extra_q
+[4/29/2025 7:38:23 AM] INFO: Exiting _UpdateModelDroplist
+[4/29/2025 7:38:23 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 7:38:23 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 7:38:23 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 7:38:23 AM] INFO: Entering _IsModelCompatibleWithTab: Model=htdemucs, TabIndex=0
+[4/29/2025 7:38:23 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 7:38:23 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 7:38:23 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 7:38:24 AM] INFO: Model compatibility check: htdemucs (App: Demucs) is compatible with tab 0
+[4/29/2025 7:38:24 AM] INFO: Setting default model for tab 0: htdemucs
+[4/29/2025 7:38:24 AM] INFO: Default model htdemucs set successfully
+[4/29/2025 7:38:24 AM] INFO: Entering _UpdateModelDetails for model: htdemucs
+[4/29/2025 7:38:24 AM] INFO: Entering _GetModelDetails for model: htdemucs
+[4/29/2025 7:38:24 AM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[4/29/2025 7:38:24 AM] INFO: Retrieved details for model htdemucs
+[4/29/2025 7:38:24 AM] INFO: Setting Stems: 4
+[4/29/2025 7:38:24 AM] INFO: Setting Focus: Vocals, Drums, Bass, Other
+[4/29/2025 7:38:24 AM] INFO: Setting Description: Demucs model for separating audio into vocals, drums, bass, and other.
+[4/29/2025 7:38:24 AM] INFO: Setting Comments: Good for 4-stem separation but may muffle or phase audio in some genres; test with VR models for comparison.
+[4/29/2025 7:38:24 AM] INFO: Updated model details display for htdemucs
+[4/29/2025 7:38:24 AM] INFO: Exiting _UpdateModelDetails
+[4/29/2025 7:38:24 AM] INFO: Exiting _TabHandler
+[4/29/2025 7:38:24 AM] INFO: Setting default input path to C:\Git\3DAudioStudio\src\AutoIt\songs
+[4/29/2025 7:38:24 AM] ERROR: Default input path C:\Git\3DAudioStudio\src\AutoIt\songs does not exist
+[4/29/2025 7:38:24 AM] INFO: Setting default output path to C:\Git\3DAudioStudio\src\AutoIt\stems
+[4/29/2025 7:38:24 AM] ERROR: Default output path C:\Git\3DAudioStudio\src\AutoIt\stems does not exist
+[4/29/2025 7:38:24 AM] INFO: Adding default song C:\Git\3DAudioStudio\src\AutoIt\songs\song5.flac to Process Queue
+[4/29/2025 7:38:24 AM] ERROR: Default song C:\Git\3DAudioStudio\src\AutoIt\songs\song5.flac does not exist
+[4/29/2025 7:38:24 AM] INFO: Exiting SetDefaults
+[4/29/2025 7:38:24 AM] INFO: GUI initialized and defaults set
+[4/29/2025 7:38:30 AM] INFO: Entering _SeparateButtonHandler
+[4/29/2025 7:38:30 AM] INFO: Process Queue is empty
+[4/29/2025 7:38:37 AM] INFO: Entering _Exit
+[4/29/2025 7:38:37 AM] INFO: Exiting application
