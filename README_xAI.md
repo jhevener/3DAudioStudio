@@ -1,5 +1,10 @@
 # README for xAI (Grok) - 3DAudioStudio Repository
 
+## Number 1 rule: NO ASSUMPTIONS, EVER, ALWAY ASK FRETZCAPO
+## Number 2 rule: Always include entire "Parts" #Region/#EndRegion  including the existing three line comment headers preceding them
+## Number 3 rule: Always follow rule 1 and 2
+
+
 ## Purpose
 This file provides guidance for xAI's Grok (or similar AI agents) when accessing and analyzing the 3DAudioStudio repository (https://github.com/jhevener/3DAudioStudio). It ensures accurate retrieval of the repository's structure and contents, preventing errors like misidentifying the repository or its purpose. Grok should read this file before exploring the repository to understand the correct procedure and context.
 
