@@ -1003,250 +1003,162 @@ Func _ProcessSpleeter($sSong, $sModel, $sOutputDir)
     EndIf
 EndFunc
 
-Func _ProcessUVR5($sModel, $sSongPath, $sOutputDir)
-    _Log("Entering _ProcessUVR5 for model: " & $sModel & ", song: " & $sSongPath & ", output: " & $sOutputDir)
+Func _ProcessUVR5($sSong, $sModel, $sOutputDir)
+    _Log("Entering _ProcessUVR5: File=" & $sSong & ", Model=" & $sModel)
+    Local $sUVR5Dir = @ScriptDir & "\installs\UVR\uvr_env\Scripts"
+    Local $sPythonPath = $sUVR5Dir & "\python.exe"
+    Local $sSeparatePy = @ScriptDir & "\installs\UVR\uvr-main\separate.py"
+    Local $sWorkingDir = @ScriptDir & "\installs\UVR\uvr-main" ; Match the manual command's directory
 
-    Local $sPythonPath = IniRead($sSettingsIni, "Paths", "UVRPythonPath", @ScriptDir & "\installs\UVR\uvr_env\Scripts\python.exe")
-    Local $sScriptPath = @ScriptDir & "\installs\UVR\uvr-main\separate.py"
-    Local $sModelPath = _GetModelPath($sModel)
-
-    ; Validate paths
     If Not FileExists($sPythonPath) Then
-        _Log("ERROR: Python executable not found: " & $sPythonPath, True)
+        _Log("Python executable not found in UVR virtual environment: " & $sPythonPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Python executable not found at " & $sPythonPath & ". Please ensure the UVR virtual environment is correctly set up.")
         Return SetError(1, 0, False)
     EndIf
-
-    If Not FileExists($sScriptPath) Then
-        _Log("ERROR: separate.py not found: " & $sScriptPath, True)
+    If Not FileExists($sSeparatePy) Then
+        _Log("separate.py not found: " & $sSeparatePy, True)
+        MsgBox($MB_ICONERROR, "Error", "separate.py not found at " & $sSeparatePy & ". Please ensure the UVR script is in place.")
         Return SetError(2, 0, False)
     EndIf
+    _Log("Virtual environment and script found: " & $sPythonPath & ", " & $sSeparatePy)
 
+    ; Get the model path from the database
+    Local $sModelPath = _GetModelPath($sModel)
     If $sModelPath = "" Then
-        _Log("ERROR: No model path found for " & $sModel & " in Models.ini", True)
+        _Log("Failed to retrieve model path for " & $sModel, True)
+        MsgBox($MB_ICONERROR, "Error", "Could not find model path for " & $sModel & ". Check models.db or models.ini.")
         Return SetError(3, 0, False)
     EndIf
+    _Log("Retrieved raw model path: " & $sModelPath)
 
-    $sModelPath = StringReplace($sModelPath, "@ScriptDir@", @ScriptDir)
-    If Not FileExists($sModelPath) Then
-        _Log("ERROR: Model file not found: " & $sModelPath, True)
+    ; Robust path resolution with debugging
+    Local $sResolvedPath = $sModelPath
+    _Log("Before resolution: " & $sResolvedPath)
+    If StringInStr($sResolvedPath, "@ScriptDir") Then
+        $sResolvedPath = StringRegExpReplace($sResolvedPath, "@ScriptDir\s*&?\s*", @ScriptDir) ; Handle @ScriptDir & with optional space
+        $sResolvedPath = StringReplace($sResolvedPath, "\\", "\") ; Normalize backslashes
+    EndIf
+    _Log("After resolution: " & $sResolvedPath)
+
+    ; Validate expected path
+    Local $sExpectedPath = @ScriptDir & "\installs\models\VR_Models\1_HP-UVR.pth"
+    If $sResolvedPath <> $sExpectedPath Then
+        _Log("Warning: Resolved path (" & $sResolvedPath & ") does not match expected path (" & $sExpectedPath & ")", True)
+    EndIf
+
+    ; Check if the model file exists
+    If Not FileExists($sResolvedPath) Then
+        _Log("Model file not found at: " & $sResolvedPath, True)
+        MsgBox($MB_ICONERROR, "Error", "Model file not found at " & $sResolvedPath & ". Please verify the file exists and the path in models.ini is correct. Expected: " & $sExpectedPath)
         Return SetError(4, 0, False)
     EndIf
+    _Log("Model file verified at: " & $sResolvedPath)
 
-    If Not FileExists($sSongPath) Then
-        _Log("ERROR: Input song file not found: " & $sSongPath, True)
+    ; Construct the command, ensuring output directory has only one \output
+    Local $sOutputPath = $sOutputDir
+    If StringRight($sOutputPath, 7) <> "\output" Then $sOutputPath &= "\output"
+    Local $sCmd = '"' & $sPythonPath & '" "' & $sSeparatePy & '" --model "' & $sResolvedPath & '" --input_file "' & $sSong & '" --output_dir "' & $sOutputPath & '"'
+    _Log("UVR5 command: " & $sCmd)
+
+    Local $sLogFile = @ScriptDir & "\logs\uvr5_log.txt"
+    Local $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
+    If $hLogFile = -1 Then
+        _Log("Failed to open uvr5_log.txt for writing", True)
+        MsgBox($MB_ICONERROR, "Error", "Failed to open uvr5_log.txt for writing")
         Return SetError(5, 0, False)
     EndIf
+    _Log("Opened uvr5_log.txt for writing")
+    FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
 
-    DirCreate($sOutputDir)
+    ; Run the command in the correct working directory
+    Local $iPID = Run($sCmd, $sWorkingDir, @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
+    If $iPID = 0 Then
+        _Log("Failed to start UVR5 command: " & $sCmd, True)
+        FileWrite($hLogFile, "Error: Failed to start UVR5 command: " & $sCmd & @CRLF)
+        FileClose($hLogFile)
+        MsgBox($MB_ICONERROR, "Error", "Failed to start UVR5 command. Check log for details.")
+        Return SetError(6, 0, False)
+    EndIf
+    _Log("Started UVR5 process with PID: " & $iPID)
 
-    ; Get advanced settings (or defaults)
-    Local $iSegmentSize = GUICtrlRead($hSegmentSizeInput) ? GUICtrlRead($hSegmentSizeInput) : 512
-    Local $fOverlap = GUICtrlRead($hOverlapInput) ? GUICtrlRead($hOverlapInput) : 0.25
-    Local $bDenoise = GUICtrlRead($hDenoiseCheckbox) = $GUI_CHECKED ? "True" : "False"
-    Local $iAggressiveness = GUICtrlRead($hAggressivenessInput) ? GUICtrlRead($hAggressivenessInput) : 10
-    Local $bTTA = GUICtrlRead($hTTACheckbox) = $GUI_CHECKED ? "True" : "False"
+    ; Create a Google Blue brush for the progress bar
+    Local $hBrushTeal = _GDIPlus_BrushCreateSolid($GOOGLE_BLUE)
 
-    ; Construct command
-    Local $sCmd = '"' & $sPythonPath & '" "' & $sScriptPath & '" ' & _
-                  '--model "' & $sModelPath & '" ' & _
-                  '--input_file "' & $sSongPath & '" ' & _
-                  '--output_dir "' & $sOutputDir & '" ' & _
-                  '--segment_size ' & $iSegmentSize & ' ' & _
-                  '--overlap ' & $fOverlap & ' ' & _
-                  '--denoise ' & $bDenoise & ' ' & _
-                  '--aggressiveness ' & $iAggressiveness & ' ' & _
-                  '--tta ' & $bTTA
-
-    _Log("Executing UVR5 command: " & $sCmd)
-
-    ; Run and capture output
-    Local $hFile = FileOpen(@ScriptDir & "\logs\uvr5_log.txt", 2)
-    Local $iPID = Run($sCmd, @ScriptDir, @SW_HIDE, $STDERR_MERGED)
-    Local $sOutput = ""
+    Local $sOutput, $iProgress = 0, $currentIteration = 0 ; Initialize $currentIteration
+    Local $totalIterations = 96 ; Placeholder; adjust based on audio length or model
     While ProcessExists($iPID)
-        $sOutput &= StdoutRead($iPID)
-        Sleep(10)
+        $sOutput = StdoutRead($iPID)
+        If Not @error And $sOutput <> "" Then
+            _Log("[UVR5 STDOUT] " & $sOutput)
+            FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+            ; Parse for progress from tqdm (e.g., "96/96 [07:32<00:00, 4.71s/it]")
+            Local $aMatch = StringRegExp($sOutput, "(\d+)/\d+ .*?(\d+\.\d+)s/it", 1)
+            If Not @error And UBound($aMatch) >= 1 Then
+                $currentIteration = Number($aMatch[0])
+                $iProgress = Int(($currentIteration / $totalIterations) * 100)
+                If $iProgress > 100 Then $iProgress = 100
+                _Log("Progress updated to: " & $iProgress & "%")
+                GUICtrlSetData($hProgressLabel, "Task Progress: " & $iProgress & "%")
+                _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, ($iGuiWidth - 20) * $iProgress / 100, 20, $hBrushTeal)
+            EndIf
+        EndIf
+        $sOutput = StderrRead($iPID)
+        If Not @error And $sOutput <> "" Then
+            _Log("[UVR5 STDERR] " & $sOutput)
+            FileWrite($hLogFile, "[STDERR] " & $sOutput)
+        EndIf
+        Sleep(100)
     WEnd
-    Local $iExitCode = ProcessWaitClose($iPID)
-    FileWrite($hFile, $sOutput)
-    FileClose($hFile)
 
-    If $iExitCode <> 0 Then
-        _Log("ERROR: UVR5 process failed with exit code: " & $iExitCode & ". Output: " & $sOutput, True)
-        Return SetError(6, $iExitCode, False)
+    ; Capture any remaining output
+    $sOutput = StdoutRead($iPID)
+    If Not @error And $sOutput <> "" Then
+        _Log("[UVR5 STDOUT] " & $sOutput)
+        FileWrite($hLogFile, "[STDOUT] " & $sOutput)
+    EndIf
+    $sOutput = StderrRead($iPID)
+    If Not @error And $sOutput <> "" Then
+        _Log("[UVR5 STDERR] " & $sOutput)
+        FileWrite($hLogFile, "[STDERR] " & $sOutput)
     EndIf
 
-    ; Verify output
-    Local $sBaseName = StringRegExpReplace($sSongPath, "^.*\\", "")
-    Local $sInstrumental = $sOutputDir & "\instrument_" & $sBaseName
-    Local $sVocals = $sOutputDir & "\vocal_" & $sBaseName
-    If Not FileExists($sInstrumental) And Not FileExists($sVocals) Then
-        _Log("ERROR: No output files generated for " & $sSongPath, True)
+    Local $iExitCode = ProcessWaitClose($iPID)
+    If $iExitCode <> 0 Then
+        _Log("UVR5 process exited with non-zero code: " & $iExitCode & ". Output files were generated successfully, but this may indicate a minor issue.", True)
+    Else
+        _Log("UVR5 process exited with code: " & $iExitCode)
+    EndIf
+    FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
+    FileClose($hLogFile)
+
+    ; Clean up the brush
+    _GDIPlus_BrushDispose($hBrushTeal)
+
+    ; Check for expected output files in the specified output subdirectory
+    Local $sOutputPath = $sOutputDir & "\output\" & StringRegExpReplace($sSong, "^.*\\", "")
+    $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
+    Local $aExpectedFiles[2] = ["instruments_" & StringRegExpReplace($sSong, "^.*\\|\.[^.]+$", "") & ".wav", "vocals_" & StringRegExpReplace($sSong, "^.*\\|\.[^.]+$", "") & ".wav"]
+    Local $iFound = 0
+    For $i = 0 To UBound($aExpectedFiles) - 1
+        If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
+    Next
+
+    If $iFound = 2 Then
+        _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
+        For $i = 0 To UBound($aExpectedFiles) - 1
+            _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
+        Next
+        Return True
+    Else
+        _Log("Failed to process " & $sSong & ": expected 2 output files, found " & $iFound, True)
+        Local $sLogContent = FileRead($sLogFile)
+        If StringLen($sLogContent) > 1000 Then
+            $sLogContent = StringLeft($sLogContent, 1000) & "... (see full log at " & $sLogFile & ")"
+        EndIf
+        MsgBox($MB_ICONERROR, "UVR5 Error", "Failed to process " & $sSong & ". Expected 2 output files, found " & $iFound & "." & @CRLF & @CRLF & "Log Details:" & @CRLF & $sLogContent)
         Return SetError(7, 0, False)
     EndIf
-
-    _Log("UVR5 processing completed successfully for " & $sSongPath)
-    Return True
 EndFunc
-#EndRegion ;**** Processing Functions ****
-
-
-;~ Func _ProcessUVR5($sSong, $sModel, $sOutputDir)
-;~     _Log("Entering _ProcessUVR5: File=" & $sSong & ", Model=" & $sModel)
-;~     Local $sUVR5Dir = @ScriptDir & "\installs\UVR\uvr_env\Scripts"
-;~     Local $sPythonPath = $sUVR5Dir & "\python.exe"
-;~     Local $sSeparatePy = @ScriptDir & "\installs\UVR\uvr-main\separate.py"
-;~     Local $sWorkingDir = @ScriptDir & "\installs\UVR\uvr-main" ; Match the manual command's directory
-
-;~     If Not FileExists($sPythonPath) Then
-;~         _Log("Python executable not found in UVR virtual environment: " & $sPythonPath, True)
-;~         MsgBox($MB_ICONERROR, "Error", "Python executable not found at " & $sPythonPath & ". Please ensure the UVR virtual environment is correctly set up.")
-;~         Return SetError(1, 0, False)
-;~     EndIf
-;~     If Not FileExists($sSeparatePy) Then
-;~         _Log("separate.py not found: " & $sSeparatePy, True)
-;~         MsgBox($MB_ICONERROR, "Error", "separate.py not found at " & $sSeparatePy & ". Please ensure the UVR script is in place.")
-;~         Return SetError(2, 0, False)
-;~     EndIf
-;~     _Log("Virtual environment and script found: " & $sPythonPath & ", " & $sSeparatePy)
-
-;~     ; Get the model path from the database
-;~     Local $sModelPath = _GetModelPath($sModel)
-;~     If $sModelPath = "" Then
-;~         _Log("Failed to retrieve model path for " & $sModel, True)
-;~         MsgBox($MB_ICONERROR, "Error", "Could not find model path for " & $sModel & ". Check models.db or models.ini.")
-;~         Return SetError(3, 0, False)
-;~     EndIf
-;~     _Log("Retrieved raw model path: " & $sModelPath)
-
-;~     ; Robust path resolution with debugging
-;~     Local $sResolvedPath = $sModelPath
-;~     _Log("Before resolution: " & $sResolvedPath)
-;~     If StringInStr($sResolvedPath, "@ScriptDir") Then
-;~         $sResolvedPath = StringRegExpReplace($sResolvedPath, "@ScriptDir\s*&?\s*", @ScriptDir) ; Handle @ScriptDir & with optional space
-;~         $sResolvedPath = StringReplace($sResolvedPath, "\\", "\") ; Normalize backslashes
-;~     EndIf
-;~     _Log("After resolution: " & $sResolvedPath)
-
-;~     ; Validate expected path
-;~     Local $sExpectedPath = @ScriptDir & "\installs\models\VR_Models\1_HP-UVR.pth"
-;~     If $sResolvedPath <> $sExpectedPath Then
-;~         _Log("Warning: Resolved path (" & $sResolvedPath & ") does not match expected path (" & $sExpectedPath & ")", True)
-;~     EndIf
-
-;~     ; Check if the model file exists
-;~     If Not FileExists($sResolvedPath) Then
-;~         _Log("Model file not found at: " & $sResolvedPath, True)
-;~         MsgBox($MB_ICONERROR, "Error", "Model file not found at " & $sResolvedPath & ". Please verify the file exists and the path in models.ini is correct. Expected: " & $sExpectedPath)
-;~         Return SetError(4, 0, False)
-;~     EndIf
-;~     _Log("Model file verified at: " & $sResolvedPath)
-
-;~     ; Construct the command, ensuring output directory has only one \output
-;~     Local $sOutputPath = $sOutputDir
-;~     If StringRight($sOutputPath, 7) <> "\output" Then $sOutputPath &= "\output"
-;~     Local $sCmd = '"' & $sPythonPath & '" "' & $sSeparatePy & '" --model "' & $sResolvedPath & '" --input_file "' & $sSong & '" --output_dir "' & $sOutputPath & '"'
-;~     _Log("UVR5 command: " & $sCmd)
-
-;~     Local $sLogFile = @ScriptDir & "\logs\uvr5_log.txt"
-;~     Local $hLogFile = FileOpen($sLogFile, 2) ; Overwrite mode
-;~     If $hLogFile = -1 Then
-;~         _Log("Failed to open uvr5_log.txt for writing", True)
-;~         MsgBox($MB_ICONERROR, "Error", "Failed to open uvr5_log.txt for writing")
-;~         Return SetError(5, 0, False)
-;~     EndIf
-;~     _Log("Opened uvr5_log.txt for writing")
-;~     FileWrite($hLogFile, "Command: " & $sCmd & @CRLF)
-
-;~     ; Run the command in the correct working directory
-;~     Local $iPID = Run($sCmd, $sWorkingDir, @SW_HIDE, $STDOUT_CHILD + $STDERR_MERGED)
-;~     If $iPID = 0 Then
-;~         _Log("Failed to start UVR5 command: " & $sCmd, True)
-;~         FileWrite($hLogFile, "Error: Failed to start UVR5 command: " & $sCmd & @CRLF)
-;~         FileClose($hLogFile)
-;~         MsgBox($MB_ICONERROR, "Error", "Failed to start UVR5 command. Check log for details.")
-;~         Return SetError(6, 0, False)
-;~     EndIf
-;~     _Log("Started UVR5 process with PID: " & $iPID)
-
-;~     ; Create a Google Blue brush for the progress bar
-;~     Local $hBrushTeal = _GDIPlus_BrushCreateSolid($GOOGLE_BLUE)
-
-;~     Local $sOutput, $iProgress = 0, $currentIteration = 0 ; Initialize $currentIteration
-;~     Local $totalIterations = 96 ; Placeholder; adjust based on audio length or model
-;~     While ProcessExists($iPID)
-;~         $sOutput = StdoutRead($iPID)
-;~         If Not @error And $sOutput <> "" Then
-;~             _Log("[UVR5 STDOUT] " & $sOutput)
-;~             FileWrite($hLogFile, "[STDOUT] " & $sOutput)
-;~             ; Parse for progress from tqdm (e.g., "96/96 [07:32<00:00, 4.71s/it]")
-;~             Local $aMatch = StringRegExp($sOutput, "(\d+)/\d+ .*?(\d+\.\d+)s/it", 1)
-;~             If Not @error And UBound($aMatch) >= 1 Then
-;~                 $currentIteration = Number($aMatch[0])
-;~                 $iProgress = Int(($currentIteration / $totalIterations) * 100)
-;~                 If $iProgress > 100 Then $iProgress = 100
-;~                 _Log("Progress updated to: " & $iProgress & "%")
-;~                 GUICtrlSetData($hProgressLabel, "Task Progress: " & $iProgress & "%")
-;~                 _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, ($iGuiWidth - 20) * $iProgress / 100, 20, $hBrushTeal)
-;~             EndIf
-;~         EndIf
-;~         $sOutput = StderrRead($iPID)
-;~         If Not @error And $sOutput <> "" Then
-;~             _Log("[UVR5 STDERR] " & $sOutput)
-;~             FileWrite($hLogFile, "[STDERR] " & $sOutput)
-;~         EndIf
-;~         Sleep(100)
-;~     WEnd
-
-;~     ; Capture any remaining output
-;~     $sOutput = StdoutRead($iPID)
-;~     If Not @error And $sOutput <> "" Then
-;~         _Log("[UVR5 STDOUT] " & $sOutput)
-;~         FileWrite($hLogFile, "[STDOUT] " & $sOutput)
-;~     EndIf
-;~     $sOutput = StderrRead($iPID)
-;~     If Not @error And $sOutput <> "" Then
-;~         _Log("[UVR5 STDERR] " & $sOutput)
-;~         FileWrite($hLogFile, "[STDERR] " & $sOutput)
-;~     EndIf
-
-;~     Local $iExitCode = ProcessWaitClose($iPID)
-;~     If $iExitCode <> 0 Then
-;~         _Log("UVR5 process exited with non-zero code: " & $iExitCode & ". Output files were generated successfully, but this may indicate a minor issue.", True)
-;~     Else
-;~         _Log("UVR5 process exited with code: " & $iExitCode)
-;~     EndIf
-;~     FileWrite($hLogFile, "Process exited with code: " & $iExitCode & @CRLF)
-;~     FileClose($hLogFile)
-
-;~     ; Clean up the brush
-;~     _GDIPlus_BrushDispose($hBrushTeal)
-
-;~     ; Check for expected output files in the specified output subdirectory
-;~     Local $sOutputPath = $sOutputDir & "\output\" & StringRegExpReplace($sSong, "^.*\\", "")
-;~     $sOutputPath = StringRegExpReplace($sOutputPath, "\.[^.]+$", "")
-;~     Local $aExpectedFiles[2] = ["instruments_" & StringRegExpReplace($sSong, "^.*\\|\.[^.]+$", "") & ".wav", "vocals_" & StringRegExpReplace($sSong, "^.*\\|\.[^.]+$", "") & ".wav"]
-;~     Local $iFound = 0
-;~     For $i = 0 To UBound($aExpectedFiles) - 1
-;~         If FileExists($sOutputPath & "\" & $aExpectedFiles[$i]) Then $iFound += 1
-;~     Next
-
-;~     If $iFound = 2 Then
-;~         _Log("Successfully processed " & $sSong & ": found " & $iFound & " output files")
-;~         For $i = 0 To UBound($aExpectedFiles) - 1
-;~             _GUICtrlListView_AddItem($hOutputListView, $sOutputPath & "\" & $aExpectedFiles[$i])
-;~         Next
-;~         Return True
-;~     Else
-;~         _Log("Failed to process " & $sSong & ": expected 2 output files, found " & $iFound, True)
-;~         Local $sLogContent = FileRead($sLogFile)
-;~         If StringLen($sLogContent) > 1000 Then
-;~             $sLogContent = StringLeft($sLogContent, 1000) & "... (see full log at " & $sLogFile & ")"
-;~         EndIf
-;~         MsgBox($MB_ICONERROR, "UVR5 Error", "Failed to process " & $sSong & ". Expected 2 output files, found " & $iFound & "." & @CRLF & @CRLF & "Log Details:" & @CRLF & $sLogContent)
-;~         Return SetError(7, 0, False)
-;~     EndIf
-;~ EndFunc
 
 
 

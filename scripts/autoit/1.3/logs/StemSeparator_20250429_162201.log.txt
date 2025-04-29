@@ -1,0 +1,156 @@
+[4/29/2025 4:22:01 PM] INFO: Entering _Main
+[4/29/2025 4:22:01 PM] INFO: Entering _LogStartupInfo
+[4/29/2025 4:22:01 PM] INFO: Script started
+[4/29/2025 4:22:01 PM] INFO: Script Directory: C:\Git\3DAudioStudio\scripts\autoit\1.3
+[4/29/2025 4:22:01 PM] INFO: Working Directory: C:\Git\3DAudioStudio\scripts\autoit\1.3
+[4/29/2025 4:22:01 PM] INFO: OS: WIN_11 (X64)
+[4/29/2025 4:22:01 PM] INFO: User: FretzCapo
+[4/29/2025 4:22:01 PM] INFO: FFmpeg Path: C:\temp\s2S\installs\uvr\ffmpeg\bin\ffmpeg.exe
+[4/29/2025 4:22:01 PM] INFO: Models Database File: C:\Git\3DAudioStudio\scripts\autoit\1.3\models.db
+[4/29/2025 4:22:01 PM] INFO: Settings INI: C:\Git\3DAudioStudio\scripts\autoit\1.3\settings.ini
+[4/29/2025 4:22:01 PM] INFO: Models INI: C:\Git\3DAudioStudio\scripts\autoit\1.3\Models.ini
+[4/29/2025 4:22:01 PM] INFO: User INI: C:\Git\3DAudioStudio\scripts\autoit\1.3\user.ini
+[4/29/2025 4:22:01 PM] INFO: Exiting _LogStartupInfo
+[4/29/2025 4:22:01 PM] INFO: Entering _InitializeModels
+[4/29/2025 4:22:01 PM] INFO: Models database opened successfully
+[4/29/2025 4:22:01 PM] INFO: Exiting _InitializeModels
+[4/29/2025 4:22:01 PM] INFO: Entering _CreateGUI
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:02 PM] INFO: Entering _UpdateAppControls
+[4/29/2025 4:22:02 PM] INFO: Selected app: Demucs
+[4/29/2025 4:22:02 PM] INFO: Deleting control: hSettingsCombo
+[4/29/2025 4:22:02 PM] INFO: Deleting control: hModelCombo
+[4/29/2025 4:22:02 PM] INFO: Created SettingsCombo at Y=435
+[4/29/2025 4:22:02 PM] INFO: Created ModelCombo at Y=470
+[4/29/2025 4:22:02 PM] INFO: Entering _UpdateSettingsDroplist
+[4/29/2025 4:22:02 PM] INFO: No saved settings found
+[4/29/2025 4:22:02 PM] INFO: Exiting _UpdateSettingsDroplist
+[4/29/2025 4:22:02 PM] INFO: Entering _UpdateModelDroplist
+[4/29/2025 4:22:02 PM] INFO: Executing query: SELECT Models.Name FROM Models INNER JOIN ModelApps ON Models.ModelID = ModelApps.ModelID WHERE ModelApps.App = ''Demucs'' ORDER BY Models.Name;
+[4/29/2025 4:22:02 PM] ERROR: Failed to query models: near "Demucs": syntax error
+[4/29/2025 4:22:02 PM] INFO: Entering _UpdateModelDetails for model: 
+[4/29/2025 4:22:02 PM] ERROR: Model name is empty
+[4/29/2025 4:22:02 PM] INFO: Exiting _UpdateAppControls
+[4/29/2025 4:22:02 PM] INFO: GUI created successfully
+[4/29/2025 4:22:02 PM] INFO: Exiting _CreateGUI
+[4/29/2025 4:22:02 PM] INFO: Entering SetDefaults
+[4/29/2025 4:22:02 PM] INFO: Setting default tab to Demucs (index 0)
+[4/29/2025 4:22:02 PM] INFO: Setting default input path to C:\Git\3DAudioStudio\scripts\autoit\1.3\songs
+[4/29/2025 4:22:02 PM] INFO: Creating input directory: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs
+[4/29/2025 4:22:02 PM] INFO: No audio files found in C:\Git\3DAudioStudio\scripts\autoit\1.3\songs
+[4/29/2025 4:22:02 PM] INFO: Setting default output path to C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[4/29/2025 4:22:02 PM] INFO: Creating output directory: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[4/29/2025 4:22:02 PM] INFO: No audio files found in C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[4/29/2025 4:22:02 PM] INFO: Adding default song C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song1.wav to Process Queue
+[4/29/2025 4:22:02 PM] ERROR: Default song C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song1.wav does not exist, skipping
+[4/29/2025 4:22:02 PM] INFO: Triggering _TabHandler to initialize Demucs tab controls and set default model
+[4/29/2025 4:22:02 PM] INFO: Entering _TabHandler
+[4/29/2025 4:22:02 PM] ERROR: AppCombo control not found
+[4/29/2025 4:22:02 PM] INFO: Exiting SetDefaults
+[4/29/2025 4:22:02 PM] INFO: GUI initialized and defaults set
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:11 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Entering _Exit
+[4/29/2025 4:22:12 PM] INFO: SQLite database closed
+[4/29/2025 4:22:12 PM] INFO: SQLite shutdown completed
+[4/29/2025 4:22:12 PM] INFO: GDI+ graphics disposed
+[4/29/2025 4:22:12 PM] INFO: GDI+ graphic GUI disposed
+[4/29/2025 4:22:12 PM] INFO: DC released
+[4/29/2025 4:22:12 PM] INFO: Gray brush disposed
+[4/29/2025 4:22:12 PM] INFO: Green brush disposed
+[4/29/2025 4:22:12 PM] INFO: Yellow brush disposed
+[4/29/2025 4:22:12 PM] INFO: Pen disposed
+[4/29/2025 4:22:12 PM] INFO: GDI+ shutdown completed
+[4/29/2025 4:22:12 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Entering _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: Exiting _WM_NOTIFY
+[4/29/2025 4:22:12 PM] INFO: GUI deleted
+[4/29/2025 4:22:12 PM] INFO: Script exiting
