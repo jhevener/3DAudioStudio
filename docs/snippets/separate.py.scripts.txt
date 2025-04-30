@@ -1,0 +1,88 @@
+import argparse
+import librosa
+import numpy as np
+import scipy.io.wavfile
+from . import spec_utils
+import os
+import torch
+
+class Separator:
+    def __init__(self, model_path, input_file, output_dir, window_size=512, agg=10, tta=False, overlap=0.0, denoise=False):
+        self.model_path = model_path
+        self.input_file = input_file
+        self.output_dir = output_dir
+        self.data = {
+            'window_size': window_size,
+            'agg': agg / 100,  # Scale aggressiveness to 0-1
+            'tta': tta,
+            'postprocess': denoise,
+            'overlap': overlap
+        }
+        self.model = self._load_model()
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model.to(self.device)
+
+    def _load_model(self):
+        if self.model_path.endswith('.onnx'):
+            import onnxruntime as ort
+            return ort.InferenceSession(self.model_path)
+        elif self.model_path.endswith('.pth'):
+            return torch.load(self.model_path)
+        else:
+            raise ValueError("Unsupported model format")
+
+    def inference(self, spec):
+        # Basic TTA: Process original and flipped spectrograms, average results
+        if self.data['tta']:
+            spec_orig = self.model.run(None, {'input': spec})[0]
+            spec_flipped = self.model.run(None, {'input': np.flip(spec, axis=-1)})[0]
+            spec_flipped = np.flip(spec_flipped, axis=-1)
+            return (spec_orig + spec_flipped) / 2
+        return self.model.run(None, {'input': spec})[0]
+
+    def separate(self):
+        audio, sr = librosa.load(self.input_file, mono=False, sr=44100)
+        spec = spec_utils.wave_to_spectrogram_mt(audio, hop_length=int(self.data['window_size'] * (1 - self.data['overlap'])), 
+                                                 n_fft=self.data['window_size'], mid_side=False)
+        separated_spec = self.inference(spec)
+        
+        if self.data['postprocess']:
+            separated_spec = spec_utils.mask_silence(separated_spec, spec, thres=0.2)
+
+        stems = spec_utils.cmb_spectrogram_to_wave(separated_spec, audio.shape, 
+                                                  hop_length=int(self.data['window_size'] * (1 - self.data['overlap'])), 
+                                                  n_fft=self.data['window_size'], 
+                                                  aggressiveness=self.data['agg'])
+
+        os.makedirs(self.output_dir, exist_ok=True)
+        for stem_name, stem_audio in stems.items():
+            output_path = os.path.join(self.output_dir, f"{stem_name}_{os.path.basename(self.input_file)}")
+            scipy.io.wavfile.write(output_path, sr, stem_audio)
+
+def main():
+    parser = argparse.ArgumentParser(description="UVR5 Audio Separator")
+    parser.add_argument('input_file', type=str, help='Input audio file path')
+    parser.add_argument('output_dir', type=str, help='Output directory for separated stems')
+    parser.add_argument('model', type=str, help='Path to model file (.onnx or .pth)')
+    parser.add_argument('--segment_size', type=int, default=512, help='FFT window size')
+    parser.add_argument('--overlap', type=float, default=0.0, help='Window overlap (0 to 1)')
+    parser.add_argument('--denoise', type=str, default='False', help='Enable denoising (True/False)')
+    parser.add_argument('--aggressiveness', type=int, default=10, help='Aggressiveness (1-10)')
+    parser.add_argument('--tta', type=str, default='False', help='Enable TTA (True/False)')
+    
+    args = parser.parse_args()
+    
+    separator = Separator(
+        model_path=args.model,
+        input_file=args.input_file,
+        output_dir=args.output_dir,
+        window_size=args.segment_size,
+        agg=args.aggressiveness,
+        tta=(args.tta.lower() == 'true'),
+        overlap=args.overlap,
+        denoise=(args.denoise.lower() == 'true')
+    )
+    separator.separate()
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,19 @@
+[04/29/2025 5:59:29 PM] INFO: Entering _Main
+[04/29/2025 5:59:29 PM] INFO: Entering _LogStartupInfo
+[04/29/2025 5:59:29 PM] INFO: Script started
+[04/29/2025 5:59:29 PM] INFO: Script Directory: C:\Git\3DAudioStudio\scripts\autoit\1.2
+[04/29/2025 5:59:29 PM] INFO: Working Directory: C:\Git\3DAudioStudio\scripts\autoit\1.2
+[04/29/2025 5:59:29 PM] INFO: OS: WIN_11 (X64)
+[04/29/2025 5:59:29 PM] INFO: User: FretzCapo
+[04/29/2025 5:59:29 PM] INFO: FFmpeg Path: C:\Git\3DAudioStudio\scripts\autoit\installs\uvr\ffmpeg\bin\ffmpeg.exe
+[04/29/2025 5:59:29 PM] INFO: Models Database File: C:\Git\3DAudioStudio\scripts\autoit\models.db
+[04/29/2025 5:59:29 PM] INFO: Settings INI: C:\Git\3DAudioStudio\scripts\autoit\1.2\settings.ini
+[04/29/2025 5:59:29 PM] INFO: Models INI: C:\Git\3DAudioStudio\scripts\autoit\1.2\Models.ini
+[04/29/2025 5:59:30 PM] INFO: User INI: C:\Git\3DAudioStudio\scripts\autoit\1.2\user.ini
+[04/29/2025 5:59:30 PM] INFO: Exiting _LogStartupInfo
+[04/29/2025 5:59:30 PM] INFO: Entering _InitializeModels
+[04/29/2025 5:59:30 PM] INFO: Attempting to load SQLite DLL from: C:\Git\3DAudioStudio\scripts\autoit\1.2\sqlite3_x64.dll
+[04/29/2025 5:59:30 PM] INFO: DllOpen succeeded, handle: 1
+[04/29/2025 5:59:30 PM] INFO: SQLite initialized successfully
+[04/29/2025 5:59:30 PM] ERROR: Failed to open database C:\Git\3DAudioStudio\scripts\autoit\models.db: Library used incorrectly
+[04/29/2025 5:59:31 PM] ERROR: Failed to initialize models database

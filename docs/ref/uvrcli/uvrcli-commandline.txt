@@ -1,0 +1,1 @@
+python separate.py sample_audio.wav -m UVR-MDX-NET-Inst_Main.onnx

@@ -65,3 +65,4 @@ Below is the full content of `DEVELOPMENT_GUIDELINES.md`, included for reference
 - Created on April 29, 2025, following successful analysis of the `scripts/autoit/` folder.
 - If the repository structure changes (e.g., new branches, renamed files), update this file accordingly.
 - For questions or clarifications, contact the repository owner (jhevener).
+
