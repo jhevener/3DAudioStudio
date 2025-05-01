@@ -1,0 +1,9 @@
+model:
+  dim_f: 3072
+  dim_t: 7
+  n_fft: 7680
+  num_stems: 2
+audio:
+  hop_length: 1024
+training:
+  target_instrument: instrumental

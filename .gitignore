@@ -5,6 +5,8 @@ __pycache__/
 .vscode/
 pretrained_models/
 stems/
+!config/
+models/
 installs/
 support/
 tests/

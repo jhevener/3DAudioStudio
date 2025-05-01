@@ -1,214 +1,254 @@
-import soundfile as sf
-import torch 
-import os 
+import os
+import sys
+import torch
 import librosa
 import numpy as np
-import onnxruntime as ort
-from pathlib import Path
-from argparse import ArgumentParser
+import soundfile as sf
+from time import time
 from tqdm import tqdm
+import onnxruntime as ort
+import argparse
+import configparser
+import logging
+from datetime import datetime
 
+# Setup logging
+script_dir = os.path.dirname(os.path.abspath(__file__))
+log_dir = os.path.join(script_dir, '..', '..', '..', 'logs')
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, 'separation_log.txt')
+
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s Separation: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger()
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 class ConvTDFNet:
-    def __init__(self, target_name, L, dim_f, dim_t, n_fft, hop=1024):
-        super(ConvTDFNet, self).__init__()
-        self.dim_c = 4
-        self.dim_f = dim_f
-        self.dim_t = 2**dim_t
-        self.n_fft = n_fft
-        self.hop = hop
+    def __init__(self, device, model_path, args):
+        self.device = device
+        self.dim_f = args['dim_f']
+        self.dim_t = args['dim_t']
+        self.n_fft = args['n_fft']
+        self.hop = args.get('hop_length', 1024)  # Default from YAML
+        self.window = torch.hann_window(self.n_fft).to(self.device)
         self.n_bins = self.n_fft // 2 + 1
-        self.chunk_size = hop * (self.dim_t - 1)
-        self.window = torch.hann_window(window_length=self.n_fft, periodic=True)
-        self.target_name = target_name
-        
-        out_c = self.dim_c * 4 if target_name == "*" else self.dim_c
-        
-        self.freq_pad = torch.zeros([1, out_c, self.n_bins - self.dim_f, self.dim_t])
-        self.n = L // 2
+        logger.info(f"ConvTDFNet params: n_bins={self.n_bins}, dim_f={self.dim_f}, dim_t={self.dim_t}")
+        if self.n_bins - self.dim_f <= 0:
+            logger.error(f"Invalid dimensions: n_bins ({self.n_bins}) - dim_f ({self.dim_f}) must be positive")
+            raise ValueError(f"n_bins ({self.n_bins}) must be greater than dim_f ({self.dim_f})")
+        self.freq_pad = torch.zeros([1, 1, self.n_bins - self.dim_f, self.dim_t]).to(device)
+        self.model = ort.InferenceSession(model_path, providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+        self.args = args
 
     def stft(self, x):
-        x = x.reshape([-1, self.chunk_size])
-        x = torch.stft(
+        spec = torch.stft(
             x,
             n_fft=self.n_fft,
             hop_length=self.hop,
             window=self.window,
             center=True,
-            return_complex=True,
+            return_complex=True
         )
-        x = torch.view_as_real(x)
-        x = x.permute([0, 3, 1, 2])
-        x = x.reshape([-1, 2, 2, self.n_bins, self.dim_t]).reshape(
-            [-1, self.dim_c, self.n_bins, self.dim_t]
-        )
-        return x[:, :, : self.dim_f]
+        return torch.view_as_real(spec)
 
-    # Inversed Short-time Fourier transform (STFT).
-    def istft(self, x, freq_pad=None):
-        freq_pad = (
-            self.freq_pad.repeat([x.shape[0], 1, 1, 1])
-            if freq_pad is None
-            else freq_pad
+    def istft(self, spec):
+        spec = torch.view_as_complex(spec)
+        return torch.istft(
+            spec,
+            n_fft=self.n_fft,
+            hop_length=self.hop,
+            window=self.window,
+            center=True,
+            length=self.args['length']
         )
-        x = torch.cat([x, freq_pad], -2)
-        c = 4 * 2 if self.target_name == "*" else 2
-        x = x.reshape([-1, c, 2, self.n_bins, self.dim_t]).reshape(
-            [-1, 2, self.n_bins, self.dim_t]
-        )
-        x = x.permute([0, 2, 3, 1])
-        x = x.contiguous()
-        x = torch.view_as_complex(x)
-        x = torch.istft(
-            x, n_fft=self.n_fft, hop_length=self.hop, window=self.window, center=True
-        )
-        return x.reshape([-1, c, self.chunk_size])
 
-class Predictor:
-    def __init__(self, args):
+    def spec_effects(self, spec):
+        spec = spec[:, :self.dim_f, :]
+        spec = torch.cat([spec, self.freq_pad], dim=-2)
+        spec = torch.cat([spec, torch.flip(spec, dims=[-1])], dim=-1)[..., :self.dim_t]
+        return spec
+
+    def inference(self, mix):
+        self.args['length'] = len(mix)
+        mix = torch.tensor(mix, dtype=torch.float32).to(self.device)
+        spec = self.stft(mix)
+        spec = spec.permute(0, 3, 1, 2)
+        mag = spec.norm(p=2, dim=-1)
+
+        mag = mag.transpose(-1, -2)[..., :-1]
+        mag = self.spec_effects(mag)
+
+        mag = mag.cpu().numpy()
+        mag = np.expand_dims(mag, axis=1)
+
+        output = self.model.run(None, {'input': mag})[0]
+        output = torch.tensor(output).to(self.device)
+
+        output = output.squeeze(1).transpose(-1, -2)
+        output = torch.cat([output, torch.zeros([*output.shape[:-1], 1], device=self.device)], dim=-1)
+        output = torch.cat([output[..., :self.dim_t], torch.flip(output, dims=[-1])[..., 1:self.dim_t+1]], dim=-1)
+
+        mask = torch.softmax(output, dim=1)
+        mask = torch.cat([mask, torch.zeros([*mask.shape[:-1], self.n_bins - self.dim_f], device=self.device)], dim=-1)
+
+        mask = mask.transpose(-1, -2)[..., :spec.shape[-2]]
+        mask = torch.stack([mask, mask], dim=-1)
+
+        spec = spec * mask[1] + spec * (1 - mask[0])
+        stems = torch.stack([self.istft(spec[i]) for i in range(self.args['num_stems'])])
+
+        return stems.cpu().numpy()
+
+class Separator:
+    def __init__(self, model_path, args):
+        self.device = torch.device('cuda' if torch.cuda.is_available() and not args['no_cuda'] else 'cpu')
+        self.model_path = model_path
         self.args = args
-        self.model_ = ConvTDFNet(
-            target_name="vocals",
-            L=11,
-            dim_f=args["dim_f"], 
-            dim_t=args["dim_t"], 
-            n_fft=args["n_fft"]
-        )
-        
-        if torch.cuda.is_available():
-            self.model = ort.InferenceSession(args['model_path'], providers=['CUDAExecutionProvider'])
+        self.model = ConvTDFNet(self.device, model_path, args)
+
+    def pad_audio(self, audio):
+        length = len(audio)
+        if length % self.args['chunks']:
+            padding = (self.args['chunks'] - (length % self.args['chunks'])) % self.args['chunks']
+            audio = np.pad(audio, (0, padding), mode='constant')
+        return audio, length
+
+    def separate(self, filepath):
+        audio, sr = librosa.load(filepath, sr=44100, mono=True)
+        audio, length = self.pad_audio(audio)
+        chunk_size = sr * self.args['chunks']
+
+        if self.args['chunks'] == 0:
+            stems = self.model.inference(audio)
         else:
-            self.model = ort.InferenceSession(args['model_path'], providers=['CPUExecutionProvider'])
+            stems = np.zeros([self.args['num_stems'], len(audio)], dtype=np.float32)
+            for i in tqdm(range(0, len(audio), chunk_size)):
+                chunk = audio[i:i + chunk_size]
+                if len(chunk) != chunk_size:
+                    chunk, _ = self.pad_audio(chunk)
+                chunk_stems = self.model.inference(chunk)
+                stems[:, i:i + chunk_size] = chunk_stems[:, :len(chunk)]
 
-    def demix(self, mix):
-        samples = mix.shape[-1]
-        margin = self.args["margin"]
-        chunk_size = self.args["chunks"] * 44100
-        
-        assert not margin == 0, "margin cannot be zero!"
-        
-        if margin > chunk_size:
-            margin = chunk_size
+        stems = stems[..., :length]
+        return stems
 
-        segmented_mix = {}
-
-        if self.args["chunks"] == 0 or samples < chunk_size:
-            chunk_size = samples
-
-        counter = -1
-        for skip in range(0, samples, chunk_size):
-            counter += 1
-            s_margin = 0 if counter == 0 else margin
-            end = min(skip + chunk_size + margin, samples)
-            start = skip - s_margin
-            segmented_mix[skip] = mix[:, start:end].copy()
-            if end == samples:
-                break
-
-        sources = self.demix_base(segmented_mix, margin_size=margin)
-        return sources
-
-    def demix_base(self, mixes, margin_size):
-        chunked_sources = []
-        progress_bar = tqdm(total=len(mixes))
-        progress_bar.set_description("Processing")
-        
-        for mix in mixes:
-            cmix = mixes[mix]
-            sources = []
-            n_sample = cmix.shape[1]
-            model = self.model_
-            trim = model.n_fft // 2
-            gen_size = model.chunk_size - 2 * trim
-            pad = gen_size - n_sample % gen_size
-            mix_p = np.concatenate(
-                (np.zeros((2, trim)), cmix, np.zeros((2, pad)), np.zeros((2, trim))), 1
-            )
-            mix_waves = []
-            i = 0
-            while i < n_sample + pad:
-                waves = np.array(mix_p[:, i : i + model.chunk_size])
-                mix_waves.append(waves)
-                i += gen_size
-            
-            mix_waves = torch.tensor(np.array(mix_waves), dtype=torch.float32)
-            
-            with torch.no_grad():
-                _ort = self.model
-                spek = model.stft(mix_waves)
-                if self.args["denoise"]:
-                    spec_pred = (
-                        -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
-                        + _ort.run(None, {"input": spek.cpu().numpy()})[0] * 0.5
-                    )
-                    tar_waves = model.istft(torch.tensor(spec_pred))
-                else:
-                    tar_waves = model.istft(
-                        torch.tensor(_ort.run(None, {"input": spek.cpu().numpy() })[0])
-                    )
-                tar_signal = (
-                    tar_waves[:, :, trim:-trim]
-                    .transpose(0, 1)
-                    .reshape(2, -1)
-                    .numpy()[:, :-pad]
-                )
-
-                start = 0 if mix == 0 else margin_size
-                end = None if mix == list(mixes.keys())[::-1][0] else -margin_size
-                
-                if margin_size == 0:
-                    end = None
-                
-                sources.append(tar_signal[:, start:end])
-
-                progress_bar.update(1)
-
-            chunked_sources.append(sources)
-        _sources = np.concatenate(chunked_sources, axis=-1)
-        
-        progress_bar.close()
-        return _sources
-
-    def predict(self, file_path):
-      
-        mix, rate = librosa.load(file_path, mono=False, sr=44100)
-        
-        if mix.ndim == 1:
-            mix = np.asfortranarray([mix, mix])
-        
-        mix = mix.T
-        sources = self.demix(mix.T)
-        opt = sources[0].T
-        
-        return (mix - opt, opt, rate)
+def load_model_config(model_name):
+    logger.info(f"Loading model config for {model_name}")
+    config_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'installs', 'models.ini')
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    if model_name not in config:
+        logger.error(f"Model {model_name} not found in models.ini at {config_path}")
+        raise ValueError(f"Model {model_name} not found in models.ini")
+    # Use Config field if specified, otherwise construct default path
+    yaml_path = config[model_name].get('Config', os.path.join(os.path.dirname(__file__), '..', 'config', f"{model_name}.yaml"))
+    yaml_config = None
+    if os.path.exists(yaml_path):
+        logger.info(f"Found config.yaml at {yaml_path}")
+        try:
+            import yaml
+            with open(yaml_path, 'r') as f:
+                yaml_config = yaml.safe_load(f)
+            logger.info(f"Loaded config.yaml: {yaml_config}")
+        except Exception as e:
+            logger.error(f"Failed to load config.yaml: {str(e)}")
+    else:
+        logger.warning(f"No config.yaml found at {yaml_path}, using models.ini parameters")
+    return config[model_name], yaml_config
 
 def main():
-    parser = ArgumentParser()
-    
-    parser.add_argument("files", nargs="+", type=Path, default=[], help="Source audio path")
-    parser.add_argument("-o", "--output", type=Path, default=Path("separated"), help="Output folder")
-    parser.add_argument("-m", "--model_path", type=Path, help="MDX Net ONNX Model path")
-    
-    parser.add_argument("-d", "--no-denoise", dest="denoise", action="store_false", default=True, help="Disable denoising")
-    parser.add_argument("-M", "--margin", type=int, default=44100, help="Margin")
-    parser.add_argument("-c", "--chunks", type=int, default=15, help="Chunk size")
-    parser.add_argument("-F", "--n_fft", type=int, default=6144)
-    parser.add_argument("-t", "--dim_t", type=int, default=8)
-    parser.add_argument("-f", "--dim_f", type=int, default=2048)
-    
+    logger.info("Starting separation process")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--files', nargs='+', required=True, help='Source audio path')
+    parser.add_argument('-o', '--output', default='stems', help='Output folder')
+    parser.add_argument('-m', '--model_path', required=True, help='MDX Net ONNX Model path')
+    parser.add_argument('-c', '--config_path', help='Path to config YAML file')
+    parser.add_argument('--model-type', choices=['mdx', 'roformer'], default='mdx', help='Model type')
+    parser.add_argument('--stems', type=int, help='Number of stems to separate into')
+    parser.add_argument('-d', action='store_true', help='Enable denoising')
+    parser.add_argument('--no-cuda', action='store_true', help='Disable CUDA')
+    parser.add_argument('-M', '--margin', type=int, default=10, help='Margin')
+    parser.add_argument('-C', '--chunks', type=int, default=512, help='Chunk size')
+    parser.add_argument('-F', '--n_fft', type=int, default=6144, help='FFT size')
+    parser.add_argument('-t', '--dim_t', type=int, default=256, help='Time dimension')
+    parser.add_argument('-f', '--dim_f', type=int, default=2048, help='Frequency dimension')
     args = parser.parse_args()
-    dict_args = vars(args)
-    
-    os.makedirs(args.output, exist_ok=True)
-    
-    for file_path in args.files:  
-      predictor = Predictor(args=dict_args)
-      vocals, no_vocals, sampling_rate = predictor.predict(file_path)
-      filename = os.path.splitext(os.path.split(file_path)[-1])[0]
-      sf.write(os.path.join(args.output, filename+"_no_vocals.wav"), no_vocals, sampling_rate)
-      sf.write(os.path.join(args.output, filename+"_vocals.wav"), vocals, sampling_rate)
-  
-if __name__ == "__main__":
-    main()
-  
-   
+
+    # Extract model name
+    model_name = os.path.basename(args.model_path).rsplit(".", 1)[0]
+    logger.info(f"Processing model: {model_name}")
+
+    # Load config
+    try:
+        ini_config, yaml_config = load_model_config(model_name)
+    except Exception as e:
+        logger.error(f"Failed to load config: {str(e)}")
+        raise
+
+    # Load parameters (prioritize YAML, then INI, then command-line)
+    if yaml_config and 'model' in yaml_config:
+        yaml_params = yaml_config['model']
+        chunks = yaml_params.get('chunks', ini_config.getint("Chunks", args.chunks))
+        margin = yaml_params.get('margin', ini_config.getint("Margin", args.margin))
+        n_fft = yaml_params.get('n_fft', ini_config.getint("N_FFT", args.n_fft))
+        dim_t = yaml_params.get('dim_t', ini_config.getint("Dim_T", args.dim_t))
+        dim_f = yaml_params.get('dim_f', ini_config.getint("Dim_F", args.dim_f))
+        num_stems = yaml_params.get('num_stems', ini_config.getint("Stems", args.stems or 2))
+        hop_length = yaml_config.get('audio', {}).get('hop_length', 1024)
+    else:
+        chunks = ini_config.getint("Chunks", args.chunks)
+        margin = ini_config.getint("Margin", args.margin)
+        n_fft = ini_config.getint("N_FFT", args.n_fft)
+        dim_t = ini_config.getint("Dim_T", args.dim_t)
+        dim_f = ini_config.getint("Dim_F", args.dim_f)
+        num_stems = ini_config.getint("Stems", args.stems or 2)
+        hop_length = 1024  # Default
+    denoise = args.d
+    no_cuda = args.no_cuda
+
+    logger.info(f"Parameters: chunks={chunks}, margin={margin}, n_fft={n_fft}, dim_t={dim_t}, dim_f={dim_f}, num_stems={num_stems}, hop_length={hop_length}, denoise={denoise}")
+
+    args_dict = {
+        'chunks': chunks,
+        'margin': margin,
+        'n_fft': n_fft,
+        'dim_t': dim_t,
+        'dim_f': dim_f,
+        'num_stems': num_stems,
+        'hop_length': hop_length,
+        'denoise': denoise,
+        'no_cuda': no_cuda
+    }
+
+    separator = Separator(args.model_path, args_dict)
+
+    output_stems = ini_config.get("OutputStems", "vocals,no_vocals").split(",")
+    if len(output_stems) != num_stems:
+        logger.error(f"Number of output stems ({len(output_stems)}) does not match num_stems ({num_stems})")
+        raise ValueError(f"OutputStems ({output_stems}) does not match num_stems ({num_stems})")
+
+    for file_path in args.files:
+        logger.info(f'Separating: {file_path}')
+        start = time()
+        stems = separator.separate(file_path)
+        logger.info(f'Time: {time() - start:.2f}s')
+
+        filename = os.path.splitext(os.path.basename(file_path))[0]
+        os.makedirs(args.output, exist_ok=True)
+        for i, stem_name in enumerate(output_stems):
+            stem_name = stem_name.strip()
+            sf.write(os.path.join(args.output, f'{filename}_{stem_name}.wav'), stems[i], 44100)
+            logger.info(f"Generated stem: {stem_name}")
+
+if __name__ == '__main__':
+    try:
+        logger.info("Script started")
+        main()
+        logger.info("Script completed successfully")
+    except Exception as e:
+        logger.error(f"Separation failed: {str(e)}")
+        raise

@@ -1,0 +1,383 @@
+ Volume in drive C is Windows
+ Volume Serial Number is 7CE1-DA94
+
+ Directory of C:\Git\3DAudioStudio\models
+
+04/30/2025  06:29 PM    <DIR>          .
+04/30/2025  02:26 PM    <DIR>          ..
+04/30/2025  03:06 PM    <DIR>          Bandit
+04/30/2025  02:28 PM    <DIR>          Demucs
+04/30/2025  03:07 PM    <DIR>          MDX23C
+04/30/2025  03:07 PM    <DIR>          MDXNet
+04/30/2025  09:42 PM                 0 models.txt
+04/30/2025  02:32 PM    <DIR>          Roformer
+04/30/2025  03:06 PM    <DIR>          SCnet
+04/30/2025  06:48 PM    <DIR>          Unknown
+04/30/2025  02:29 PM    <DIR>          VR_Arch
+               1 File(s)              0 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Bandit
+
+04/30/2025  03:06 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  03:06 PM    <DIR>          Bandit_Plus
+04/30/2025  03:06 PM    <DIR>          Bandit_v2
+               0 File(s)              0 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Bandit\Bandit_Plus
+
+04/30/2025  03:06 PM    <DIR>          .
+04/30/2025  03:06 PM    <DIR>          ..
+04/30/2025  03:06 PM       148,891,175 model_bandit_plus_dnr_sdr_11.47.ckpt
+               1 File(s)    148,891,175 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Bandit\Bandit_v2
+
+04/30/2025  03:06 PM    <DIR>          .
+04/30/2025  03:06 PM    <DIR>          ..
+04/30/2025  03:06 PM       149,133,378 checkpoint-multi_fixed.ckpt
+               1 File(s)    149,133,378 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Demucs
+
+04/30/2025  02:28 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  02:27 PM    <DIR>          Demucs_v1
+04/30/2025  02:28 PM    <DIR>          Demucs_v2
+04/30/2025  02:28 PM    <DIR>          Demucs_v3
+04/30/2025  02:28 PM    <DIR>          Demucs_v4
+               0 File(s)              0 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Demucs\Demucs_v1
+
+04/30/2025  02:27 PM    <DIR>          .
+04/30/2025  02:28 PM    <DIR>          ..
+04/30/2025  02:27 PM     2,594,202,563 demucs.th
+04/30/2025  02:27 PM     2,594,202,563 demucs_extra.th
+04/30/2025  02:27 PM     1,062,727,712 light.th
+04/30/2025  02:27 PM     1,062,727,712 light_extra.th
+04/30/2025  02:27 PM        43,973,949 tasnet.th
+04/30/2025  02:27 PM        43,973,949 tasnet_extra.th
+               6 File(s)  7,401,808,448 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Demucs\Demucs_v2
+
+04/30/2025  02:28 PM    <DIR>          .
+04/30/2025  02:28 PM    <DIR>          ..
+04/30/2025  02:27 PM     1,062,738,817 demucs-e07c671f.th
+04/30/2025  02:27 PM       597,870,849 demucs48_hq-28a1282c.th
+04/30/2025  02:28 PM     1,062,738,817 demucs_extra-3646af93.th
+04/30/2025  02:28 PM         4,194,049 demucs_unittest-09ebc15f.th
+04/30/2025  02:28 PM        44,035,981 tasnet-beb46fac.th
+04/30/2025  02:28 PM        44,035,981 tasnet_extra-df3777b2.th
+               6 File(s)  2,815,614,494 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Demucs\Demucs_v3
+
+04/30/2025  02:28 PM    <DIR>          .
+04/30/2025  02:28 PM    <DIR>          ..
+04/30/2025  02:28 PM       178,048,329 0d19c1c6-0f06f20e.th
+04/30/2025  02:28 PM        38,491,885 14fc6a69-a89dd0ee.th
+04/30/2025  02:28 PM       267,602,121 1ef250f1-592467ce.th
+04/30/2025  02:28 PM        46,847,123 305bc58f-18378783.th
+04/30/2025  02:28 PM        58,227,087 42e558d4-196e0e1b.th
+04/30/2025  02:28 PM        38,893,153 464b36d7-e5a9386e.th
+04/30/2025  02:28 PM       167,391,595 5d2d6c55-db83574e.th
+04/30/2025  02:28 PM        59,648,321 6b9c2ca1-3fd82607.th
+04/30/2025  02:28 PM       167,918,783 7d865c68-3d5dd56b.th
+04/30/2025  02:28 PM       178,048,329 7ecf8ec1-70f50cc9.th
+04/30/2025  02:28 PM        39,436,529 7fd6ef75-a905dd85.th
+04/30/2025  02:28 PM        50,756,993 83fc094f-4a16d450.th
+04/30/2025  02:28 PM       167,405,611 902315c2-b39ce9c9.th
+04/30/2025  02:28 PM       267,602,121 9a6b4851-03af0aa6.th
+04/30/2025  02:28 PM       167,391,595 a1d90b5c-ae9d2452.th
+04/30/2025  02:28 PM        44,368,175 b72baf4e-8778635e.th
+04/30/2025  02:28 PM       167,334,095 c511e2ab-fe698775.th
+04/30/2025  02:28 PM       167,399,275 cfa93e08-61801ae1.th
+04/30/2025  02:28 PM       167,399,275 e51eebcc-c1b80bdd.th
+04/30/2025  02:28 PM       167,390,507 ebf34a2db.th
+04/30/2025  02:28 PM       167,405,675 fa0cb7f9-100d8bf4.th
+              21 File(s)  2,775,006,577 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Demucs\Demucs_v4
+
+04/30/2025  02:28 PM    <DIR>          .
+04/30/2025  02:28 PM    <DIR>          ..
+04/30/2025  02:28 PM        84,141,271 04573f0d-f3cf25b2.th
+04/30/2025  02:28 PM        54,996,327 5c90dfd2-34c22ccb.th
+04/30/2025  02:28 PM       167,407,275 75fc33f5-1941ce65.th
+04/30/2025  02:28 PM        84,141,271 92cfc3b6-ef3bcb9c.th
+04/30/2025  02:28 PM        84,141,911 955717e8-8726e21a.th
+04/30/2025  02:28 PM        84,141,271 d12395a8-e57c48e6.th
+04/30/2025  02:28 PM        84,141,271 f7e0c4bc-ba3fe64a.th
+               7 File(s)    643,110,597 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\MDX23C
+
+04/30/2025  03:07 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  02:30 PM       448,101,203 MDX23C-8KFFT-InstVoc_HQ.ckpt
+04/30/2025  03:07 PM       448,093,770 MDX23C-8KFFT-InstVoc_HQ_2.ckpt
+04/30/2025  02:30 PM       448,098,867 MDX23C-De-Reverb-aufr33-jarredou.ckpt
+04/30/2025  02:30 PM       437,652,699 MDX23C-DrumSep-aufr33-jarredou.ckpt
+04/30/2025  03:07 PM       183,379,219 MDX23C_D1581.ckpt
+04/30/2025  02:30 PM       437,613,512 model_mdx23c_ep_271_l1_freq_72.2383.ckpt
+               6 File(s)  2,402,939,270 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\MDXNet
+
+04/30/2025  03:07 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  02:29 PM        66,759,214 Kim_Inst.onnx
+04/30/2025  02:29 PM        66,759,214 Kim_Vocal_1.onnx
+04/30/2025  02:29 PM        66,759,214 Kim_Vocal_2.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_a_bass.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_a_drums.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_a_other.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_a_vocals.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_b_bass.onnx
+04/30/2025  02:29 PM        21,930,313 kuielab_b_drums.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_b_other.onnx
+04/30/2025  02:29 PM        29,703,204 kuielab_b_vocals.onnx
+04/30/2025  02:29 PM        66,780,123 Reverb_HQ_By_FoxJoy.onnx
+04/30/2025  02:29 PM        66,759,214 UVR-MDX-NET-Inst_1.onnx
+04/30/2025  02:29 PM        66,759,214 UVR-MDX-NET-Inst_2.onnx
+04/30/2025  02:30 PM        66,759,214 UVR-MDX-NET-Inst_3.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET-Inst_full_292.onnx
+04/30/2025  02:30 PM        66,759,214 UVR-MDX-NET-Inst_HQ_1.onnx
+04/30/2025  02:30 PM        66,759,214 UVR-MDX-NET-Inst_HQ_2.onnx
+04/30/2025  02:30 PM        66,759,214 UVR-MDX-NET-Inst_HQ_3.onnx
+04/30/2025  02:30 PM        59,074,342 UVR-MDX-NET-Inst_HQ_4.onnx
+04/30/2025  02:30 PM        59,074,342 UVR-MDX-NET-Inst_HQ_5.onnx
+04/30/2025  02:30 PM        52,786,726 UVR-MDX-NET-Inst_Main.onnx
+04/30/2025  02:30 PM        66,762,490 UVR-MDX-NET-Voc_FT.onnx
+04/30/2025  02:29 PM        59,074,342 UVR-MDX-NET_Crowd_HQ_1.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Inst_187_beta.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Inst_82_beta.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Inst_90_beta.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Main_340.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Main_390.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Main_406.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Main_427.onnx
+04/30/2025  03:07 PM        66,759,214 UVR-MDX-NET_Main_438.onnx
+04/30/2025  02:29 PM        29,704,436 UVR_MDXNET_1_9703.onnx
+04/30/2025  02:29 PM        29,704,436 UVR_MDXNET_2_9682.onnx
+04/30/2025  02:29 PM        29,704,436 UVR_MDXNET_3_9662.onnx
+04/30/2025  02:30 PM        29,704,436 UVR_MDXNET_9482.onnx
+04/30/2025  02:30 PM        29,704,436 UVR_MDXNET_KARA.onnx
+04/30/2025  02:30 PM        52,786,726 UVR_MDXNET_KARA_2.onnx
+04/30/2025  02:30 PM        66,759,214 UVR_MDXNET_Main.onnx
+              39 File(s)  2,063,139,078 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Roformer
+
+04/30/2025  02:32 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  02:32 PM    <DIR>          BandSplit
+04/30/2025  03:06 PM    <DIR>          MelBand
+               0 File(s)              0 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Roformer\BandSplit
+
+04/30/2025  02:32 PM    <DIR>          .
+04/30/2025  02:32 PM    <DIR>          ..
+04/30/2025  02:32 PM       393,351,501 BS_Inst_EXP_VRL.ckpt
+04/30/2025  02:32 PM       527,119,779 bs_roformer_male_female_by_aufr33_sdr_7.2889.ckpt
+04/30/2025  02:32 PM       361,499,604 deverb_bs_roformer_8_384dim_10depth.ckpt
+04/30/2025  02:31 PM       639,331,213 model_bs_roformer_ep_317_sdr_12.9755.ckpt
+04/30/2025  02:30 PM       639,317,465 model_bs_roformer_ep_368_sdr_12.9628.ckpt
+04/30/2025  02:30 PM       393,068,365 model_bs_roformer_ep_937_sdr_10.5309.ckpt
+04/30/2025  02:31 PM       527,121,477 model_chorus_bs_roformer_ep_267_sdr_24.1275.ckpt
+               7 File(s)  3,480,809,404 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Roformer\MelBand
+
+04/30/2025  03:06 PM    <DIR>          .
+04/30/2025  02:32 PM    <DIR>          ..
+04/30/2025  02:34 PM       835,982,664 aspiration_mel_band_roformer_less_aggr_sdr_18.1201.ckpt
+04/30/2025  02:34 PM       835,983,746 aspiration_mel_band_roformer_sdr_18.9845.ckpt
+04/30/2025  02:36 PM       913,097,300 denoise_mel_band_roformer_aufr33_aggr_sdr_27.9768.ckpt
+04/30/2025  02:36 PM       913,097,300 denoise_mel_band_roformer_aufr33_sdr_27.9959.ckpt
+04/30/2025  02:35 PM       835,997,896 dereverb-echo_mel_band_roformer_sdr_10.0169.ckpt
+04/30/2025  02:35 PM       455,862,568 dereverb-echo_mel_band_roformer_sdr_13.4843_v2.ckpt
+04/30/2025  02:35 PM       455,864,012 dereverb_big_mbr_ep_362.ckpt
+04/30/2025  02:35 PM       455,776,577 dereverb_echo_mbr_fused.ckpt
+04/30/2025  02:35 PM       913,107,578 dereverb_mel_band_roformer_anvuew_sdr_19.1729.ckpt
+04/30/2025  02:35 PM       913,107,578 dereverb_mel_band_roformer_less_aggressive_anvuew_sdr_18.8050.ckpt
+04/30/2025  02:35 PM       913,097,978 dereverb_mel_band_roformer_mono_anvuew_sdr_20.4029.ckpt
+04/30/2025  02:35 PM       455,864,012 dereverb_super_big_mbr_ep_346.ckpt
+04/30/2025  03:06 PM     1,479,738,496 MelBandRoformerBigSYHFTV1.ckpt
+04/30/2025  03:05 PM       913,096,702 MelBandRoformerSYHFT.ckpt
+04/30/2025  03:05 PM       913,090,472 MelBandRoformerSYHFTV2.5.ckpt
+04/30/2025  03:05 PM       913,095,346 MelBandRoformerSYHFTV2.ckpt
+04/30/2025  03:05 PM       913,090,472 MelBandRoformerSYHFTV3Epsilon.ckpt
+04/30/2025  03:04 PM     1,574,477,088 melband_roformer_big_beta4.ckpt
+04/30/2025  03:04 PM     1,479,749,810 melband_roformer_big_beta5e.ckpt
+04/30/2025  03:04 PM     1,557,078,584 melband_roformer_big_beta6.ckpt
+04/30/2025  03:05 PM     1,708,527,586 melband_roformer_big_beta6x.ckpt
+04/30/2025  03:03 PM     1,719,116,358 melband_roformer_instvoc_duality_v1.ckpt
+04/30/2025  03:03 PM     1,719,116,358 melband_roformer_instvoc_duality_v2.ckpt
+04/30/2025  03:02 PM       913,100,690 melband_roformer_inst_v1.ckpt
+04/30/2025  03:02 PM       913,102,724 melband_roformer_inst_v1e.ckpt
+04/30/2025  03:02 PM       913,090,472 melband_roformer_inst_v1e_plus.ckpt
+04/30/2025  03:03 PM     1,574,477,088 melband_roformer_inst_v2.ckpt
+04/30/2025  03:00 PM     1,719,139,254 melband_roformer_karaoke_becruily.ckpt
+04/30/2025  03:06 PM       913,090,472 melband_roformer_kim_vocals_fullness_v1_by_aname.ckpt
+04/30/2025  03:06 PM       913,090,472 melband_roformer_kim_vocals_fullness_v2_by_aname.ckpt
+04/30/2025  03:06 PM       913,106,158 melband_roformer_kim_vocals_v1_by_aname.ckpt
+04/30/2025  03:06 PM       913,090,472 melband_roformer_kim_vocals_v2_by_aname.ckpt
+04/30/2025  03:06 PM       913,106,158 melband_roformer_kim_vocals_v3_by_aname.ckpt
+04/30/2025  02:33 PM       202,573,672 melband_roformer_small_by_aname.ckpt
+04/30/2025  03:01 PM       913,090,472 melband_roformer_vocals_bleedness_by_aname.ckpt
+04/30/2025  02:34 PM       913,102,724 mel_band_roformer_bleed_suppressor_v1.ckpt
+04/30/2025  02:35 PM       913,096,801 mel_band_roformer_crowd_aufr33_viperx_sdr_8.7144.ckpt
+04/30/2025  02:36 PM       913,106,900 mel_band_roformer_instrumental_becruily.ckpt
+04/30/2025  02:36 PM       913,026,650 mel_band_roformer_instrumental_gabox.ckpt
+04/30/2025  02:37 PM       913,026,650 mel_band_roformer_inst_bleedless_v1_gabox.ckpt
+04/30/2025  02:37 PM       913,026,650 mel_band_roformer_inst_bleedless_v2_gabox.ckpt
+04/30/2025  03:00 PM       147,464,192 mel_band_roformer_inst_denoise_debleed_gabox.ckpt
+04/30/2025  02:48 PM       460,890,112 mel_band_roformer_inst_fullness_v1_gabox.ckpt
+04/30/2025  02:48 PM       913,026,650 mel_band_roformer_inst_fullness_v2_gabox.ckpt
+04/30/2025  02:48 PM       913,026,650 mel_band_roformer_inst_fullness_v3_gabox.ckpt
+04/30/2025  02:48 PM       913,026,650 mel_band_roformer_inst_fullness_v4_noise_gabox.ckpt
+04/30/2025  02:48 PM       913,026,650 mel_band_roformer_inst_fullness_v5_gabox.ckpt
+04/30/2025  02:48 PM       913,026,650 mel_band_roformer_inst_fullness_v5_noise_gabox.ckpt
+04/30/2025  02:48 PM       913,026,650 mel_band_roformer_inst_fullness_v6_gabox.ckpt
+04/30/2025  02:49 PM       913,026,650 mel_band_roformer_inst_fullness_v6_noise_gabox.ckpt
+04/30/2025  02:49 PM       913,026,650 mel_band_roformer_inst_fullness_v7_gabox.ckpt
+04/30/2025  02:49 PM       913,026,650 mel_band_roformer_inst_fullness_v7_noise_gabox.ckpt
+04/30/2025  02:49 PM       913,026,650 mel_band_roformer_inst_fullness_v8_gabox.ckpt
+04/30/2025  02:49 PM       913,026,650 mel_band_roformer_inst_fullness_vX_gabox.ckpt
+04/30/2025  02:36 PM       913,026,650 mel_band_roformer_inst_v1_gabox.ckpt
+04/30/2025  02:36 PM       913,026,650 mel_band_roformer_inst_v2_gabox.ckpt
+04/30/2025  02:37 PM       913,026,650 mel_band_roformer_inst_v3_gabox.ckpt
+04/30/2025  03:00 PM       913,096,801 mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt
+04/30/2025  03:01 PM       913,026,650 mel_band_roformer_karaoke_gabox.ckpt
+04/30/2025  03:04 PM       913,101,368 mel_band_roformer_kim_ft2_bleedless_unwa.ckpt
+04/30/2025  03:03 PM       913,100,690 mel_band_roformer_kim_ft2_unwa.ckpt
+04/30/2025  03:03 PM       913,100,690 mel_band_roformer_kim_ft_unwa.ckpt
+04/30/2025  03:01 PM       913,107,578 mel_band_roformer_vocals_becruily.ckpt
+04/30/2025  03:01 PM       913,090,472 mel_band_roformer_vocals_fullness_aname.ckpt
+04/30/2025  03:01 PM       913,026,650 mel_band_roformer_voc_fullness_v1_gabox.ckpt
+04/30/2025  03:02 PM       913,026,650 mel_band_roformer_voc_fullness_v2_gabox.ckpt
+04/30/2025  03:02 PM       913,026,650 mel_band_roformer_voc_fullness_v3_gabox.ckpt
+04/30/2025  03:02 PM       913,026,650 mel_band_roformer_voc_fullness_v4_gabox.ckpt
+04/30/2025  03:01 PM       913,026,650 mel_band_roformer_voc_gabox.ckpt
+04/30/2025  02:33 PM     1,007,816,988 model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt
+04/30/2025  03:01 PM       913,106,900 vocals_mel_band_roformer.ckpt
+              71 File(s) 67,247,869,751 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\SCnet
+
+04/30/2025  03:06 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  03:06 PM       216,189,106 model_scnet_ep_54_sdr_9.8051.ckpt
+04/30/2025  03:06 PM       168,868,194 model_scnet_sdr_9.3244.ckpt
+04/30/2025  03:06 PM       168,852,258 SCNet-large_starrytong_fixed.ckpt
+04/30/2025  03:06 PM        42,434,986 scnet_checkpoint_musdb18.ckpt
+               4 File(s)    596,344,544 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\Unknown
+
+04/30/2025  06:48 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  02:31 PM             1,847 config_bs_roformer_chorus_male_female.yaml
+04/30/2025  02:32 PM             2,329 config_bs_roformer_deverb_8_384dim_10depth.yaml
+04/30/2025  02:31 PM             2,273 config_bs_roformer_ep_317_sdr_12.9755.yaml
+04/30/2025  02:30 PM             2,274 config_bs_roformer_ep_368_sdr_12.9628.yaml
+04/30/2025  02:30 PM             2,368 config_bs_roformer_ep_937_sdr_10.5309.yaml
+04/30/2025  02:32 PM             1,818 config_bs_roformer_inst_exp_vrl.yaml
+04/30/2025  02:32 PM             2,273 config_bs_roformer_voc_gabox.yaml
+04/30/2025  02:30 PM             3,953 config_dereverb_mdx23c.yaml
+04/30/2025  03:06 PM             2,024 config_dnr_bandit_bsrnn_multi_mus64.yaml
+04/30/2025  03:06 PM             1,955 config_dnr_bandit_v2_mus64.yaml
+04/30/2025  02:30 PM             2,331 config_drumsep_mdx23c.yaml
+04/30/2025  02:30 PM               897 config_mdx23c_similarity.yaml
+04/30/2025  02:34 PM             1,902 config_melband_roformer_aspiration.yaml
+04/30/2025  03:04 PM               908 config_melband_roformer_big_beta4.yaml
+04/30/2025  03:04 PM               905 config_melband_roformer_big_beta5e.yaml
+04/30/2025  03:04 PM             1,722 config_melband_roformer_big_beta6.yaml
+04/30/2025  03:05 PM             1,724 config_melband_roformer_big_beta6x.yaml
+04/30/2025  02:34 PM               917 config_melband_roformer_bleed_suppressor_v1.yaml
+04/30/2025  02:35 PM             1,621 config_melband_roformer_crowd_aufr33_viperx_sdr_8.7144.yaml
+04/30/2025  02:36 PM             1,621 config_melband_roformer_denoise_aufr33_aggr_sdr_27.9768.yaml
+04/30/2025  02:36 PM             1,621 config_melband_roformer_denoise_aufr33_sdr_27.9959.yaml
+04/30/2025  02:35 PM             1,896 config_melband_roformer_dereverb-echo.yaml
+04/30/2025  02:35 PM             1,106 config_melband_roformer_dereverb-echo_sdr_13.4843_v2.yaml
+04/30/2025  02:35 PM             1,846 config_melband_roformer_dereverb_anvuew.yaml
+04/30/2025  02:35 PM             1,105 config_melband_roformer_dereverb_echo_v2.yaml
+04/30/2025  02:33 PM             1,794 config_melband_roformer_ep_3005_sdr_11.4360.yaml
+04/30/2025  03:02 PM               906 config_melband_roformer_inst.yaml
+04/30/2025  02:36 PM             1,736 config_melband_roformer_instrumental_becruily.yaml
+04/30/2025  03:03 PM               911 config_melband_roformer_instvoc_duality.yaml
+04/30/2025  02:36 PM               920 config_melband_roformer_inst_gabox.yaml
+04/30/2025  03:03 PM               921 config_melband_roformer_inst_v2.yaml
+04/30/2025  03:00 PM             1,726 config_melband_roformer_karaoke_aufr33_viperx_sdr_10.1956.yaml
+04/30/2025  03:00 PM             1,724 config_melband_roformer_karaoke_becruily.yaml
+04/30/2025  03:03 PM             1,721 config_melband_roformer_kim_ft_unwa.yaml
+04/30/2025  02:33 PM               898 config_melband_roformer_small_by_aname.yaml
+04/30/2025  03:01 PM             1,723 config_melband_roformer_vocals_becruily.yaml
+04/30/2025  03:06 PM               905 config_melband_roformer_vocals_big_v1_ft.yaml
+04/30/2025  03:05 PM             1,723 config_melband_roformer_vocals_ft.yaml
+04/30/2025  03:01 PM               927 config_melband_roformer_vocals_fullness_aname.yaml
+04/30/2025  03:01 PM               895 config_melband_roformer_vocals_kim.yaml
+04/30/2025  03:01 PM             5,965 config_melband_roformer_vocals_test_by_aname.yaml
+04/30/2025  03:01 PM               918 config_melband_roformer_voc_gabox.yaml
+04/30/2025  03:06 PM             1,656 config_musdb18_scnet.yaml
+04/30/2025  03:06 PM             1,868 config_musdb18_scnet_large.yaml
+04/30/2025  03:06 PM             1,867 config_musdb18_scnet_large_starrytong.yaml
+04/30/2025  03:06 PM             5,808 config_musdb18_scnet_xl.yaml
+04/30/2025  02:28 PM                33 hdemucs_mmi.yaml
+04/30/2025  02:28 PM                21 htdemucs.yaml
+04/30/2025  02:28 PM                21 htdemucs_6s.yaml
+04/30/2025  02:28 PM               149 htdemucs_ft.yaml
+04/30/2025  02:28 PM               162 mdx.yaml
+04/30/2025  02:28 PM                68 mdx_extra.yaml
+04/30/2025  02:28 PM                69 mdx_extra_q.yaml
+04/30/2025  02:28 PM               162 mdx_q.yaml
+04/30/2025  03:07 PM               567 model_2_stem_061321.yaml
+04/30/2025  02:30 PM               709 model_2_stem_full_band_8k.yaml
+04/30/2025  02:28 PM                69 repro_mdx_a.yaml
+04/30/2025  02:28 PM                69 repro_mdx_a_hybrid_only.yaml
+04/30/2025  02:28 PM                69 repro_mdx_a_time_only.yaml
+04/30/2025  06:48 PM               138 UVR-MDX-NET-Inst_Main.yaml
+04/30/2025  02:28 PM                33 UVR_Demucs_Model_1.yaml
+              61 File(s)         85,087 bytes
+
+ Directory of C:\Git\3DAudioStudio\models\VR_Arch
+
+04/30/2025  02:29 PM    <DIR>          .
+04/30/2025  06:29 PM    <DIR>          ..
+04/30/2025  02:29 PM        31,938,951 10_SP-UVR-2B-32000-1.pth
+04/30/2025  02:29 PM        31,938,951 11_SP-UVR-2B-32000-2.pth
+04/30/2025  02:29 PM        31,938,951 12_SP-UVR-3B-44100.pth
+04/30/2025  02:29 PM        31,938,951 13_SP-UVR-4B-44100-1.pth
+04/30/2025  02:29 PM        31,938,951 14_SP-UVR-4B-44100-2.pth
+04/30/2025  02:29 PM        31,938,951 15_SP-UVR-MID-44100-1.pth
+04/30/2025  02:29 PM        31,938,951 16_SP-UVR-MID-44100-2.pth
+04/30/2025  02:29 PM       223,661,285 17_HP-Wind_Inst-UVR.pth
+04/30/2025  02:28 PM       126,792,647 1_HP-UVR.pth
+04/30/2025  02:29 PM       126,782,699 2_HP-UVR.pth
+04/30/2025  02:29 PM       126,792,647 3_HP-Vocal-UVR.pth
+04/30/2025  02:29 PM       126,792,647 4_HP-Vocal-UVR.pth
+04/30/2025  02:29 PM       126,782,699 5_HP-Karaoke-UVR.pth
+04/30/2025  02:29 PM       126,782,699 6_HP-Karaoke-UVR.pth
+04/30/2025  02:29 PM       550,120,123 7_HP2-UVR.pth
+04/30/2025  02:29 PM       550,131,079 8_HP2-UVR.pth
+04/30/2025  02:29 PM       550,131,079 9_HP2-UVR.pth
+04/30/2025  02:28 PM        31,861,529 MGM_HIGHEND_v4.pth
+04/30/2025  02:28 PM        31,938,951 MGM_LOWEND_A_v4.pth
+04/30/2025  02:28 PM        31,938,951 MGM_LOWEND_B_v4.pth
+04/30/2025  02:28 PM        31,938,951 MGM_MAIN_v4.pth
+04/30/2025  02:29 PM       223,650,277 UVR-BVE-4B_SN-44100-1.pth
+04/30/2025  02:29 PM       127,139,365 UVR-De-Echo-Aggressive.pth
+04/30/2025  02:29 PM       127,139,365 UVR-De-Echo-Normal.pth
+04/30/2025  02:29 PM        58,928,133 UVR-De-Reverb-aufr33-jarredou.pth
+04/30/2025  02:29 PM       223,650,277 UVR-DeEcho-DeReverb.pth
+04/30/2025  02:29 PM        17,922,277 UVR-DeNoise-Lite.pth
+04/30/2025  02:29 PM       127,139,365 UVR-DeNoise.pth
+              28 File(s)  3,891,589,702 bytes
+
+     Total Files Listed:
+             259 File(s) 93,616,341,505 bytes
+              50 Dir(s)  205,679,443,968 bytes free
