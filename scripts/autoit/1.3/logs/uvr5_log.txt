@@ -1,5 +1,0 @@
-Command: cmd /c "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts\activate.bat && "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts\python.exe" "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py" --model "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\models\VR_Models\2_HP-UVR.pth" --input_file "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song5.flac" --output_dir "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\output" --segment_size 256 --overlap 0.25 --denoise false --batch_size 1 --aggressiveness 10 --tta false --high_end_process mirroring && exit"
-[STDOUT] Traceback (most recent call last):
-  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py", line 5, in <module>
-    from . import spec_utils
-ImportError: attempted relative import with no known parent package
