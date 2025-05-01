@@ -119,3 +119,48 @@ Error reading output.
 [2025-05-01 15:51:10] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_1, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song4.mp3, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
 [2025-05-01 15:51:10] ERROR GUI: Model file not found: C:\Git\3DAudioStudio\installs\models\MDXNet\UVR-MDX-NET-Inst_1.onnx
 [2025-05-01 15:51:24] INFO GUI: Exiting GUI
+[2025-05-01 15:53:53] INFO GUI: Starting Test Models.ini GUI
+[2025-05-01 15:53:53] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-01 15:53:54] INFO GUI: Loaded 56 models from models.ini
+[2025-05-01 15:53:54] INFO GUI: Selected model: UVR_MDXNET_Inst_1
+[2025-05-01 15:53:54] INFO GUI: Updated model info for UVR_MDXNET_Inst_1
+[2025-05-01 15:53:58] INFO GUI: Selected input file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+[2025-05-01 15:53:59] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_1, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[2025-05-01 15:53:59] ERROR GUI: Model file not found: C:\Git\3DAudioStudio\installs\models\MDXNet\UVR-MDX-NET-Inst_1.onnx
+[2025-05-01 15:56:19] INFO GUI: Exiting GUI
+[2025-05-01 15:56:26] INFO GUI: Starting Test Models.ini GUI
+[2025-05-01 15:56:26] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-01 15:56:26] INFO GUI: Loaded 1 models from models.ini
+[2025-05-01 15:56:26] INFO GUI: Selected model: UVR_MDXNET_Inst_Main
+[2025-05-01 15:56:26] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main
+[2025-05-01 15:56:31] INFO GUI: Selected input file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+[2025-05-01 15:56:32] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_Main, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[2025-05-01 15:56:32] INFO GUI: Resolved command: cmd /c cd "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts" && activate.bat && cd "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main" && python.exe separate.py --files "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\UVR-MDX-NET-Inst_Main.onnx" -c "C:\Git\3DAudioStudio\scripts\autoit\1.3\config\UVR-MDX-NET-Inst_Main.yaml" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" && deactivate
+[2025-05-01 16:09:13] INFO GUI: Starting Test Models.ini GUI
+[2025-05-01 16:09:13] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-01 16:09:13] INFO GUI: Loaded 2 models from models.ini
+[2025-05-01 16:09:13] INFO GUI: Selected model: UVR_MDXNET_Inst_Main
+[2025-05-01 16:09:13] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main
+[2025-05-01 16:09:17] INFO GUI: Selected input file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+[2025-05-01 16:09:18] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_Main, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[2025-05-01 16:09:18] INFO GUI: Resolved command: cmd /c cd "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts" && activate.bat && cd "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main" && python.exe separate.py --files "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\UVR-MDX-NET-Inst_Main.onnx" -c "C:\Git\3DAudioStudio\scripts\autoit\1.3\config\UVR-MDX-NET-Inst_Main.yaml" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" && deactivate
+[2025-05-01 16:14:01] ERROR GUI: Error reading command output for UVR_MDXNET_Inst_Main
+[2025-05-01 16:14:01] INFO GUI: Command output:   0%|          | 0/18 [00:00<?, ?it/s]Processing:   0%|          | 0/18 [00:00<?, ?it/s]Processing:   6%|5         | 1/18 [00:11<03:22, 11.89s/it]Processing:  11%|#1        | 2/18 [00:22<02:58, 11.14s/it]Processing:  17%|#6        | 3/18 [00:35<02:56, 11.78s/it]Processing:  22%|##2       | 4/18 [00:49<03:00, 12.87s/it]Processing:  28%|##7       | 5/18 [01:04<02:57, 13.63s/it]Processing:  33%|###3      | 6/18 [01:19<02:47, 13.97s/it]Processing:  39%|###8      | 7/18 [01:33<02:35, 14.17s/it]Processing:  44%|####4     | 8/18 [01:48<02:22, 14.29s/it]Processing:  50%|#####     | 9/18 [02:03<02:09, 14.44s/it]Processing:  56%|#####5    | 10/18 [02:18<01:57, 14.65s/it]Processing:  61%|######1   | 11/18 [02:33<01:43, 14.84s/it]Processing:  67%|######6   | 12/18 [02:49<01:30, 15.14s/it]Processing:  72%|#######2  | 13/18 [03:05<01:16, 15.36s/it]Processing:  78%|#######7  | 14/18 [03:22<01:04, 16.05s/it]Processing:  83%|########3 | 15/18 [03:41<00:50, 16.75s/it]Processing:  89%|########8 | 16/18 [04:01<00:35, 17.78s/it]Processing:  94%|#########4| 17/18 [04:20<00:18, 18.22s/it]Processing: 100%|##########| 18/18 [04:39<00:00, 18.49s/it]Traceback (most recent call last):
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py", line 263, in <module>
+    main()
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py", line 250, in main
+    result = predictor.predict(file_path)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py", line 211, in predict
+    sources = self.demix(mix.T)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py", line 133, in demix
+    sources = self.demix_base(segmented_mix, margin_size=margin)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main\separate.py", line 199, in demix_base
+    _sources = np.concatenate(chunked_sources, axis=-1)
+  File "<__array_function__ internals>", line 180, in concatenate
+ValueError: need at least one array to concatenate
+Processing: 100%|##########| 18/18 [04:39<00:00, 15.55s/it]
+Error reading output.
+
+[2025-05-01 16:14:01] ERROR GUI: Failed to generate stem: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_vocals.wav
+[2025-05-01 16:14:01] ERROR GUI: Failed to generate stem: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_no_vocals.wav
+[2025-05-01 16:15:25] INFO GUI: Exiting GUI
