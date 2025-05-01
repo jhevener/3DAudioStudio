@@ -1,13 +1,13 @@
 import soundfile as sf
-import torch 
-import os 
+import torch
+import os
 import librosa
 import numpy as np
 import onnxruntime as ort
 from pathlib import Path
 from argparse import ArgumentParser
 from tqdm import tqdm
-
+import yaml
 
 class ConvTDFNet:
     def __init__(self, target_name, L, dim_f, dim_t, n_fft, hop=1024):
@@ -44,7 +44,6 @@ class ConvTDFNet:
         )
         return x[:, :, : self.dim_f]
 
-    # Inversed Short-time Fourier transform (STFT).
     def istft(self, x, freq_pad=None):
         freq_pad = (
             self.freq_pad.repeat([x.shape[0], 1, 1, 1])
@@ -67,18 +66,41 @@ class ConvTDFNet:
 class Predictor:
     def __init__(self, args):
         self.args = args
-        self.model_ = ConvTDFNet(
-            target_name="vocals",
-            L=11,
-            dim_f=args["dim_f"], 
-            dim_t=args["dim_t"], 
-            n_fft=args["n_fft"]
-        )
-        
-        if torch.cuda.is_available():
-            self.model = ort.InferenceSession(args['model_path'], providers=['CUDAExecutionProvider'])
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+        # Determine model type and load parameters
+        if args.model_type == 'roformer':
+            # Load config for RoFormer models
+            with open(args.config_path, 'r') as f:
+                config = yaml.safe_load(f)
+            self.model_ = ConvTDFNet(
+                target_name="vocals",
+                L=config.get('L', 11),
+                dim_f=config.get('dim_f', args.dim_f),
+                dim_t=config.get('dim_t', args.dim_t),
+                n_fft=config.get('n_fft', args.n_fft),
+                hop=config.get('hop', 1024)
+            )
+            # Load PyTorch checkpoint
+            checkpoint = torch.load(args.model_path, map_location=self.device)
+            self.model_.load_state_dict(checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint)
+            self.model_.to(self.device)
+            self.model_.eval()
+            self.model = self.model_  # For PyTorch inference
         else:
-            self.model = ort.InferenceSession(args['model_path'], providers=['CPUExecutionProvider'])
+            # Assume MDX (ONNX) model
+            self.model_ = ConvTDFNet(
+                target_name="vocals",
+                L=11,
+                dim_f=args.dim_f,
+                dim_t=args.dim_t,
+                n_fft=args.n_fft
+            )
+            # Load ONNX model
+            if torch.cuda.is_available():
+                self.model = ort.InferenceSession(args.model_path, providers=['CUDAExecutionProvider'])
+            else:
+                self.model = ort.InferenceSession(args.model_path, providers=['CPUExecutionProvider'])
 
     def demix(self, mix):
         samples = mix.shape[-1]
@@ -131,46 +153,53 @@ class Predictor:
                 mix_waves.append(waves)
                 i += gen_size
             
-            mix_waves = torch.tensor(np.array(mix_waves), dtype=torch.float32)
+            mix_waves = torch.tensor(np.array(mix_waves), dtype=torch.float32).to(self.device)
             
-            with torch.no_grad():
-                _ort = self.model
-                spek = model.stft(mix_waves)
-                if self.args["denoise"]:
-                    spec_pred = (
-                        -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
-                        + _ort.run(None, {"input": spek.cpu().numpy()})[0] * 0.5
-                    )
-                    tar_waves = model.istft(torch.tensor(spec_pred))
-                else:
-                    tar_waves = model.istft(
-                        torch.tensor(_ort.run(None, {"input": spek.cpu().numpy() })[0])
-                    )
-                tar_signal = (
-                    tar_waves[:, :, trim:-trim]
-                    .transpose(0, 1)
-                    .reshape(2, -1)
-                    .numpy()[:, :-pad]
-                )
+            if self.args.model_type == 'roformer':
+                with torch.no_grad():
+                    spek = model.stft(mix_waves)
+                    if self.args["denoise"]:
+                        spec_pred = (-model(-spek) * 0.5 + model(spek) * 0.5)
+                    else:
+                        spec_pred = model(spek)
+                    tar_waves = model.istft(spec_pred)
+            else:
+                # ONNX inference
+                with torch.no_grad():
+                    _ort = self.model
+                    spek = model.stft(mix_waves)
+                    if self.args["denoise"]:
+                        spec_pred = (
+                            -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
+                            + _ort.run(None, {"input": spek.cpu().numpy()})[0] * 0.5
+                        )
+                    else:
+                        spec_pred = _ort.run(None, {"input": spek.cpu().numpy()})[0]
+                    tar_waves = model.istft(torch.tensor(spec_pred).to(self.device))
 
-                start = 0 if mix == 0 else margin_size
-                end = None if mix == list(mixes.keys())[::-1][0] else -margin_size
-                
-                if margin_size == 0:
-                    end = None
-                
-                sources.append(tar_signal[:, start:end])
+            tar_signal = (
+                tar_waves[:, :, trim:-trim]
+                .transpose(0, 1)
+                .reshape(2, -1)
+                .cpu().numpy()[:, :-pad]
+            )
 
-                progress_bar.update(1)
+            start = 0 if mix == 0 else margin_size
+            end = None if mix == list(mixes.keys())[::-1][0] else -margin_size
+            
+            if margin_size == 0:
+                end = None
+            
+            sources.append(tar_signal[:, start:end])
 
-            chunked_sources.append(sources)
+            progress_bar.update(1)
+
         _sources = np.concatenate(chunked_sources, axis=-1)
         
         progress_bar.close()
         return _sources
 
     def predict(self, file_path):
-      
         mix, rate = librosa.load(file_path, mono=False, sr=44100)
         
         if mix.ndim == 1:
@@ -187,28 +216,12 @@ def main():
     
     parser.add_argument("files", nargs="+", type=Path, default=[], help="Source audio path")
     parser.add_argument("-o", "--output", type=Path, default=Path("separated"), help="Output folder")
-    parser.add_argument("-m", "--model_path", type=Path, help="MDX Net ONNX Model path")
+    parser.add_argument("-m", "--model_path", type=Path, help="Model path (.onnx for MDX, .ckpt for RoFormer)")
+    parser.add_argument("-c", "--config_path", type=Path, help="Config YAML path (required for RoFormer)")
+    parser.add_argument("--model-type", type=str, choices=['mdx', 'roformer'], default='mdx', help="Model type (mdx or roformer)")
     
     parser.add_argument("-d", "--no-denoise", dest="denoise", action="store_false", default=True, help="Disable denoising")
     parser.add_argument("-M", "--margin", type=int, default=44100, help="Margin")
-    parser.add_argument("-c", "--chunks", type=int, default=15, help="Chunk size")
+    parser.add_argument("-C", "--chunks", type=int, default=15, help="Chunk size")
     parser.add_argument("-F", "--n_fft", type=int, default=6144)
-    parser.add_argument("-t", "--dim_t", type=int, default=8)
-    parser.add_argument("-f", "--dim_f", type=int, default=2048)
-    
-    args = parser.parse_args()
-    dict_args = vars(args)
-    
-    os.makedirs(args.output, exist_ok=True)
-    
-    for file_path in args.files:  
-      predictor = Predictor(args=dict_args)
-      vocals, no_vocals, sampling_rate = predictor.predict(file_path)
-      filename = os.path.splitext(os.path.split(file_path)[-1])[0]
-      sf.write(os.path.join(args.output, filename+"_no_vocals.wav"), no_vocals, sampling_rate)
-      sf.write(os.path.join(args.output, filename+"_vocals.wav"), vocals, sampling_rate)
-  
-if __name__ == "__main__":
-    main()
-  
-   
+    parser.add_argument("-t", "--dim
