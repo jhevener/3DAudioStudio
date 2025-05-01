@@ -79,3 +79,24 @@ Error reading output.
 [2025-05-01 11:22:12] ERROR GUI: Failed to generate stem: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav
 [2025-05-01 11:22:12] ERROR GUI: Failed to generate stem: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
 [2025-05-01 11:50:56] INFO GUI: Exiting GUI
+[2025-05-01 12:08:52] INFO GUI: Starting Test Models.ini GUI
+[2025-05-01 12:08:52] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\models.ini
+[2025-05-01 12:08:52] INFO GUI: Loaded 23 models from models.ini
+[2025-05-01 12:08:52] INFO GUI: Selected model: UVR_MDXNET_Inst_Main
+[2025-05-01 12:08:52] INFO GUI: Updated parameters for UVR_MDXNET_Inst_Main: Chunks=512, Margin=10, N_FFT=6144, Dim_T=256, Dim_F=2048, Denoise=--denoise
+[2025-05-01 12:09:13] INFO GUI: Selected input file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+[2025-05-01 12:09:21] INFO GUI: Selected output directory: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[2025-05-01 12:09:28] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_Main, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+[2025-05-01 12:09:28] INFO GUI: Parameters: Chunks=512, Margin=10, N_FFT=6144, Dim_T=256, Dim_F=2048, Denoise=--denoise
+[2025-05-01 12:09:28] INFO GUI: Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr-main" && python.exe separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\models\MDXNet\UVR-MDX-NET-Inst_Main.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks=512 --margin=10 --n_fft=6144 --dim_t=256 --dim_f=2048 --denoise && deactivate"
+[2025-05-01 12:09:40] ERROR GUI: Error reading command output for UVR_MDXNET_Inst_Main
+[2025-05-01 12:09:40] INFO GUI: Command output: usage: separate.py [-h] --files FILES [FILES ...] [-o OUTPUT] -m MODEL_PATH
+                   [-c CONFIG_PATH] [--model-type {mdx,roformer}]
+                   [--stems STEMS] [-d] [-M MARGIN] [-C CHUNKS] [-F N_FFT]
+                   [-t DIM_T] [-f DIM_F]
+separate.py: error: the following arguments are required: --files
+Error reading output.
+
+[2025-05-01 12:09:40] ERROR GUI: Failed to generate stem: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav
+[2025-05-01 12:09:40] ERROR GUI: Failed to generate stem: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
+[2025-05-01 12:10:36] INFO GUI: Exiting GUI
