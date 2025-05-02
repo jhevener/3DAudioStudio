@@ -1,44 +1,401 @@
-[2025-05-01 22:38:32] INFO GUI: Starting Test Models.ini GUI
-[2025-05-01 22:38:32] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
-[2025-05-01 22:38:32] INFO GUI: Loaded 21 models from models.ini
-[2025-05-01 22:38:32] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
-[2025-05-01 22:38:32] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
-[2025-05-01 22:38:48] INFO GUI: Selected model: kuelab_a_vocals_Fast
-[2025-05-01 22:38:48] INFO GUI: Updated model info for kuelab_a_vocals_Fast
-[2025-05-01 22:38:56] INFO GUI: Selected input file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
-[2025-05-01 22:38:57] INFO GUI: Starting separation for model: kuelab_a_vocals_Fast, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 512, Overlap: 2, Denoise: False, NFFT: 6144, DimF: 2048, DimT: 8
-[2025-05-01 22:38:57] ERROR GUI: Model file not found: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuelab_a_vocals.onnx
-[2025-05-01 22:39:30] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Balanced
-[2025-05-01 22:39:30] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Balanced
-[2025-05-01 22:39:31] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_Main_Balanced, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 512, Overlap: 8, Denoise: False, NFFT: 6144, DimF: 2048, DimT: 8
-[2025-05-01 22:39:31] INFO GUI: Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\UVR-MDX-NET-Inst_Main.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 512 --margin 8 --denoise False --n_fft 6144 --dim_f 2048 --dim_t 8 && deactivate"
-[2025-05-02 11:01:18] INFO GUI: Starting Test Models.ini GUI
-[2025-05-02 11:01:18] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
-[2025-05-02 11:01:18] INFO GUI: Loaded 21 models from models.ini
-[2025-05-02 11:01:18] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 11:01:18] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 11:12:59] INFO GUI: Exiting GUI
-[2025-05-02 12:36:36] INFO GUI: Starting Test Models.ini GUI
-[2025-05-02 12:36:36] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
-[2025-05-02 12:36:36] INFO GUI: Loaded 21 models from models.ini
-[2025-05-02 12:36:36] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:36:36] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:36:42] INFO GUI: Exiting GUI
-[2025-05-02 12:39:18] INFO GUI: Starting Test Models.ini GUI
-[2025-05-02 12:39:18] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
-[2025-05-02 12:39:18] INFO GUI: Loaded 21 models from models.ini
-[2025-05-02 12:39:18] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:39:18] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:39:21] INFO GUI: Exiting GUI
-[2025-05-02 12:39:40] INFO GUI: Starting Test Models.ini GUI
-[2025-05-02 12:39:40] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
-[2025-05-02 12:39:40] INFO GUI: Loaded 21 models from models.ini
-[2025-05-02 12:39:40] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:39:40] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:39:42] INFO GUI: Exiting GUI
-[2025-05-02 12:40:01] INFO GUI: Starting Test Models.ini GUI
-[2025-05-02 12:40:01] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
-[2025-05-02 12:40:01] INFO GUI: Loaded 21 models from models.ini
-[2025-05-02 12:40:01] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:40:01] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
-[2025-05-02 12:40:03] INFO GUI: Exiting GUI
+2025-05-02 18:40:47 - INFO - Starting separation for model: kuelab_b_bass, Quality: Quality, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 20, Overlap: 88200, Denoise: True, NFFT: 4096, DimF: 2048, DimT: 8
+2025-05-02 18:40:47 - DEBUG - Original command: cmd /c "cd @EnvPath@ && activate.bat && cd @ScriptDir@ && python @PythonScript@ "@SongPath@" -m "@Path@" -o "@OutputDir@" --chunks @SegmentSize@ --margin @Overlap@ --n_fft @NFFT@ --dim_f @DimF@ --dim_t @DimT@ && deactivate"
+2025-05-02 18:40:47 - INFO - Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_bass.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 20 --margin 88200 --n_fft 4096 --dim_f 2048 --dim_t 8 && deactivate"
+2025-05-02 18:43:21 - INFO - Separation output: 2025-05-02 18:40:49,845 - DEBUG - Logging initialized
+2025-05-02 18:40:49,845 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_bass.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:40:49,845 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:40:49,845 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:40:49,845 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 18:40:49,845 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_bass.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:40:49,845 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_bass.onnx
+2025-05-02 18:40:49,925 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:40:50,176 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:40:50,176 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:40:50,207 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:40:50,223 - DEBUG - Processing chunk: 4 waves
+Processing:   6%|6         | 1/16 [00:07<01:54,  7.67s/it]2025-05-02 18:40:57,896 - DEBUG - Processing chunk: 5 waves
+Processing:  12%|#2        | 2/16 [00:18<02:09,  9.24s/it]2025-05-02 18:41:08,225 - DEBUG - Processing chunk: 5 waves
+Processing:  19%|#8        | 3/16 [00:27<01:59,  9.20s/it]2025-05-02 18:41:17,393 - DEBUG - Processing chunk: 5 waves
+Processing:  25%|##5       | 4/16 [00:36<01:50,  9.17s/it]2025-05-02 18:41:26,507 - DEBUG - Processing chunk: 5 waves
+Processing:  31%|###1      | 5/16 [00:45<01:42,  9.35s/it]2025-05-02 18:41:36,170 - DEBUG - Processing chunk: 5 waves
+Processing:  38%|###7      | 6/16 [00:56<01:38,  9.88s/it]2025-05-02 18:41:47,098 - DEBUG - Processing chunk: 5 waves
+Processing:  44%|####3     | 7/16 [01:07<01:31, 10.21s/it]2025-05-02 18:41:57,959 - DEBUG - Processing chunk: 5 waves
+Processing:  50%|#####     | 8/16 [01:18<01:22, 10.36s/it]2025-05-02 18:42:08,636 - DEBUG - Processing chunk: 5 waves
+Processing:  56%|#####6    | 9/16 [01:29<01:13, 10.46s/it]2025-05-02 18:42:19,330 - DEBUG - Processing chunk: 5 waves
+Processing:  62%|######2   | 10/16 [01:39<01:02, 10.34s/it]2025-05-02 18:42:29,409 - DEBUG - Processing chunk: 5 waves
+Processing:  69%|######8   | 11/16 [01:48<00:49, 10.00s/it]2025-05-02 18:42:38,627 - DEBUG - Processing chunk: 5 waves
+Processing:  75%|#######5  | 12/16 [01:57<00:39,  9.78s/it]2025-05-02 18:42:47,922 - DEBUG - Processing chunk: 5 waves
+Processing:  81%|########1 | 13/16 [02:07<00:29,  9.72s/it]2025-05-02 18:42:57,487 - DEBUG - Processing chunk: 5 waves
+Processing:  88%|########7 | 14/16 [02:17<00:19,  9.75s/it]2025-05-02 18:43:07,319 - DEBUG - Processing chunk: 5 waves
+Processing:  94%|#########3| 15/16 [02:27<00:09,  9.96s/it]2025-05-02 18:43:17,726 - DEBUG - Processing chunk: 1 waves
+Processing: 100%|##########| 16/16 [02:29<00:00,  7.56s/it]Processing: 100%|##########| 16/16 [02:29<00:00,  9.35s/it]
+2025-05-02 18:43:19,811 - DEBUG - Demixing complete
+2025-05-02 18:43:20,255 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
+
+2025-05-02 18:43:21 - ERROR - Failed to generate stem: 2025-05-02 18:40:49,845 - DEBUG - Logging initialized
+2025-05-02 18:40:49,845 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_bass.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:40:49,845 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:40:49,845 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:40:49,845 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 18:40:49,845 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_bass.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:40:49,845 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_bass.onnx
+2025-05-02 18:40:49,925 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:40:50,176 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:40:50,176 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:40:50,207 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:40:50,223 - DEBUG - Processing chunk: 4 waves
+Processing:   6%|6         | 1/16 [00:07<01:54,  7.67s/it]2025-05-02 18:40:57,896 - DEBUG - Processing chunk: 5 waves
+Processing:  12%|#2        | 2/16 [00:18<02:09,  9.24s/it]2025-05-02 18:41:08,225 - DEBUG - Processing chunk: 5 waves
+Processing:  19%|#8        | 3/16 [00:27<01:59,  9.20s/it]2025-05-02 18:41:17,393 - DEBUG - Processing chunk: 5 waves
+Processing:  25%|##5       | 4/16 [00:36<01:50,  9.17s/it]2025-05-02 18:41:26,507 - DEBUG - Processing chunk: 5 waves
+Processing:  31%|###1      | 5/16 [00:45<01:42,  9.35s/it]2025-05-02 18:41:36,170 - DEBUG - Processing chunk: 5 waves
+Processing:  38%|###7      | 6/16 [00:56<01:38,  9.88s/it]2025-05-02 18:41:47,098 - DEBUG - Processing chunk: 5 waves
+Processing:  44%|####3     | 7/16 [01:07<01:31, 10.21s/it]2025-05-02 18:41:57,959 - DEBUG - Processing chunk: 5 waves
+Processing:  50%|#####     | 8/16 [01:18<01:22, 10.36s/it]2025-05-02 18:42:08,636 - DEBUG - Processing chunk: 5 waves
+Processing:  56%|#####6    | 9/16 [01:29<01:13, 10.46s/it]2025-05-02 18:42:19,330 - DEBUG - Processing chunk: 5 waves
+Processing:  62%|######2   | 10/16 [01:39<01:02, 10.34s/it]2025-05-02 18:42:29,409 - DEBUG - Processing chunk: 5 waves
+Processing:  69%|######8   | 11/16 [01:48<00:49, 10.00s/it]2025-05-02 18:42:38,627 - DEBUG - Processing chunk: 5 waves
+Processing:  75%|#######5  | 12/16 [01:57<00:39,  9.78s/it]2025-05-02 18:42:47,922 - DEBUG - Processing chunk: 5 waves
+Processing:  81%|########1 | 13/16 [02:07<00:29,  9.72s/it]2025-05-02 18:42:57,487 - DEBUG - Processing chunk: 5 waves
+Processing:  88%|########7 | 14/16 [02:17<00:19,  9.75s/it]2025-05-02 18:43:07,319 - DEBUG - Processing chunk: 5 waves
+Processing:  94%|#########3| 15/16 [02:27<00:09,  9.96s/it]2025-05-02 18:43:17,726 - DEBUG - Processing chunk: 1 waves
+Processing: 100%|##########| 16/16 [02:29<00:00,  7.56s/it]Processing: 100%|##########| 16/16 [02:29<00:00,  9.35s/it]
+2025-05-02 18:43:19,811 - DEBUG - Demixing complete
+2025-05-02 18:43:20,255 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
+\song0_bass.wav
+2025-05-02 18:43:21 - ERROR - Failed to generate stem: 2025-05-02 18:40:49,845 - DEBUG - Logging initialized
+2025-05-02 18:40:49,845 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_bass.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:40:49,845 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:40:49,845 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:40:49,845 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 18:40:49,845 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_bass.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:40:49,845 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_bass.onnx
+2025-05-02 18:40:49,925 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:40:50,176 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:40:50,176 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:40:50,207 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:40:50,223 - DEBUG - Processing chunk: 4 waves
+Processing:   6%|6         | 1/16 [00:07<01:54,  7.67s/it]2025-05-02 18:40:57,896 - DEBUG - Processing chunk: 5 waves
+Processing:  12%|#2        | 2/16 [00:18<02:09,  9.24s/it]2025-05-02 18:41:08,225 - DEBUG - Processing chunk: 5 waves
+Processing:  19%|#8        | 3/16 [00:27<01:59,  9.20s/it]2025-05-02 18:41:17,393 - DEBUG - Processing chunk: 5 waves
+Processing:  25%|##5       | 4/16 [00:36<01:50,  9.17s/it]2025-05-02 18:41:26,507 - DEBUG - Processing chunk: 5 waves
+Processing:  31%|###1      | 5/16 [00:45<01:42,  9.35s/it]2025-05-02 18:41:36,170 - DEBUG - Processing chunk: 5 waves
+Processing:  38%|###7      | 6/16 [00:56<01:38,  9.88s/it]2025-05-02 18:41:47,098 - DEBUG - Processing chunk: 5 waves
+Processing:  44%|####3     | 7/16 [01:07<01:31, 10.21s/it]2025-05-02 18:41:57,959 - DEBUG - Processing chunk: 5 waves
+Processing:  50%|#####     | 8/16 [01:18<01:22, 10.36s/it]2025-05-02 18:42:08,636 - DEBUG - Processing chunk: 5 waves
+Processing:  56%|#####6    | 9/16 [01:29<01:13, 10.46s/it]2025-05-02 18:42:19,330 - DEBUG - Processing chunk: 5 waves
+Processing:  62%|######2   | 10/16 [01:39<01:02, 10.34s/it]2025-05-02 18:42:29,409 - DEBUG - Processing chunk: 5 waves
+Processing:  69%|######8   | 11/16 [01:48<00:49, 10.00s/it]2025-05-02 18:42:38,627 - DEBUG - Processing chunk: 5 waves
+Processing:  75%|#######5  | 12/16 [01:57<00:39,  9.78s/it]2025-05-02 18:42:47,922 - DEBUG - Processing chunk: 5 waves
+Processing:  81%|########1 | 13/16 [02:07<00:29,  9.72s/it]2025-05-02 18:42:57,487 - DEBUG - Processing chunk: 5 waves
+Processing:  88%|########7 | 14/16 [02:17<00:19,  9.75s/it]2025-05-02 18:43:07,319 - DEBUG - Processing chunk: 5 waves
+Processing:  94%|#########3| 15/16 [02:27<00:09,  9.96s/it]2025-05-02 18:43:17,726 - DEBUG - Processing chunk: 1 waves
+Processing: 100%|##########| 16/16 [02:29<00:00,  7.56s/it]Processing: 100%|##########| 16/16 [02:29<00:00,  9.35s/it]
+2025-05-02 18:43:19,811 - DEBUG - Demixing complete
+2025-05-02 18:43:20,255 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
+\song0_other.wav
+2025-05-02 18:44:16 - INFO - Starting separation for model: kuelab_b_other, Quality: Quality, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 20, Overlap: 88200, Denoise: True, NFFT: 4096, DimF: 2048, DimT: 9
+2025-05-02 18:44:16 - DEBUG - Original command: cmd /c "cd @EnvPath@ && activate.bat && cd @ScriptDir@ && python @PythonScript@ "@SongPath@" -m "@Path@" -o "@OutputDir@" --chunks @SegmentSize@ --margin @Overlap@ --n_fft @NFFT@ --dim_f @DimF@ --dim_t @DimT@ && deactivate"
+2025-05-02 18:44:16 - INFO - Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_other.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 20 --margin 88200 --n_fft 4096 --dim_f 2048 --dim_t 9 && deactivate"
+2025-05-02 18:44:19 - INFO - Separation output: 2025-05-02 18:44:18,446 - DEBUG - Logging initialized
+2025-05-02 18:44:18,446 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 18:44:18,446 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:44:18,446 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:18,446 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=512, n_fft=4096, hop=1024
+2025-05-02 18:44:18,446 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 18:44:18,446 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_other.onnx
+2025-05-02 18:44:18,519 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:18,788 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:44:18,788 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:44:18,820 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:44:18,836 - DEBUG - Processing chunk: 2 waves
+2025-05-02 18:44:18,867 - ERROR - Failed to process C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Traceback (most recent call last):
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 258, in <module>
+    main()
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 242, in main
+    vocals, no_vocals, sampling_rate = predictor.predict(file_path)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 210, in predict
+    sources = self.demix(mix.T)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 131, in demix
+    sources = self.demix_base(segmented_mix, margin_size=margin)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 165, in demix_base
+    -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
+  File "C:\temp\s2S\installs\UVR\uvr_env\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py", line 220, in run
+    return self._sess.run(output_names, input_feed, run_options)
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Processing:   0%|          | 0/16 [00:00<?, ?it/s]
+
+2025-05-02 18:44:19 - ERROR - Python error occurred: 2025-05-02 18:44:18,446 - DEBUG - Logging initialized
+2025-05-02 18:44:18,446 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 18:44:18,446 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:44:18,446 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:18,446 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=512, n_fft=4096, hop=1024
+2025-05-02 18:44:18,446 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 18:44:18,446 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_other.onnx
+2025-05-02 18:44:18,519 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:18,788 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:44:18,788 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:44:18,820 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:44:18,836 - DEBUG - Processing chunk: 2 waves
+2025-05-02 18:44:18,867 - ERROR - Failed to process C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Traceback (most recent call last):
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 258, in <module>
+    main()
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 242, in main
+    vocals, no_vocals, sampling_rate = predictor.predict(file_path)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 210, in predict
+    sources = self.demix(mix.T)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 131, in demix
+    sources = self.demix_base(segmented_mix, margin_size=margin)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 165, in demix_base
+    -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
+  File "C:\temp\s2S\installs\UVR\uvr_env\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py", line 220, in run
+    return self._sess.run(output_names, input_feed, run_options)
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Processing:   0%|          | 0/16 [00:00<?, ?it/s]
+
+2025-05-02 18:44:52 - INFO - Starting separation for model: kuelab_b_other, Quality: Quality, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 20, Overlap: 88200, Denoise: True, NFFT: 4096, DimF: 2048, DimT: 8
+2025-05-02 18:44:52 - DEBUG - Original command: cmd /c "cd @EnvPath@ && activate.bat && cd @ScriptDir@ && python @PythonScript@ "@SongPath@" -m "@Path@" -o "@OutputDir@" --chunks @SegmentSize@ --margin @Overlap@ --n_fft @NFFT@ --dim_f @DimF@ --dim_t @DimT@ && deactivate"
+2025-05-02 18:44:52 - INFO - Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_other.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 20 --margin 88200 --n_fft 4096 --dim_f 2048 --dim_t 8 && deactivate"
+2025-05-02 18:48:53 - INFO - Separation output: 2025-05-02 18:44:54,369 - DEBUG - Logging initialized
+2025-05-02 18:44:54,369 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:44:54,369 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:44:54,369 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:54,369 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 18:44:54,369 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:44:54,369 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_other.onnx
+2025-05-02 18:44:54,439 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:54,698 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:44:54,698 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:44:54,730 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:44:54,746 - DEBUG - Processing chunk: 4 waves
+Processing:   6%|6         | 1/16 [00:07<01:57,  7.84s/it]2025-05-02 18:45:02,584 - DEBUG - Processing chunk: 5 waves
+Processing:  12%|#2        | 2/16 [00:18<02:13,  9.55s/it]2025-05-02 18:45:13,352 - DEBUG - Processing chunk: 5 waves
+Processing:  19%|#8        | 3/16 [00:33<02:38, 12.22s/it]2025-05-02 18:45:28,750 - DEBUG - Processing chunk: 5 waves
+Processing:  25%|##5       | 4/16 [00:49<02:44, 13.70s/it]2025-05-02 18:45:44,701 - DEBUG - Processing chunk: 5 waves
+Processing:  31%|###1      | 5/16 [01:05<02:39, 14.53s/it]2025-05-02 18:46:00,724 - DEBUG - Processing chunk: 5 waves
+Processing:  38%|###7      | 6/16 [01:23<02:36, 15.68s/it]2025-05-02 18:46:18,632 - DEBUG - Processing chunk: 5 waves
+Processing:  44%|####3     | 7/16 [01:40<02:23, 15.95s/it]2025-05-02 18:46:35,135 - DEBUG - Processing chunk: 5 waves
+Processing:  50%|#####     | 8/16 [01:56<02:07, 15.97s/it]2025-05-02 18:46:51,167 - DEBUG - Processing chunk: 5 waves
+Processing:  56%|#####6    | 9/16 [02:12<01:52, 16.04s/it]2025-05-02 18:47:07,343 - DEBUG - Processing chunk: 5 waves
+Processing:  62%|######2   | 10/16 [02:28<01:35, 15.98s/it]2025-05-02 18:47:23,191 - DEBUG - Processing chunk: 5 waves
+Processing:  69%|######8   | 11/16 [02:44<01:20, 16.00s/it]2025-05-02 18:47:39,251 - DEBUG - Processing chunk: 5 waves
+Processing:  75%|#######5  | 12/16 [03:01<01:04, 16.24s/it]2025-05-02 18:47:56,032 - DEBUG - Processing chunk: 5 waves
+Processing:  81%|########1 | 13/16 [03:17<00:49, 16.36s/it]2025-05-02 18:48:12,678 - DEBUG - Processing chunk: 5 waves
+Processing:  88%|########7 | 14/16 [03:35<00:33, 16.84s/it]2025-05-02 18:48:30,611 - DEBUG - Processing chunk: 5 waves
+Processing:  94%|#########3| 15/16 [03:53<00:16, 16.94s/it]2025-05-02 18:48:47,765 - DEBUG - Processing chunk: 1 waves
+Processing: 100%|##########| 16/16 [03:56<00:00, 12.86s/it]Processing: 100%|##########| 16/16 [03:56<00:00, 14.79s/it]
+2025-05-02 18:48:51,313 - DEBUG - Demixing complete
+2025-05-02 18:48:52,361 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
+
+2025-05-02 18:48:53 - ERROR - Failed to generate stem: 2025-05-02 18:44:54,369 - DEBUG - Logging initialized
+2025-05-02 18:44:54,369 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:44:54,369 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 18:44:54,369 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:54,369 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 18:44:54,369 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song0.flac')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_other.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 88200, 'chunks': 20, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 18:44:54,369 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_other.onnx
+2025-05-02 18:44:54,439 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac
+2025-05-02 18:44:54,698 - DEBUG - Audio loaded: shape=(2, 13371120), sample_rate=44100
+2025-05-02 18:44:54,698 - DEBUG - Demixing audio: samples=13371120, margin=88200, chunk_size=882000
+2025-05-02 18:44:54,730 - DEBUG - Created 16 chunks for demixing
+  0%|          | 0/16 [00:00<?, ?it/s]Processing:   0%|          | 0/16 [00:00<?, ?it/s]2025-05-02 18:44:54,746 - DEBUG - Processing chunk: 4 waves
+Processing:   6%|6         | 1/16 [00:07<01:57,  7.84s/it]2025-05-02 18:45:02,584 - DEBUG - Processing chunk: 5 waves
+Processing:  12%|#2        | 2/16 [00:18<02:13,  9.55s/it]2025-05-02 18:45:13,352 - DEBUG - Processing chunk: 5 waves
+Processing:  19%|#8        | 3/16 [00:33<02:38, 12.22s/it]2025-05-02 18:45:28,750 - DEBUG - Processing chunk: 5 waves
+Processing:  25%|##5       | 4/16 [00:49<02:44, 13.70s/it]2025-05-02 18:45:44,701 - DEBUG - Processing chunk: 5 waves
+Processing:  31%|###1      | 5/16 [01:05<02:39, 14.53s/it]2025-05-02 18:46:00,724 - DEBUG - Processing chunk: 5 waves
+Processing:  38%|###7      | 6/16 [01:23<02:36, 15.68s/it]2025-05-02 18:46:18,632 - DEBUG - Processing chunk: 5 waves
+Processing:  44%|####3     | 7/16 [01:40<02:23, 15.95s/it]2025-05-02 18:46:35,135 - DEBUG - Processing chunk: 5 waves
+Processing:  50%|#####     | 8/16 [01:56<02:07, 15.97s/it]2025-05-02 18:46:51,167 - DEBUG - Processing chunk: 5 waves
+Processing:  56%|#####6    | 9/16 [02:12<01:52, 16.04s/it]2025-05-02 18:47:07,343 - DEBUG - Processing chunk: 5 waves
+Processing:  62%|######2   | 10/16 [02:28<01:35, 15.98s/it]2025-05-02 18:47:23,191 - DEBUG - Processing chunk: 5 waves
+Processing:  69%|######8   | 11/16 [02:44<01:20, 16.00s/it]2025-05-02 18:47:39,251 - DEBUG - Processing chunk: 5 waves
+Processing:  75%|#######5  | 12/16 [03:01<01:04, 16.24s/it]2025-05-02 18:47:56,032 - DEBUG - Processing chunk: 5 waves
+Processing:  81%|########1 | 13/16 [03:17<00:49, 16.36s/it]2025-05-02 18:48:12,678 - DEBUG - Processing chunk: 5 waves
+Processing:  88%|########7 | 14/16 [03:35<00:33, 16.84s/it]2025-05-02 18:48:30,611 - DEBUG - Processing chunk: 5 waves
+Processing:  94%|#########3| 15/16 [03:53<00:16, 16.94s/it]2025-05-02 18:48:47,765 - DEBUG - Processing chunk: 1 waves
+Processing: 100%|##########| 16/16 [03:56<00:00, 12.86s/it]Processing: 100%|##########| 16/16 [03:56<00:00, 14.79s/it]
+2025-05-02 18:48:51,313 - DEBUG - Demixing complete
+2025-05-02 18:48:52,361 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song0_no_vocals.wav
+\song0_other.wav
+2025-05-02 19:29:14 - INFO - Starting separation for model: kuelab_b_vocals, Quality: Balanced, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 15, Overlap: 44100, Denoise: True, NFFT: 4096, DimF: 2048, DimT: 9
+2025-05-02 19:29:14 - DEBUG - Original command: cmd /c "cd @EnvPath@ && activate.bat && cd @ScriptDir@ && python @PythonScript@ "@SongPath@" -m "@Path@" -o "@OutputDir@" --chunks @SegmentSize@ --margin @Overlap@ --n_fft @NFFT@ --dim_f @DimF@ --dim_t @DimT@ && deactivate"
+2025-05-02 19:29:14 - INFO - Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 15 --margin 44100 --n_fft 4096 --dim_f 2048 --dim_t 9 && deactivate"
+2025-05-02 19:29:17 - INFO - Separation output: 2025-05-02 19:29:16,425 - DEBUG - Logging initialized
+2025-05-02 19:29:16,426 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 19:29:16,426 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 19:29:16,426 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:16,429 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=512, n_fft=4096, hop=1024
+2025-05-02 19:29:16,429 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 19:29:16,429 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx
+2025-05-02 19:29:16,516 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:16,598 - DEBUG - Audio loaded: shape=(2, 11715900), sample_rate=44100
+2025-05-02 19:29:16,598 - DEBUG - Demixing audio: samples=11715900, margin=44100, chunk_size=661500
+2025-05-02 19:29:16,622 - DEBUG - Created 18 chunks for demixing
+  0%|          | 0/18 [00:00<?, ?it/s]Processing:   0%|          | 0/18 [00:00<?, ?it/s]2025-05-02 19:29:16,634 - DEBUG - Processing chunk: 2 waves
+2025-05-02 19:29:16,651 - ERROR - Failed to process C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Traceback (most recent call last):
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 258, in <module>
+    main()
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 242, in main
+    vocals, no_vocals, sampling_rate = predictor.predict(file_path)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 210, in predict
+    sources = self.demix(mix.T)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 131, in demix
+    sources = self.demix_base(segmented_mix, margin_size=margin)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 165, in demix_base
+    -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
+  File "C:\temp\s2S\installs\UVR\uvr_env\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py", line 220, in run
+    return self._sess.run(output_names, input_feed, run_options)
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Processing:   0%|          | 0/18 [00:00<?, ?it/s]
+
+2025-05-02 19:29:17 - ERROR - Python error occurred: 2025-05-02 19:29:16,425 - DEBUG - Logging initialized
+2025-05-02 19:29:16,426 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 19:29:16,426 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 19:29:16,426 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:16,429 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=512, n_fft=4096, hop=1024
+2025-05-02 19:29:16,429 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 9, 'dim_f': 2048}
+2025-05-02 19:29:16,429 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx
+2025-05-02 19:29:16,516 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:16,598 - DEBUG - Audio loaded: shape=(2, 11715900), sample_rate=44100
+2025-05-02 19:29:16,598 - DEBUG - Demixing audio: samples=11715900, margin=44100, chunk_size=661500
+2025-05-02 19:29:16,622 - DEBUG - Created 18 chunks for demixing
+  0%|          | 0/18 [00:00<?, ?it/s]Processing:   0%|          | 0/18 [00:00<?, ?it/s]2025-05-02 19:29:16,634 - DEBUG - Processing chunk: 2 waves
+2025-05-02 19:29:16,651 - ERROR - Failed to process C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Traceback (most recent call last):
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 258, in <module>
+    main()
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 242, in main
+    vocals, no_vocals, sampling_rate = predictor.predict(file_path)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 210, in predict
+    sources = self.demix(mix.T)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 131, in demix
+    sources = self.demix_base(segmented_mix, margin_size=margin)
+  File "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py", line 165, in demix_base
+    -_ort.run(None, {"input": -spek.cpu().numpy()})[0] * 0.5
+  File "C:\temp\s2S\installs\UVR\uvr_env\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py", line 220, in run
+    return self._sess.run(output_names, input_feed, run_options)
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: input for the following indices
+ index: 3 Got: 512 Expected: 256
+ Please fix either the inputs/outputs or the model.
+Processing:   0%|          | 0/18 [00:00<?, ?it/s]
+
+2025-05-02 19:29:24 - INFO - Starting separation for model: kuelab_b_vocals, Quality: Balanced, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 15, Overlap: 44100, Denoise: True, NFFT: 4096, DimF: 2048, DimT: 8
+2025-05-02 19:29:24 - DEBUG - Original command: cmd /c "cd @EnvPath@ && activate.bat && cd @ScriptDir@ && python @PythonScript@ "@SongPath@" -m "@Path@" -o "@OutputDir@" --chunks @SegmentSize@ --margin @Overlap@ --n_fft @NFFT@ --dim_f @DimF@ --dim_t @DimT@ && deactivate"
+2025-05-02 19:29:24 - INFO - Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 15 --margin 44100 --n_fft 4096 --dim_f 2048 --dim_t 8 && deactivate"
+2025-05-02 19:31:22 - INFO - Separation output: 2025-05-02 19:29:26,890 - DEBUG - Logging initialized
+2025-05-02 19:29:26,890 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 19:29:26,894 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 19:29:26,894 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:26,894 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 19:29:26,894 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 19:29:26,894 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx
+2025-05-02 19:29:26,945 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:26,993 - DEBUG - Audio loaded: shape=(2, 11715900), sample_rate=44100
+2025-05-02 19:29:26,993 - DEBUG - Demixing audio: samples=11715900, margin=44100, chunk_size=661500
+2025-05-02 19:29:27,024 - DEBUG - Created 18 chunks for demixing
+  0%|          | 0/18 [00:00<?, ?it/s]Processing:   0%|          | 0/18 [00:00<?, ?it/s]2025-05-02 19:29:27,024 - DEBUG - Processing chunk: 3 waves
+Processing:   6%|5         | 1/18 [00:05<01:39,  5.85s/it]2025-05-02 19:29:32,885 - DEBUG - Processing chunk: 3 waves
+Processing:  11%|#1        | 2/18 [00:11<01:30,  5.68s/it]2025-05-02 19:29:38,440 - DEBUG - Processing chunk: 3 waves
+Processing:  17%|#6        | 3/18 [00:16<01:24,  5.63s/it]2025-05-02 19:29:44,011 - DEBUG - Processing chunk: 3 waves
+Processing:  22%|##2       | 4/18 [00:22<01:18,  5.62s/it]2025-05-02 19:29:49,617 - DEBUG - Processing chunk: 3 waves
+Processing:  28%|##7       | 5/18 [00:29<01:16,  5.91s/it]2025-05-02 19:29:56,052 - DEBUG - Processing chunk: 3 waves
+Processing:  33%|###3      | 6/18 [00:35<01:13,  6.10s/it]2025-05-02 19:30:02,522 - DEBUG - Processing chunk: 3 waves
+Processing:  39%|###8      | 7/18 [00:42<01:08,  6.24s/it]2025-05-02 19:30:09,040 - DEBUG - Processing chunk: 3 waves
+Processing:  44%|####4     | 8/18 [00:48<01:03,  6.38s/it]2025-05-02 19:30:15,730 - DEBUG - Processing chunk: 3 waves
+Processing:  50%|#####     | 9/18 [00:55<00:57,  6.41s/it]2025-05-02 19:30:22,196 - DEBUG - Processing chunk: 3 waves
+Processing:  56%|#####5    | 10/18 [01:01<00:51,  6.42s/it]2025-05-02 19:30:28,662 - DEBUG - Processing chunk: 3 waves
+Processing:  61%|######1   | 11/18 [01:08<00:45,  6.43s/it]2025-05-02 19:30:35,110 - DEBUG - Processing chunk: 3 waves
+Processing:  67%|######6   | 12/18 [01:14<00:38,  6.44s/it]2025-05-02 19:30:41,577 - DEBUG - Processing chunk: 3 waves
+Processing:  72%|#######2  | 13/18 [01:20<00:32,  6.44s/it]2025-05-02 19:30:48,000 - DEBUG - Processing chunk: 3 waves
+Processing:  78%|#######7  | 14/18 [01:27<00:25,  6.44s/it]2025-05-02 19:30:54,445 - DEBUG - Processing chunk: 3 waves
+Processing:  83%|########3 | 15/18 [01:33<00:19,  6.42s/it]2025-05-02 19:31:00,825 - DEBUG - Processing chunk: 3 waves
+Processing:  89%|########8 | 16/18 [01:40<00:13,  6.50s/it]2025-05-02 19:31:07,520 - DEBUG - Processing chunk: 3 waves
+Processing:  94%|#########4| 17/18 [01:46<00:06,  6.48s/it]2025-05-02 19:31:13,932 - DEBUG - Processing chunk: 3 waves
+Processing: 100%|##########| 18/18 [01:53<00:00,  6.59s/it]Processing: 100%|##########| 18/18 [01:53<00:00,  6.32s/it]
+2025-05-02 19:31:20,826 - DEBUG - Demixing complete
+2025-05-02 19:31:21,312 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_no_vocals.wav
+
+2025-05-02 19:31:22 - ERROR - Failed to generate stem: 2025-05-02 19:29:26,890 - DEBUG - Logging initialized
+2025-05-02 19:29:26,890 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 19:29:26,894 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 19:29:26,894 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:26,894 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 19:29:26,894 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 19:29:26,894 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx
+2025-05-02 19:29:26,945 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:26,993 - DEBUG - Audio loaded: shape=(2, 11715900), sample_rate=44100
+2025-05-02 19:29:26,993 - DEBUG - Demixing audio: samples=11715900, margin=44100, chunk_size=661500
+2025-05-02 19:29:27,024 - DEBUG - Created 18 chunks for demixing
+  0%|          | 0/18 [00:00<?, ?it/s]Processing:   0%|          | 0/18 [00:00<?, ?it/s]2025-05-02 19:29:27,024 - DEBUG - Processing chunk: 3 waves
+Processing:   6%|5         | 1/18 [00:05<01:39,  5.85s/it]2025-05-02 19:29:32,885 - DEBUG - Processing chunk: 3 waves
+Processing:  11%|#1        | 2/18 [00:11<01:30,  5.68s/it]2025-05-02 19:29:38,440 - DEBUG - Processing chunk: 3 waves
+Processing:  17%|#6        | 3/18 [00:16<01:24,  5.63s/it]2025-05-02 19:29:44,011 - DEBUG - Processing chunk: 3 waves
+Processing:  22%|##2       | 4/18 [00:22<01:18,  5.62s/it]2025-05-02 19:29:49,617 - DEBUG - Processing chunk: 3 waves
+Processing:  28%|##7       | 5/18 [00:29<01:16,  5.91s/it]2025-05-02 19:29:56,052 - DEBUG - Processing chunk: 3 waves
+Processing:  33%|###3      | 6/18 [00:35<01:13,  6.10s/it]2025-05-02 19:30:02,522 - DEBUG - Processing chunk: 3 waves
+Processing:  39%|###8      | 7/18 [00:42<01:08,  6.24s/it]2025-05-02 19:30:09,040 - DEBUG - Processing chunk: 3 waves
+Processing:  44%|####4     | 8/18 [00:48<01:03,  6.38s/it]2025-05-02 19:30:15,730 - DEBUG - Processing chunk: 3 waves
+Processing:  50%|#####     | 9/18 [00:55<00:57,  6.41s/it]2025-05-02 19:30:22,196 - DEBUG - Processing chunk: 3 waves
+Processing:  56%|#####5    | 10/18 [01:01<00:51,  6.42s/it]2025-05-02 19:30:28,662 - DEBUG - Processing chunk: 3 waves
+Processing:  61%|######1   | 11/18 [01:08<00:45,  6.43s/it]2025-05-02 19:30:35,110 - DEBUG - Processing chunk: 3 waves
+Processing:  67%|######6   | 12/18 [01:14<00:38,  6.44s/it]2025-05-02 19:30:41,577 - DEBUG - Processing chunk: 3 waves
+Processing:  72%|#######2  | 13/18 [01:20<00:32,  6.44s/it]2025-05-02 19:30:48,000 - DEBUG - Processing chunk: 3 waves
+Processing:  78%|#######7  | 14/18 [01:27<00:25,  6.44s/it]2025-05-02 19:30:54,445 - DEBUG - Processing chunk: 3 waves
+Processing:  83%|########3 | 15/18 [01:33<00:19,  6.42s/it]2025-05-02 19:31:00,825 - DEBUG - Processing chunk: 3 waves
+Processing:  89%|########8 | 16/18 [01:40<00:13,  6.50s/it]2025-05-02 19:31:07,520 - DEBUG - Processing chunk: 3 waves
+Processing:  94%|#########4| 17/18 [01:46<00:06,  6.48s/it]2025-05-02 19:31:13,932 - DEBUG - Processing chunk: 3 waves
+Processing: 100%|##########| 18/18 [01:53<00:00,  6.59s/it]Processing: 100%|##########| 18/18 [01:53<00:00,  6.32s/it]
+2025-05-02 19:31:20,826 - DEBUG - Demixing complete
+2025-05-02 19:31:21,312 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_no_vocals.wav
+\song6_vocals.wav
+2025-05-02 19:31:22 - ERROR - Failed to generate stem: 2025-05-02 19:29:26,890 - DEBUG - Logging initialized
+2025-05-02 19:29:26,890 - INFO - Parsed arguments: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 19:29:26,894 - DEBUG - Output directory created: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems
+2025-05-02 19:29:26,894 - INFO - Processing file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:26,894 - DEBUG - ConvTDFNet initialized: dim_f=2048, dim_t=256, n_fft=4096, hop=1024
+2025-05-02 19:29:26,894 - DEBUG - Predictor initializing with args: {'files': [WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/songs/song6.wav')], 'output': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/stems'), 'model_path': WindowsPath('C:/Git/3DAudioStudio/scripts/autoit/1.3/models/MDXNet/kuielab_b_vocals.onnx'), 'stems': 'vocals,no_vocals', 'denoise': True, 'margin': 44100, 'chunks': 15, 'n_fft': 4096, 'dim_t': 8, 'dim_f': 2048}
+2025-05-02 19:29:26,894 - INFO - CUDA not available, using CPUExecutionProvider for model: C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\kuielab_b_vocals.onnx
+2025-05-02 19:29:26,945 - INFO - Loading audio file: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song6.wav
+2025-05-02 19:29:26,993 - DEBUG - Audio loaded: shape=(2, 11715900), sample_rate=44100
+2025-05-02 19:29:26,993 - DEBUG - Demixing audio: samples=11715900, margin=44100, chunk_size=661500
+2025-05-02 19:29:27,024 - DEBUG - Created 18 chunks for demixing
+  0%|          | 0/18 [00:00<?, ?it/s]Processing:   0%|          | 0/18 [00:00<?, ?it/s]2025-05-02 19:29:27,024 - DEBUG - Processing chunk: 3 waves
+Processing:   6%|5         | 1/18 [00:05<01:39,  5.85s/it]2025-05-02 19:29:32,885 - DEBUG - Processing chunk: 3 waves
+Processing:  11%|#1        | 2/18 [00:11<01:30,  5.68s/it]2025-05-02 19:29:38,440 - DEBUG - Processing chunk: 3 waves
+Processing:  17%|#6        | 3/18 [00:16<01:24,  5.63s/it]2025-05-02 19:29:44,011 - DEBUG - Processing chunk: 3 waves
+Processing:  22%|##2       | 4/18 [00:22<01:18,  5.62s/it]2025-05-02 19:29:49,617 - DEBUG - Processing chunk: 3 waves
+Processing:  28%|##7       | 5/18 [00:29<01:16,  5.91s/it]2025-05-02 19:29:56,052 - DEBUG - Processing chunk: 3 waves
+Processing:  33%|###3      | 6/18 [00:35<01:13,  6.10s/it]2025-05-02 19:30:02,522 - DEBUG - Processing chunk: 3 waves
+Processing:  39%|###8      | 7/18 [00:42<01:08,  6.24s/it]2025-05-02 19:30:09,040 - DEBUG - Processing chunk: 3 waves
+Processing:  44%|####4     | 8/18 [00:48<01:03,  6.38s/it]2025-05-02 19:30:15,730 - DEBUG - Processing chunk: 3 waves
+Processing:  50%|#####     | 9/18 [00:55<00:57,  6.41s/it]2025-05-02 19:30:22,196 - DEBUG - Processing chunk: 3 waves
+Processing:  56%|#####5    | 10/18 [01:01<00:51,  6.42s/it]2025-05-02 19:30:28,662 - DEBUG - Processing chunk: 3 waves
+Processing:  61%|######1   | 11/18 [01:08<00:45,  6.43s/it]2025-05-02 19:30:35,110 - DEBUG - Processing chunk: 3 waves
+Processing:  67%|######6   | 12/18 [01:14<00:38,  6.44s/it]2025-05-02 19:30:41,577 - DEBUG - Processing chunk: 3 waves
+Processing:  72%|#######2  | 13/18 [01:20<00:32,  6.44s/it]2025-05-02 19:30:48,000 - DEBUG - Processing chunk: 3 waves
+Processing:  78%|#######7  | 14/18 [01:27<00:25,  6.44s/it]2025-05-02 19:30:54,445 - DEBUG - Processing chunk: 3 waves
+Processing:  83%|########3 | 15/18 [01:33<00:19,  6.42s/it]2025-05-02 19:31:00,825 - DEBUG - Processing chunk: 3 waves
+Processing:  89%|########8 | 16/18 [01:40<00:13,  6.50s/it]2025-05-02 19:31:07,520 - DEBUG - Processing chunk: 3 waves
+Processing:  94%|#########4| 17/18 [01:46<00:06,  6.48s/it]2025-05-02 19:31:13,932 - DEBUG - Processing chunk: 3 waves
+Processing: 100%|##########| 18/18 [01:53<00:00,  6.59s/it]Processing: 100%|##########| 18/18 [01:53<00:00,  6.32s/it]
+2025-05-02 19:31:20,826 - DEBUG - Demixing complete
+2025-05-02 19:31:21,312 - INFO - Generated outputs: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_vocals.wav, C:\Git\3DAudioStudio\scripts\autoit\1.3\stems\song6_no_vocals.wav
+\song6_other.wav
