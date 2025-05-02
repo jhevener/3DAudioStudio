@@ -12,3 +12,9 @@
 [2025-05-01 22:39:30] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Balanced
 [2025-05-01 22:39:31] INFO GUI: Starting separation for model: UVR_MDXNET_Inst_Main_Balanced, Input: C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac, Output: C:\Git\3DAudioStudio\scripts\autoit\1.3\stems, SegmentSize: 512, Overlap: 8, Denoise: False, NFFT: 6144, DimF: 2048, DimT: 8
 [2025-05-01 22:39:31] INFO GUI: Resolved command: cmd /c "cd C:\Git\3DAudioStudio\scripts\autoit\1.3\installs\UVR\uvr_env\Scripts && activate.bat && cd C:\Git\3DAudioStudio\scripts\autoit\1.3 && python separate.py "C:\Git\3DAudioStudio\scripts\autoit\1.3\songs\song0.flac" -m "C:\Git\3DAudioStudio\scripts\autoit\1.3\models\MDXNet\UVR-MDX-NET-Inst_Main.onnx" -o "C:\Git\3DAudioStudio\scripts\autoit\1.3\stems" --chunks 512 --margin 8 --denoise False --n_fft 6144 --dim_f 2048 --dim_t 8 && deactivate"
+[2025-05-02 11:01:18] INFO GUI: Starting Test Models.ini GUI
+[2025-05-02 11:01:18] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-02 11:01:18] INFO GUI: Loaded 21 models from models.ini
+[2025-05-02 11:01:18] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 11:01:18] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 11:12:59] INFO GUI: Exiting GUI
