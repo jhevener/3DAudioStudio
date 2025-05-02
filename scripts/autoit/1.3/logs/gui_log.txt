@@ -18,3 +18,27 @@
 [2025-05-02 11:01:18] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
 [2025-05-02 11:01:18] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
 [2025-05-02 11:12:59] INFO GUI: Exiting GUI
+[2025-05-02 12:36:36] INFO GUI: Starting Test Models.ini GUI
+[2025-05-02 12:36:36] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-02 12:36:36] INFO GUI: Loaded 21 models from models.ini
+[2025-05-02 12:36:36] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:36:36] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:36:42] INFO GUI: Exiting GUI
+[2025-05-02 12:39:18] INFO GUI: Starting Test Models.ini GUI
+[2025-05-02 12:39:18] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-02 12:39:18] INFO GUI: Loaded 21 models from models.ini
+[2025-05-02 12:39:18] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:39:18] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:39:21] INFO GUI: Exiting GUI
+[2025-05-02 12:39:40] INFO GUI: Starting Test Models.ini GUI
+[2025-05-02 12:39:40] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-02 12:39:40] INFO GUI: Loaded 21 models from models.ini
+[2025-05-02 12:39:40] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:39:40] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:39:42] INFO GUI: Exiting GUI
+[2025-05-02 12:40:01] INFO GUI: Starting Test Models.ini GUI
+[2025-05-02 12:40:01] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\models.ini
+[2025-05-02 12:40:01] INFO GUI: Loaded 21 models from models.ini
+[2025-05-02 12:40:01] INFO GUI: Selected model: UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:40:01] INFO GUI: Updated model info for UVR_MDXNET_Inst_Main_Fast
+[2025-05-02 12:40:03] INFO GUI: Exiting GUI

@@ -190,16 +190,6 @@ Func LoadModels()
     $g_aModels[0] = $iModelCount
     $g_aModelFiles[0] = $iModelCount
     Local $iIndex = 1
-    For $i = 1 To $aSections - 1
-        If $aSections[$i] <> "models" Then
-            $iModelCount += 1
-        EndIf
-    Next
-    ReDim $g_aModels[$iModelCount + 1]
-    ReDim $g_aModelFiles[$iModelCount + 1]
-    $g_aModels[0] = $iModelCount
-    $g_aModelFiles[0] = $iModelCount
-    Local $iIndex = 1
     For $i = 1 To $aSections[0]
         If $aSections[$i] <> "models" Then
             $g_aModels[$iIndex] = $aSections[$i]

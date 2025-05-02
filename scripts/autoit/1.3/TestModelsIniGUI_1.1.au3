@@ -1,244 +1,251 @@
-#include <Array.au3>
-#include <File.au3>
 #include <GUIConstantsEx.au3>
-#include <MsgBoxConstants.au3>
-#include <StringConstants.au3>
 #include <WindowsConstants.au3>
-#include <AutoItConstants.au3>
-#include <GUITab.au3>
+#include <ComboConstants.au3>
 #include <EditConstants.au3>
-#include <GuiEdit.au3>
-#include <ScrollBarsConstants.au3>
-#include <WinAPI.au3>
-Global $g_sIniPath = "C:\Git\3DAudioStudio\config\testmodels.ini"
-Global $g_sOutputPath = "C:\Git\3DAudioStudio\output"
-Global $g_sPythonPath = "C:\Git\3DAudioStudio\venv\Scripts\python.exe"
-Global $g_sSeparatePyPath = "C:\Git\3DAudioStudio\scripts\autoit\1.3\separate.py"
-Global $g_sOutExt = "wav"
-Global $g_sLogPath = "C:\Git\3DAudioStudio\output\log.txt"
-Global $g_iMaxLogSize = 10485760
-Global $g_sModelFile = "UVR_MDXNET_1_420k.pth"
-Global $g_sModelName = "UVR-MDXNET_1_420k"
-Global $g_iChunks = 15
-Global $g_iMargin = 44100
-Global $g_bDenoise = False
-Global $g_iFFTSize = 6144
-Global $g_iFreqDim = 2048
-Global $g_iTimeDim = 8
-Global $g_sInputFile = ""
-Global $g_sOutputDir = ""
-Global $g_hGUI = 0
-Global $g_idTab = 0
-Global $g_idOutputList = 0
-Global $g_idModelCombo = 0
-Global $g_idInputBrowse = 0
-Global $g_idOutputBrowse = 0
-Global $g_idRunButton = 0
-Global $g_idChunksInput = 0
-Global $g_idDenoiseCheckbox = 0
-Global $g_idMarginInput = 0
-Global $g_idFFTSizeInput = 0
-Global $g_idFreqDimInput = 0
-Global $g_idTimeDimInput = 0
-Global $g_aModels[0]
-Global $g_aModelFiles[0]
-Global $g_bRunning = False
-Global $g_iLastLineCount = 0
+#include <FileConstants.au3>
+#include <Array.au3>
+#include <MsgBoxConstants.au3>
+#include <File.au3>
+
+; GUI Setup
+Global $hGUI = GUICreate("Test Models.ini GUI", 600, 400)
+Global $idModelCombo = GUICtrlCreateCombo("", 20, 20, 560, 25, $CBS_DROPDOWNLIST)
+Global $idModelInfo = GUICtrlCreateEdit("", 20, 50, 560, 100, BitOR($ES_READONLY, $WS_VSCROLL))
+Global $idInputFile = GUICtrlCreateInput("", 20, 160, 480, 25)
+Global $idInputBrowse = GUICtrlCreateButton("Browse", 510, 160, 70, 25)
+Global $idOutputDir = GUICtrlCreateInput(@ScriptDir & "\stems", 20, 190, 480, 25)
+Global $idOutputBrowse = GUICtrlCreateButton("Browse", 510, 190, 70, 25)
+Global $idRunButton = GUICtrlCreateButton("Run Separation", 20, 220, 560, 30)
+Global $idOutputList = GUICtrlCreateEdit("", 20, 260, 560, 130, BitOR($ES_READONLY, $WS_VSCROLL))
+Global $g_sIniPath = @ScriptDir & "\models.ini"
+Global $g_sLogPath = @ScriptDir & "\logs\gui_log.txt"
+Global $g_aModels[1][8] ; [Name, Focus, Stems, Path, Description, Comments, OutputStems, CommandLine]
+
+; Create log directory
+DirCreate(@ScriptDir & "\logs")
+
+; Logging function
 Func LogMessage($sLevel, $sMessage)
-    Local $sTimeStamp = @YEAR & "-" & @MON & "-" & @MDAY & " " & @HOUR & ":" & @MIN & ":" & @SEC
-    Local $hFile = FileOpen($g_sLogPath, $FO_APPEND)
-    FileWriteLine($hFile, $sTimeStamp & " [" & $sLevel & "] " & $sMessage)
-    FileClose($hFile)
-    Local $iFileSize = FileGetSize($g_sLogPath)
-    If $iFileSize > $g_iMaxLogSize Then
-        Local $aLines
-        _FileReadToArray($g_sLogPath, $aLines)
-        Local $iLinesToKeep = $aLines[0] / 2
-        Local $hNewFile = FileOpen($g_sLogPath, $FO_OVERWRITE)
-        For $i = $iLinesToKeep + 1 To $aLines[0]
-            FileWriteLine($hNewFile, $aLines[$i])
-        Next
-        FileClose($hNewFile)
-    EndIf
-    _GUICtrlEdit_AppendText($g_idOutputList, $sTimeStamp & " [" & $sLevel & "] " & $sMessage & @CRLF)
-    Local $iLines = _GUICtrlEdit_GetLineCount($g_idOutputList)
-    If $iLines > 1000 Then
-        Local $sText = _GUICtrlEdit_GetText($g_idOutputList)
-        Local $aTextLines = StringSplit($sText, @CRLF, $STR_NOCOUNT)
-        Local $iLinesToRemove = $iLines - 500
-        Local $sNewText = ""
-        For $i = $iLinesToRemove + 1 To $aTextLines[0]
-            $sNewText &= $aTextLines[$i] & @CRLF
-        Next
-        _GUICtrlEdit_SetText($g_idOutputList, $sNewText)
-    EndIf
+    Local $sTimestamp = @YEAR & "-" & @MON & "-" & @MDAY & " " & @HOUR & ":" & @MIN & ":" & @SEC
+    Local $sLogLine = "[" & $sTimestamp & "] " & $sLevel & " GUI: " & $sMessage & @CRLF
+    FileWrite($g_sLogPath, $sLogLine)
 EndFunc
-Func CheckStems()
-    Local $aStems = StringSplit(IniRead($g_sIniPath, "models", "OutputStems", "vocals_no_vocals|*"), "|", $STR_NOCOUNT)
-    Local $sFilename = StringRegExpReplace($g_sInputFile, "^.*\\", "")
-    Local $sResult = ""
-    For $i = 1 To $aStems[0]
-        Local $sStemFile = $g_sOutputDir & "\" & StringRegExpReplace($sFilename, "\.[^.]+$", "") & "_" & $aStems[$i] & "." & $g_sOutExt
-        If FileExists($sStemFile) Then
-            $sResult &= $aStems[$i] & @CRLF
-        Else
-            LogMessage("INFO", "Generated stem: " & $sStemFile)
-            LogMessage("ERROR", "Missing! " & $sStemFile)
-        EndIf
+
+; Load models.ini
+Func LoadModels()
+    LogMessage("INFO", "Loading models.ini from " & $g_sIniPath)
+    Local $aSections = IniReadSectionNames($g_sIniPath)
+    If @error Then
+        LogMessage("ERROR", "Failed to read models.ini at " & $g_sIniPath)
+        MsgBox($MB_ICONERROR, "Error", "Failed to read models.ini at " & $g_sIniPath)
+        Exit
+    EndIf
+    ReDim $g_aModels[$aSections[0] + 1][8]
+    $g_aModels[0][0] = $aSections[0]
+    Local $sComboData = ""
+    For $i = 1 To $aSections[0]
+        $g_aModels[$i][0] = $aSections[$i] ; Name
+        $g_aModels[$i][1] = IniRead($g_sIniPath, $aSections[$i], "Focus", "")
+        $g_aModels[$i][2] = IniRead($g_sIniPath, $aSections[$i], "Stems", "2")
+        $g_aModels[$i][3] = IniRead($g_sIniPath, $aSections[$i], "Path", "")
+        $g_aModels[$i][4] = IniRead($g_sIniPath, $aSections[$i], "Description", "")
+        $g_aModels[$i][5] = IniRead($g_sIniPath, $aSections[$i], "Comments", "")
+        $g_aModels[$i][6] = IniRead($g_sIniPath, $aSections[$i], "OutputStems", "vocals,no_vocals")
+        $g_aModels[$i][7] = IniRead($g_sIniPath, $aSections[$i], "CommandLine", "")
+        $sComboData &= $aSections[$i] & "|"
     Next
-    $sResult &= @CRLF & "Full Command Line:" & @CRLF & $g_sPythonPath & " " & $g_sSeparatePyPath & " " & $g_sInputFile & " --output " & $g_sOutputDir & " --model_path " & $g_sModelFile & " --denoise " & $g_bDenoise & " --margin " & $g_iMargin & " --chunks " & $g_iChunks & " --n_fft " & $g_iFFTSize & " --dim_t " & $g_iTimeDim & " --dim_f " & $g_iFreqDim
-    GUICtrlSetData($g_idOutputList, $sResult)
+    GUICtrlSetData($idModelCombo, $sComboData)
+    GUICtrlSetData($idModelCombo, $aSections[1]) ; Select first model
+    LogMessage("INFO", "Loaded " & $aSections[0] & " models from models.ini")
+    UpdateModelInfo()
 EndFunc
-Func RunSeparation()
-    LogMessage("INFO", "Starting separation process...")
-    Local $sCommand = $g_sPythonPath & " " & $g_sSeparatePyPath & " " & $g_sInputFile & " --output " & $g_sOutputDir & " --model_path " & $g_sModelFile & " --denoise " & $g_bDenoise & " --margin " & $g_iMargin & " --chunks " & $g_iChunks & " --n_fft " & $g_iFFTSize & " --dim_t " & $g_iTimeDim & " --dim_f " & $g_iFreqDim
-    LogMessage("INFO", "Command: " & $sCommand)
-    Local $iPID = Run($sCommand, "", @SW_HIDE, $STDERR_MERGED)
-    If $iPID = 0 Then
-        LogMessage("ERROR", "Failed to run command: " & $sCommand)
-        $g_bRunning = False
-        Return
-    EndIf
-    Local $sOutput = ""
-    While ProcessExists($iPID)
-        $sOutput &= StdoutRead($iPID)
-        If @error Then ExitLoop
-        Local $sErrOutput = StderrRead($iPID)
-        If $sErrOutput <> "" Then
-            LogMessage("ERROR", "STDERR: " & $sErrOutput)
-        EndIf
-        If $sOutput <> "" Then
-            Local $aLines = StringSplit($sOutput, @CRLF, $STR_NOCOUNT)
-            For $i = 1 To $aLines[0]
-                If $aLines[$i] <> "" Then
-                    LogMessage("INFO", "STDOUT: " & $aLines[$i])
-                EndIf
-            Next
-            $sOutput = ""
-        EndIf
-        Sleep(100)
-    WEnd
-    $sOutput &= StdoutRead($iPID)
-    If $sOutput <> "" Then
-        Local $aLines = StringSplit($sOutput, @CRLF, $STR_NOCOUNT)
-        For $i = 1 To $aLines[0]
-            If $aLines[$i] <> "" Then
-                LogMessage("INFO", "STDOUT: " & $aLines[$i])
-            EndIf
-        Next
-    EndIf
-    Local $iExitCode = ProcessWaitClose($iPID)
-    LogMessage("INFO", "Separation process completed with exit code: " & $iExitCode)
-    If $iExitCode = 0 Then
-        CheckStems()
-    Else
-        LogMessage("ERROR", "Separation failed with exit code: " & $iExitCode)
-    EndIf
-    $g_bRunning = False
-EndFunc
+
+; Update model info display
 Func UpdateModelInfo()
-    Local $sSelectedModel = GUICtrlRead($g_idModelCombo)
-    For $i = 1 To $g_aModels[0]
-        If $sSelectedModel = $g_aModels[$i] Then
-            $g_sModelFile = $g_aModelFiles[$i]
-            $g_sModelName = $g_aModels[$i]
+    Local $sModel = GUICtrlRead($idModelCombo)
+    LogMessage("INFO", "Selected model: " & $sModel)
+    For $i = 1 To $g_aModels[0][0]
+        If $g_aModels[$i][0] = $sModel Then
+            Local $sInfo = "Name: " & $g_aModels[$i][0] & @CRLF & _
+                          "Focus: " & $g_aModels[$i][1] & @CRLF & _
+                          "Stems: " & $g_aModels[$i][2] & @CRLF & _
+                          "Output Stems: " & $g_aModels[$i][6] & @CRLF & _
+                          "Description: " & $g_aModels[$i][4] & @CRLF & _
+                          "Comments: " & $g_aModels[$i][5]
+            GUICtrlSetData($idModelInfo, $sInfo)
+            LogMessage("INFO", "Updated model info for " & $sModel)
             ExitLoop
         EndIf
     Next
 EndFunc
-Func CreateGUI()
-    $g_hGUI = GUICreate("Test Models.ini GUI", 800, 600)
-    $g_idTab = GUICtrlCreateTab(10, 10, 780, 580)
-    GUICtrlCreateTabItem("Separation")
-    $g_idModelCombo = GUICtrlCreateCombo("", 30, 50, 300, 25)
-    GUICtrlSetData($g_idModelCombo, _ArrayToString($g_aModels, "|", 1), $g_aModels[1])
-    GUICtrlCreateLabel("Model:", 30, 80, 100, 20)
-    GUICtrlCreateLabel("Input File:", 30, 110, 100, 20)
-    $g_idInputBrowse = GUICtrlCreateButton("Browse", 350, 110, 80, 25)
-    GUICtrlCreateLabel("Output Directory:", 30, 140, 100, 20)
-    $g_idOutputBrowse = GUICtrlCreateButton("Browse", 350, 140, 80, 25)
-    $g_idOutputList = GUICtrlCreateEdit("", 30, 170, 740, 300, $ES_AUTOVSCROLL + $ES_READONLY + $WS_VSCROLL)
-    GUICtrlCreateLabel("Chunk Size (seconds):", 30, 480, 120, 20)
-    $g_idChunksInput = GUICtrlCreateInput($g_iChunks, 150, 480, 50, 20)
-    $g_idDenoiseCheckbox = GUICtrlCreateCheckbox("Enable Denoise", 220, 480, 100, 20)
-    GUICtrlCreateLabel("Margin (samples):", 30, 510, 120, 20)
-    $g_idMarginInput = GUICtrlCreateInput($g_iMargin, 150, 510, 50, 20)
-    GUICtrlCreateLabel("FFT Size:", 330, 480, 50, 20)
-    $g_idFFTSizeInput = GUICtrlCreateInput($g_iFFTSize, 380, 480, 50, 20)
-    GUICtrlCreateLabel("Freq Dim:", 450, 480, 50, 20)
-    $g_idFreqDimInput = GUICtrlCreateInput($g_iFreqDim, 500, 480, 50, 20)
-    GUICtrlCreateLabel("Time Dim:", 570, 480, 50, 20)
-    $g_idTimeDimInput = GUICtrlCreateInput($g_iTimeDim, 620, 480, 50, 20)
-    $g_idRunButton = GUICtrlCreateButton("Run Separation", 680, 480, 90, 30)
-    GUICtrlCreateTabItem("")
-    GUISetState(@SW_SHOW)
+
+; Browse for input file
+Func BrowseInput()
+    Local $sFile = FileOpenDialog("Select Audio File", @ScriptDir & "\songs", "Audio Files (*.mp3;*.wav;*.flac)", 1)
+    If Not @error Then
+        GUICtrlSetData($idInputFile, $sFile)
+        LogMessage("INFO", "Selected input file: " & $sFile)
+    EndIf
 EndFunc
-Func LoadModels()
-    Local $aSections = IniReadSectionNames($g_sIniPath)
-    If @error Then
-        LogMessage("ERROR", "Failed to read models from INI file: " & $g_sIniPath)
+
+; Browse for output directory
+Func BrowseOutput()
+    Local $sDir = FileSelectFolder("Select Output Directory", @ScriptDir & "\stems")
+    If Not @error Then
+        GUICtrlSetData($idOutputDir, $sDir)
+        LogMessage("INFO", "Selected output directory: " & $sDir)
+    EndIf
+EndFunc
+
+; Run separation
+Func RunSeparation()
+    Local $sModel = GUICtrlRead($idModelCombo)
+    Local $sInput = GUICtrlRead($idInputFile)
+    Local $sOutput = GUICtrlRead($idOutputDir)
+
+    LogMessage("INFO", "Starting separation for model: " & $sModel & ", Input: " & $sInput & ", Output: " & $sOutput)
+
+    If $sInput = "" Or Not FileExists($sInput) Then
+        LogMessage("ERROR", "Invalid input audio file: " & $sInput)
+        MsgBox($MB_ICONERROR, "Error", "Please select a valid input audio file.")
         Return
     EndIf
-    Local $iModelCount = 0
-    For $i = 1 To $aSections[0]
-        If $aSections[$i] <> "models" Then
-            $iModelCount += 1
+    If $sOutput = "" Or Not FileExists($sOutput) Then
+        LogMessage("ERROR", "Invalid output directory: " & $sOutput)
+        MsgBox($MB_ICONERROR, "Error", "Please select a valid output directory.")
+        Return
+    EndIf
+
+    ; Get CommandLine
+    Local $sCmd = ""
+    For $i = 1 To $g_aModels[0][0]
+        If $g_aModels[$i][0] = $sModel Then
+            $sCmd = $g_aModels[$i][7]
+            ExitLoop
         EndIf
     Next
-    ReDim $g_aModels[$iModelCount + 1]
-    ReDim $g_aModelFiles[$iModelCount + 1]
-    $g_aModels[0] = $iModelCount
-    $g_aModelFiles[0] = $iModelCount
-    Local $iIndex = 1
-    For $i = 1 To $aSections[0]
-        If $aSections[$i] <> "models" Then
-            $g_aModels[$iIndex] = $aSections[$i]
-            $g_aModelFiles[$iIndex] = IniRead($g_sIniPath, $aSections[$i], "ModelFile", "")
-            $iIndex += 1
+    If $sCmd = "" Then
+        LogMessage("ERROR", "CommandLine not found for model: " & $sModel)
+        MsgBox($MB_ICONERROR, "Error", "CommandLine not found for model: " & $sModel)
+        Return
+    EndIf
+
+    ; Get and validate the model path
+    Local $sModelPath = IniRead($g_sIniPath, $sModel, "Path", "")
+    If $sModelPath = "" Then
+        LogMessage("ERROR", "Model path not found for model: " & $sModel)
+        MsgBox($MB_ICONERROR, "Error", "Model path not found for model: " & $sModel)
+        Return
+    EndIf
+    Local $sResolvedModelPath = StringReplace($sModelPath, "@ScriptDir@", @ScriptDir)
+    If Not FileExists($sResolvedModelPath) Then
+        LogMessage("ERROR", "Model file not found: " & $sResolvedModelPath)
+        MsgBox($MB_ICONERROR, "Error", "Model file not found: " & $sResolvedModelPath)
+        Return
+    EndIf
+
+    ; Get and validate the config path
+    Local $sConfigPath = IniRead($g_sIniPath, $sModel, "Config", "")
+    If $sConfigPath = "" Then
+        LogMessage("ERROR", "Config path not found for model: " & $sModel)
+        MsgBox($MB_ICONERROR, "Error", "Config path not found for model: " & $sModel)
+        Return
+    EndIf
+    Local $sResolvedConfigPath = StringReplace($sConfigPath, "@ScriptDir@", @ScriptDir)
+    If Not FileExists($sResolvedConfigPath) Then
+        LogMessage("ERROR", "Config file not found: " & $sResolvedConfigPath)
+        MsgBox($MB_ICONERROR, "Error", "Config file not found: " & $sResolvedConfigPath)
+        Return
+    EndIf
+
+    ; Substitute placeholders in the CommandLine
+    $sCmd = StringReplace($sCmd, "@ScriptDir@", @ScriptDir)
+    $sCmd = StringReplace($sCmd, "@SongPath@", $sInput)
+    $sCmd = StringReplace($sCmd, "@OutputDir@", $sOutput)
+
+    ; Validate critical paths in the command
+    Local $sEnvPath = @ScriptDir & "\installs\UVR\uvr_env\Scripts\activate.bat"
+    Local $sPyPath = @ScriptDir & "\installs\UVR\uvr-main\separate.py"
+    If Not FileExists($sEnvPath) Then
+        LogMessage("ERROR", "Virtual environment not found: " & $sEnvPath)
+        MsgBox($MB_ICONERROR, "Error", "Virtual environment not found: " & $sEnvPath)
+        Return
+    EndIf
+    If Not FileExists($sPyPath) Then
+        LogMessage("ERROR", "separate.py not found: " & $sPyPath)
+        MsgBox($MB_ICONERROR, "Error", "separate.py not found: " & $sPyPath)
+        Return
+    EndIf
+
+    ; Run command with progress monitoring
+    LogMessage("INFO", "Resolved command: " & $sCmd)
+    GUICtrlSetData($idOutputList, "Running separation for " & $sModel & "..." & @CRLF)
+    Local $iPID = Run($sCmd, "", @SW_HIDE, $STDERR_MERGED)
+    Local $sOutputText = ""
+    Local $sProgress = "Progress: 0%"
+    While ProcessExists($iPID)
+        Local $sLine = StdoutRead($iPID)
+        If @error Then
+            ContinueLoop
+        EndIf
+        If $sLine <> "" Then
+            $sOutputText &= $sLine
+            ; Parse progress percentage from lines like "Processing:  95%|#########5| 20/21 [04:17<00:13, 13.33s/it]"
+            If StringInStr($sLine, "Processing:") Then
+                Local $aMatch = StringRegExp($sLine, "Processing:\s+(\d+)%", 1)
+                If Not @error Then
+                    $sProgress = "Progress: " & $aMatch[0] & "%"
+                EndIf
+            EndIf
+            ; Update GUI with progress
+            GUICtrlSetData($idOutputList, "Running separation for " & $sModel & "..." & @CRLF & $sProgress & @CRLF & $sOutputText)
+        EndIf
+        Sleep(100)
+    WEnd
+    $sOutputText &= StdoutRead($iPID)
+    If @error Then
+        LogMessage("ERROR", "Error reading command output for " & $sModel)
+        $sOutputText &= "Error reading output." & @CRLF
+    EndIf
+    LogMessage("INFO", "Command output: " & $sOutputText)
+
+    ; Check generated stems
+    Local $aStems = StringSplit(IniRead($g_sIniPath, $sModel, "OutputStems", "vocals,no_vocals"), ",")
+    Local $sFilename = StringRegExpReplace($sInput, "^.*\\", "")
+    $sFilename = StringRegExpReplace($sFilename, "\.[^.]+$", "")
+    Local $sResult = "Separation complete. Generated stems:" & @CRLF
+    For $i = 1 To $aStems[0]
+        Local $sStemFile = $sOutput & "\" & $sFilename & "_" & $aStems[$i] & ".wav"
+        If FileExists($sStemFile) Then
+            $sResult &= "- " & $sStemFile & @CRLF
+            LogMessage("INFO", "Generated stem: " & $sStemFile)
+        Else
+            $sResult &= "- [Missing] " & $sStemFile & @CRLF
+            LogMessage("ERROR", "Failed to generate stem: " & $sStemFile)
         EndIf
     Next
-    LogMessage("INFO", "Loaded " & $iModelCount & " models from INI file.")
+    $sResult &= @CRLF & "Full Command Line:" & @CRLF & $sCmd & @CRLF
+    $sResult &= @CRLF & "Command Output:" & @CRLF & $sOutputText
+    GUICtrlSetData($idOutputList, $sResult)
 EndFunc
+
+; Main loop
+LogMessage("INFO", "Starting Test Models.ini GUI")
 LoadModels()
-CreateGUI()
-LogMessage("INFO", "Starting Test Models.ini GUI...")
+GUISetState(@SW_SHOW)
+
 While 1
     Switch GUIGetMsg()
         Case $GUI_EVENT_CLOSE
-            LogMessage("INFO", "Exiting GUI...")
+            LogMessage("INFO", "Exiting GUI")
             Exit
-        Case $g_idModelCombo
+        Case $idModelCombo
             UpdateModelInfo()
-        Case $g_idInputBrowse
-            $g_sInputFile = FileOpenDialog("Select Input File", "", "Audio Files (*.wav;*.mp3;*.flac)", 1)
-            If Not @error Then
-                LogMessage("INFO", "Selected input file: " & $g_sInputFile)
-            EndIf
-        Case $g_idOutputBrowse
-            $g_sOutputDir = FileSelectFolder("Select Output Directory", "")
-            If Not @error Then
-                LogMessage("INFO", "Selected output directory: " & $g_sOutputDir)
-            EndIf
-        Case $g_idRunButton
-            If Not $g_bRunning Then
-                $g_iChunks = GUICtrlRead($g_idChunksInput)
-                $g_iMargin = GUICtrlRead($g_idMarginInput)
-                $g_bDenoise = (GUICtrlRead($g_idDenoiseCheckbox) = $GUI_CHECKED)
-                $g_iFFTSize = GUICtrlRead($g_idFFTSizeInput)
-                $g_iFreqDim = GUICtrlRead($g_idFreqDimInput)
-                $g_iTimeDim = GUICtrlRead($g_idTimeDimInput)
-                If $g_sInputFile = "" Then
-                    LogMessage("ERROR", "No input file selected!")
-                    ContinueLoop
-                EndIf
-                If $g_sOutputDir = "" Then
-                    LogMessage("ERROR", "No output directory selected!")
-                    ContinueLoop
-                EndIf
-                $g_bRunning = True
-                RunSeparation()
-            Else
-                LogMessage("INFO", "Separation already in progress...")
-            EndIf
+        Case $idInputBrowse
+            BrowseInput()
+        Case $idOutputBrowse
+            BrowseOutput()
+        Case $idRunButton
+            RunSeparation()
     EndSwitch
 WEnd

@@ -1,0 +1,44 @@
+[5/2/2025 12:33:55 PM] INFO: Entering _Main
+[5/2/2025 12:33:55 PM] INFO: Entering _LogStartupInfo
+[5/2/2025 12:33:55 PM] INFO: Script started
+[5/2/2025 12:33:55 PM] INFO: Script Directory: C:\Git\3DAudioStudio\scripts\autoit\1.3
+[5/2/2025 12:33:55 PM] INFO: Working Directory: C:\Git\3DAudioStudio\scripts\autoit\1.3
+[5/2/2025 12:33:55 PM] INFO: OS: WIN_11 (X64)
+[5/2/2025 12:33:55 PM] INFO: User: FretzCapo
+[5/2/2025 12:33:55 PM] INFO: FFmpeg Path: C:\temp\s2S\installs\uvr\ffmpeg\bin\ffmpeg.exe
+[5/2/2025 12:33:55 PM] INFO: Models Database File: C:\Git\3DAudioStudio\scripts\autoit\1.3\models.db
+[5/2/2025 12:33:55 PM] INFO: Settings INI: C:\Git\3DAudioStudio\scripts\autoit\1.3\settings.ini
+[5/2/2025 12:33:55 PM] INFO: Models INI: C:\Git\3DAudioStudio\scripts\autoit\1.3\Models.ini
+[5/2/2025 12:33:55 PM] INFO: User INI: C:\Git\3DAudioStudio\scripts\autoit\1.3\user.ini
+[5/2/2025 12:33:55 PM] INFO: Exiting _LogStartupInfo
+[5/2/2025 12:33:55 PM] INFO: Entering _InitializeModels
+[5/2/2025 12:33:55 PM] INFO: Database file does not exist: C:\Git\3DAudioStudio\scripts\autoit\1.3\models.db. Creating from Models.ini
+[5/2/2025 12:33:55 PM] INFO: Created new database: C:\Git\3DAudioStudio\scripts\autoit\1.3\models.db
+[5/2/2025 12:33:55 PM] INFO: Models table created
+[5/2/2025 12:33:55 PM] INFO: ModelApps table created
+[5/2/2025 12:33:55 PM] INFO: ModelFocuses table created
+[5/2/2025 12:33:55 PM] INFO: Found 21 sections in Models.ini
+[5/2/2025 12:33:55 PM] INFO: Executing query: SELECT COUNT(*) FROM Models
+[5/2/2025 12:33:55 PM] INFO: Found 0 models in database
+[5/2/2025 12:33:55 PM] INFO: Executing query: SELECT Name FROM Models WHERE Name = 'htdemucs'
+[5/2/2025 12:33:55 PM] ERROR: Default model 'htdemucs' not found in database
+[5/2/2025 12:34:07 PM] INFO: Executing query: SELECT Name FROM Models WHERE Name = '2stems'
+[5/2/2025 12:34:07 PM] ERROR: Spleeter model '2stems' not found in database
+[5/2/2025 12:34:10 PM] INFO: Exiting _InitializeModels
+[5/2/2025 12:34:10 PM] INFO: Entering _CreateGUI
+[5/2/2025 12:34:10 PM] INFO: Exiting _CreateGUI
+[5/2/2025 12:34:10 PM] INFO: Entering SetDefaults
+[5/2/2025 12:34:10 PM] INFO: Setting default tab to Demucs (index 0)
+[5/2/2025 12:34:10 PM] INFO: Triggering _TabHandler to initialize Demucs tab controls and set default model
+[5/2/2025 12:34:10 PM] INFO: Entering _TabHandler
+[5/2/2025 12:34:10 PM] INFO: Tab switched to index: 0
+[5/2/2025 12:34:10 PM] INFO: Entering _UpdateModelDroplist
+[5/2/2025 12:34:10 PM] INFO: Executing query: SELECT Models.Name FROM Models INNER JOIN ModelApps ON Models.ModelID = ModelApps.ModelID WHERE ModelApps.App = 'Demucs' ORDER BY Models.Name;
+[5/2/2025 12:34:10 PM] INFO: No models found for Demucs
+[5/2/2025 12:34:10 PM] INFO: Exiting _UpdateModelDroplist
+[5/2/2025 12:34:10 PM] INFO: Entering _IsModelCompatibleWithTab: Model=htdemucs, TabIndex=0
+[5/2/2025 12:34:10 PM] INFO: Entering _GetModelDetails for model: htdemucs
+[5/2/2025 12:34:10 PM] INFO: Executing query: SELECT ModelApps.App, ModelFocuses.Focus, Models.Name, ModelFocuses.Stems, Models.Path, Models.CommandLine, Models.Description, Models.Comments FROM Models LEFT JOIN ModelApps ON Models.ModelID = ModelApps.ModelID LEFT JOIN ModelFocuses ON Models.ModelID = ModelFocuses.ModelID WHERE Models.Name = 'htdemucs';
+[5/2/2025 12:34:10 PM] ERROR: No details found for model htdemucs
+[5/2/2025 12:34:10 PM] ERROR: Failed to get model details for compatibility check
+[5/2/2025 12:34:10 PM] ERROR: Default model htdemucs not found or not compatible with tab 0, selecting first available

@@ -1,0 +1,3 @@
+[2025-05-02 12:36:14] INFO GUI: Starting Test Models.ini GUI
+[2025-05-02 12:36:14] INFO GUI: Loading models.ini from C:\Git\3DAudioStudio\scripts\autoit\1.3\backup\models.ini
+[2025-05-02 12:36:15] ERROR GUI: Failed to read models.ini at C:\Git\3DAudioStudio\scripts\autoit\1.3\backup\models.ini
